@@ -1,0 +1,57 @@
+.ghe {
+    display: grid;
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+    -webkit-user-select: none;
+    user-select: none;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .gheThuong {
+    fill: #3e515d;
+  }
+  .gheVip {
+    fill: rgb(247, 181, 0);
+  }
+  .gheDangChon {
+    fill: rgb(68, 192, 32);
+  }
+  .gheNKChon svg {
+    fill: rgb(220, 58, 58);
+  }
+  .gheDaChon,
+  .gheDaChon svg {
+    fill: rgb(153, 197, 255) !important;
+  }
+  
+  
+   .close {
+    left: 50%;
+    color: white;
+    position: absolute;
+    font-size: medium;
+    margin-left: -5px;
+    transform: translate(-50%, -50%);
+    top: 14px;
+  } 
+  .selected svg {
+    fill: rgb(68, 192, 32);
+    position: relative;
+  }
+  .svg_color {
+    color : rgb(62, 81, 93)
+  }
+  
+  .stt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    position: absolute;
+    z-index: 10;
+    margin-top: 5px;
+    margin-left: 7px;
+    font-weight: 600;
+  }
