@@ -5,11 +5,19 @@ export const PATH = {
 
     // PATH USER
     USER_LAYOUT: "/",
+    POLICY: "/policy",
+    THEATER: "/theater",
+    NEWS_EVENT: "/news-event",
+    NEWS_EVENT_DETAIL: "/news-event/:id",
+    MOVIE_DETAIL: "/movie/:id",
+    PROFILE: "/profile",
+    SHOWTIME: "/showtime",
+    BOOK_TICKET: "/book-ticket/:id",
 
     // PATH ADMIN
     ADMIN_LAYOUT: "/admin",
-    MOVIE: "/movie",
-    USER: "/user",
+    MOVIE: "/admin/movie",
+    USER: "/admin/user",
 
     // PATH NOT FOUND
     NOT_FOUND: '/not-found',
