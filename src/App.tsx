@@ -3,8 +3,18 @@ import { PATH } from "../src/utils/path"
 import Register from "./pages/auth/Register"
 import Login from "./pages/auth/Login"
 
-import UserLayout from "../src/layouts/UserLayout"
+
+
+import UserLayout from "./layouts/user/UserLayout"
 import Home from "./pages/user/home/Home"
+import MovieDetail from "./pages/user/movie-detail/MovieDetail"
+import Profile from "./pages/user/profile/Profiile"
+import Policy from "./pages/user/Policy"
+import Theater from "./pages/user/theater/Theater"
+import NewsEventDetail from "./pages/user/newsEventDetail/NewsEventDetail"
+import NewsEvent from "./pages/user/newsEvent/NewsEvent"
+import Showtime from "./pages/user/showtime/Showtime"
+import BookTicket from "./pages/user/book-ticket/BookTicket"
 
 import AdminLayout from "../src/layouts/AdminLayout"
 import Movie from "./pages/admin/movie/Movie"
@@ -22,6 +32,8 @@ function App() {
         <Route path={PATH.NOT_FOUND} element={<NotFound />} />
         <Route path={PATH.LOGIN} element={<Login />} />
         <Route path={PATH.REGISTER} element={<Register />} />
+        <Route path={PATH.BOOK_TICKET} element={<BookTicket />} />
+
 
         {/* User Layout */}
         <Route
@@ -33,6 +45,13 @@ function App() {
           }
         >
           <Route index element={<Home />} />
+          <Route path={PATH.MOVIE_DETAIL} element={<MovieDetail />} />
+          <Route path={PATH.PROFILE} element={<Profile />} />
+          <Route path={PATH.POLICY} element={<Policy />} />
+          <Route path={PATH.THEATER} element={<Theater />} />
+          <Route path={PATH.NEWS_EVENT_DETAIL} element={<NewsEventDetail />} />
+          <Route path={PATH.NEWS_EVENT} element={<NewsEvent />} />
+          <Route path={PATH.SHOWTIME} element={<Showtime />} />
         </Route>
 
         {/* Admin Layout */}
