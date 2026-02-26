@@ -1,0 +1,52 @@
+/* Override react-modal-video styles */
+.modal-video-inner {
+    max-width: 1000px !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.modal-video-close-btn {
+    border-radius: 50% !important;
+    top: -14px !important;
+    right: -18px !important;
+    cursor: pointer !important;
+    padding: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.35s ease-in-out;
+}
+.modal-video-close-btn:hover {
+    opacity: 0.7 !important;
+}
+
+.modal-video-close-btn:before,
+.modal-video-close-btn:after {
+    background-color: #fff !important;
+    height: 3px !important;
+    width: 30px !important;
+    border-radius: 2px !important;
+}
+
+/* For better mobile support or different aspect ratios */
+@media (max-width: 768px) {
+    .modal-video-inner {
+        width: 95% !important;
+    }
+    .modal-video-close-btn {
+        top: -30px !important;
+        right: 0px !important;
+    }
+}
+
+/* Ensure the motion div doesn't restrict size */
+.motion-video-wrapper {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+}
