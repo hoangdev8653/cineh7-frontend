@@ -1,12 +1,19 @@
-import { useState } from 'react';
+'use client'
+import { useEffect, useState } from 'react';
 import { MapPin, Phone, Clock, ExternalLink } from 'lucide-react';
-import { THEATER_SYSTEMS, THEATERS } from '../../../data/theaters';
-import { PATH } from '../../../utils/path';
+import { useTheaters } from '../../../hooks/useTheater';
+import { useTheaterSystems } from "../../../hooks/useTheaterSystem"
 
 function Theater() {
-    const [selectedSystem, setSelectedSystem] = useState(THEATER_SYSTEMS[0].id);
+    const { data: theaterSystems } = useTheaterSystems();
+    const { data: theaters } = useTheaters();
+    const [selectedSystem, setSelectedSystem] = useState(theaterSystems?.[0]?.id);
 
-    const filteredTheaters = THEATERS.filter(theater => theater.systemId === selectedSystem);
+    useEffect(() => {
+        setSelectedSystem(theaterSystems?.[0]?.id);
+    }, [theaterSystems]);
+
+    const filteredTheaters = theaters?.filter((theater: any) => theater?.system?.id === selectedSystem);
 
     return (
         <div className="bg-slate-50 min-h-screen pb-20">
@@ -27,24 +34,24 @@ function Theater() {
                 {/* System Selector */}
                 <div className="bg-white rounded-2xl shadow-xl p-6 mb-12 border border-slate-100">
                     <div className="flex flex-wrap justify-center gap-6 md:gap-12">
-                        {THEATER_SYSTEMS.map((system) => (
+                        {theaterSystems?.map((item: any, index: number) => (
                             <button
-                                key={system.id}
-                                onClick={() => setSelectedSystem(system.id)}
-                                className={`flex flex-col items-center gap-3 group transition-all duration-300 ${selectedSystem === system.id ? 'opacity-100 scale-110' : 'opacity-40 hover:opacity-100'
+                                key={index}
+                                onClick={() => setSelectedSystem(item.id)}
+                                className={`flex flex-col items-center gap-3 group transition-all duration-300 ${selectedSystem === item.id ? 'opacity-100 scale-110' : 'opacity-40 hover:opacity-100'
                                     }`}
                             >
-                                <div className={`w-16 h-16 rounded-2xl p-2 bg-white shadow-sm border-2 transition-all ${selectedSystem === system.id ? 'border-red-600 shadow-red-100' : 'border-slate-100'
+                                <div className={`w-16 h-16 rounded-2xl p-2 bg-white shadow-sm border-2 transition-all ${selectedSystem === item.id ? 'border-red-600 shadow-red-100' : 'border-slate-100'
                                     }`}>
                                     <img
-                                        src={system.logo}
-                                        alt={system.name}
+                                        src={item.logo}
+                                        alt={item.name}
                                         className="w-full h-full object-contain"
                                     />
                                 </div>
-                                <span className={`text-xs font-bold uppercase tracking-wider ${selectedSystem === system.id ? 'text-red-600' : 'text-slate-500'
+                                <span className={`text-xs font-bold uppercase tracking-wider ${selectedSystem === item.id ? 'text-red-600' : 'text-slate-500'
                                     }`}>
-                                    {system.name}
+                                    {item.name}
                                 </span>
                             </button>
                         ))}
@@ -53,18 +60,18 @@ function Theater() {
 
                 {/* Theater Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-slate-800">
-                    {filteredTheaters.length > 0 ? (
-                        filteredTheaters.map((theater) => (
-                            <div key={theater.id} className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-100 group">
+                    {filteredTheaters?.length > 0 ? (
+                        filteredTheaters?.map((theater: any, index: number) => (
+                            <div key={index} className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-100 group">
                                 <div className="h-56 overflow-hidden relative">
                                     <img
-                                        src={theater.image}
+                                        src={theater?.logo || theater?.system?.logo}
                                         alt={theater.name}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                     />
                                     <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 shadow-sm flex items-center gap-2">
                                         <MapPin size={14} className="text-red-600" />
-                                        <span className="text-xs font-bold text-slate-900">TP. Hồ Chí Minh</span>
+                                        <span className="text-xs font-bold text-slate-900">{theater.location}</span>
                                     </div>
                                 </div>
                                 <div className="p-6 text-slate-800">

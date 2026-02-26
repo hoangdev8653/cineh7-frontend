@@ -1,20 +1,33 @@
-import { useParams, Link } from 'react-router-dom';
-import { Play, Calendar, Clock, Star, Info, Ticket, ChevronRight, Share2, Heart } from 'lucide-react';
-import { SAMPLE_MOVIES } from '../../../data/movies';
+import { useParams } from 'react-router-dom';
+import { useState } from 'react';
+import { Play, Calendar, Clock, Star, Heart, Share2, Ticket, ChevronRight } from 'lucide-react';
 import { THEATERS } from '../../../data/theaters';
+import { useMovieDetail } from '../../../hooks/useMovie';
+import type { IMovie } from '../../../types/movie.types';
+import VideoModal from '../../../components/features/videoModal/VideoModal';
 
 function MovieDetail() {
     const { id } = useParams();
-    const movie = SAMPLE_MOVIES.find(m => m.id === Number(id)) || SAMPLE_MOVIES[0];
+    const { data, isLoading } = useMovieDetail(id || '');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const movie = data ? {
+        ...data,
+        metadata: typeof data.metadata === 'string' ? JSON.parse(data.metadata) : data.metadata
+    } as IMovie : null;
 
     const showtimes = ['10:30', '13:15', '16:00', '19:45', '22:30'];
     const selectedTheaters = THEATERS.slice(0, 3);
+
+
+    if (isLoading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    if (!movie) return <div className="min-h-screen flex items-center justify-center">Movie not found</div>;
 
     return (
         <div className="bg-white min-h-screen pb-20 font-sans text-slate-800">
             <div className="relative h-[500px] md:h-[600px] w-full overflow-hidden">
                 <img
-                    src={movie.image}
+                    src={movie?.image_url}
                     alt={movie.title}
                     className="w-full h-full object-cover scale-110 blur-[2px] opacity-40"
                 />
@@ -23,9 +36,12 @@ function MovieDetail() {
                 <div className="absolute inset-0 flex items-center">
                     <div className="container mx-auto px-4 md:px-32 flex flex-col md:flex-row gap-12">
                         <div className="w-64 aspect-[2/3] rounded-[2rem] overflow-hidden shadow-2xl shadow-slate-400 shrink-0 border-4 border-white hidden md:block group relative">
-                            <img src={movie.image} alt={movie.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                            <img src={movie?.image_url} alt={movie.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                <button className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center text-white shadow-xl hover:scale-110 transition-transform">
+                                <button
+                                    onClick={() => setIsModalOpen(true)}
+                                    className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center text-white shadow-xl hover:scale-110 transition-transform"
+                                >
                                     <Play fill="currentColor" size={24} className="ml-1" />
                                 </button>
                             </div>
@@ -33,11 +49,9 @@ function MovieDetail() {
 
                         <div className="flex-grow pt-8 md:pt-20">
                             <div className="flex flex-wrap items-center gap-3 mb-6">
-                                {movie.tags.map((tag, idx) => (
-                                    <span key={idx} className="px-4 py-1.5 bg-slate-900/5 backdrop-blur-md rounded-full text-[10px] font-black tracking-widest uppercase text-slate-900 border border-slate-900/10">
-                                        {tag}
-                                    </span>
-                                ))}
+                                <span className="px-4 py-1.5 bg-slate-900/5 backdrop-blur-md rounded-full text-[10px] font-black tracking-widest uppercase text-slate-900 border border-slate-900/10">
+                                    {movie.metadata?.genre || 'N/A'}
+                                </span>
                                 <span className="px-4 py-1.5 bg-red-600 rounded-full text-[10px] font-black tracking-widest uppercase text-white shadow-lg shadow-red-600/20">
                                     HOT RELEASING
                                 </span>
@@ -53,8 +67,8 @@ function MovieDetail() {
                                         <Star fill="currentColor" className="text-white" size={20} />
                                     </div>
                                     <div>
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Rating</p>
-                                        <p className="text-xl font-black text-slate-900">{movie.rating}/10</p>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Classification</p>
+                                        <p className="text-xl font-black text-slate-900">{movie.metadata?.rating || 'N/A'}</p>
                                     </div>
                                 </div>
 
@@ -64,7 +78,7 @@ function MovieDetail() {
                                     </div>
                                     <div>
                                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Duration</p>
-                                        <p className="text-xl font-black text-slate-900">128 Mins</p>
+                                        <p className="text-xl font-black text-slate-900">{movie.duration} Mins</p>
                                     </div>
                                 </div>
 
@@ -73,8 +87,8 @@ function MovieDetail() {
                                         <Calendar size={20} />
                                     </div>
                                     <div>
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Released</p>
-                                        <p className="text-xl font-black text-slate-900">2026</p>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Released Year</p>
+                                        <p className="text-xl font-black text-slate-900">{new Date(movie.release_date).getFullYear()}</p>
                                     </div>
                                 </div>
                             </div>
@@ -95,10 +109,8 @@ function MovieDetail() {
                 </div>
             </div>
 
-            {/* Main Details Area */}
             <div className="container mx-auto px-4 md:px-32 -mt-12 md:mt-20 relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-                    {/* Left: Synopsis & Info */}
                     <div className="lg:col-span-8 space-y-16">
                         <section>
                             <div className="flex items-center gap-3 mb-8">
@@ -106,10 +118,7 @@ function MovieDetail() {
                                 <h2 className="text-3xl font-black italic tracking-tighter uppercase text-slate-900">Synopsis</h2>
                             </div>
                             <p className="text-xl text-slate-600 leading-relaxed font-medium">
-                                Step into the thrilling world of <span className="text-slate-900 font-bold">{movie.title}</span>.
-                                This epic journey combines high-stakes action with deep emotional storytelling.
-                                As the boundaries between reality and fantasy blur, our heroes must confront their inner demons
-                                to save everything they hold dear. Experience cinema like never before in this highly anticipated masterpiece.
+                                {movie.description}
                             </p>
                         </section>
 
@@ -145,32 +154,40 @@ function MovieDetail() {
                         </section>
                     </div>
 
-                    {/* Right: Cast & Production */}
                     <div className="lg:col-span-4 space-y-12">
                         <div className="bg-slate-900 rounded-[3rem] p-10 text-white shadow-2xl shadow-slate-900/40 sticky top-24">
                             <h3 className="text-2xl font-black italic mb-8 border-b border-white/10 pb-4">Details</h3>
                             <div className="space-y-8">
                                 <div>
                                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Director</p>
-                                    <p className="text-lg font-bold">Christopher Nolan</p>
+                                    <p className="text-lg font-bold">{movie.metadata?.director || 'N/A'}</p>
                                 </div>
                                 <div>
                                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Starring</p>
-                                    <p className="text-lg font-bold leading-relaxed">Cillian Murphy, Emily Blunt, Matt Damon, Robert Downey Jr.</p>
+                                    <p className="text-lg font-bold leading-relaxed">{movie.metadata?.actors?.join(', ') || 'N/A'}</p>
                                 </div>
                                 <div>
                                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Release Date</p>
-                                    <p className="text-lg font-bold">July 21, 2026</p>
+                                    <p className="text-lg font-bold">{new Date(movie.release_date).toLocaleDateString('vi-VN')}</p>
                                 </div>
                                 <div>
                                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Language</p>
-                                    <p className="text-lg font-bold">English (Vietnamese Subtitles)</p>
+                                    <p className="text-lg font-bold">{movie.metadata?.language || 'N/A'}</p>
                                 </div>
                             </div>
 
-                            <button className="w-full mt-12 py-4 bg-white/10 hover:bg-white/20 border border-white/20 rounded-2xl font-black text-xs uppercase tracking-widest transition-all">
+                            <button
+                                onClick={() => setIsModalOpen(true)}
+                                className="w-full mt-12 py-4 bg-white/10 hover:bg-white/20 border border-white/20 rounded-2xl font-black text-xs uppercase tracking-widest transition-all"
+                            >
                                 Official Trailer
                             </button>
+
+                            <VideoModal
+                                isOpen={isModalOpen}
+                                close={() => setIsModalOpen(false)}
+                                videoUrl={movie?.video_url || ''}
+                            />
                         </div>
                     </div>
                 </div>

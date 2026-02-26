@@ -1,9 +1,12 @@
 import Banner from "./Banner"
 import MovieCard from "./MovieCard"
-import { SAMPLE_MOVIES } from "../../../data/movies"
 import Carousel from "../../../components/features/carousel/Carousel"
+import { useMovies } from "../../../hooks/useMovie"
+import type { IMovie } from "../../../types/movie.types"
 
 function Home() {
+    const { data: movies } = useMovies()
+
     const responsiveSettings = [
         {
             breakpoint: 900,
@@ -37,7 +40,7 @@ function Home() {
                 <h2 className="text-2xl font-bold text-slate-900 mb-6">Phim đang chiếu</h2>
                 <div className="w-full ">
                     <Carousel responsiveSettings={responsiveSettings} slidesToShow={4} slidesToScroll={1}>
-                        {SAMPLE_MOVIES.map((movie) => (
+                        {movies?.map((movie: IMovie) => (
                             <div key={movie.id} className="px-2">
                                 <MovieCard {...movie} />
                             </div>
