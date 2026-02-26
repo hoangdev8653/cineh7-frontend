@@ -4,6 +4,7 @@ import * as z from 'zod';
 import { Mail, Lock, CheckCircle2, Github } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { PATH } from '../../utils/path';
+import { useAuthMutations } from '../../hooks/useAuth';
 
 const loginSchema = z.object({
     email: z.string().email('Email không hợp lệ'),
@@ -14,20 +15,20 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 function Login() {
+    const { loginMutation } = useAuthMutations();
     const {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
     } = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema),
-        defaultValues: {
-            rememberMe: false,
-        },
+        // defaultValues: {
+        //     rememberMe: false,
+        // },
     });
 
     const onSubmit = async (data: LoginFormValues) => {
-        console.log('Login data:', data);
-        // Xử lý logic đăng nhập ở đây (gọi API)
+        await loginMutation.mutate(data);
     };
 
     return (
@@ -40,6 +41,14 @@ function Login() {
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                    {/* Error Message */}
+                    {loginMutation.isError && (
+                        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                            <Lock size={16} className="shrink-0" />
+                            <span>{(loginMutation.error as any)?.message || 'Email hoặc mật khẩu không chính xác'}</span>
+                        </div>
+                    )}
+
                     {/* Email Field */}
                     <div className="space-y-1.5">
                         <label className="text-sm font-semibold text-[#1e293b] block" htmlFor="email">
@@ -91,7 +100,7 @@ function Login() {
                         <label className="flex items-center gap-2 cursor-pointer select-none group">
                             <div className="relative w-5 h-5">
                                 <input
-                                    {...register('rememberMe')}
+                                    // {...register('rememberMe')}
                                     type="checkbox"
                                     className="peer hidden"
                                 />
