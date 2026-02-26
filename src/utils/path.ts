@@ -15,9 +15,13 @@ export const PATH = {
     BOOK_TICKET: "/book-ticket/:id",
 
     // PATH ADMIN
-    ADMIN_LAYOUT: "/admin",
-    MOVIE: "/admin/movie",
-    USER: "/admin/user",
+    ADMIN_LAYOUT: "/dashboard",
+    MOVIE: "/dashboard/movie",
+    USER: "/dashboard/user",
+    NEWS_EVENT_ADMIN: "/dashboard/news-event",
+    SHOWTIME_ADMIN: "/dashboard/showtime",
+    ROOM: "/dashboard/room",
+    THEATER_ADMIN: "/dashboard/theater",
 
     // PATH NOT FOUND
     NOT_FOUND: '/not-found',
