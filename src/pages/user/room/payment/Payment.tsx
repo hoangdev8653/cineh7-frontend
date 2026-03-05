@@ -3,16 +3,18 @@ import { useEffect, useState } from "react";
 import Bill from "./Bill";
 import { formatPrice } from "../../../../utils/forrmatPriceVn";
 import { getLocalStorage } from "../../../../utils/localStorage";
+import { useOrderMutations } from "../../../../hooks/useOrder";
+import type { OrderDto } from "../../../../types/order.types";
 
 interface PaymentProps {
     data: any;
-    arrayGhe: number[];
+    arrayGhe: string[];
 }
 
 function Payment({ data, arrayGhe }: PaymentProps) {
     const [price, setPrice] = useState(0);
     const user = getLocalStorage("user") || { email: "guest@example.com", phone: "0123456789" };
-
+    const { createOrderMutation } = useOrderMutations();
     const id = data?._id || "mock-id";
 
     useEffect(() => {
@@ -22,6 +24,16 @@ function Payment({ data, arrayGhe }: PaymentProps) {
             setPrice(Number(data?.tienGhe || 100000) * arrayGhe.length);
         }
     }, [arrayGhe, data]);
+
+    const handleCreateOrder = () => {
+        const orderDto: OrderDto = {
+            showtime_id: id,
+            seat_ids: arrayGhe,
+        }
+        console.log(orderDto);
+
+        createOrderMutation.mutate(orderDto);
+    }
 
     return (
         <div
@@ -52,7 +64,12 @@ function Payment({ data, arrayGhe }: PaymentProps) {
 
             <div className="my-3 border-b-[1px] border-gray-200">
                 <div className="my-2 flex justify-between items-center">
-                    <div className="text-red-500 font-bold">Ghế {arrayGhe.join(", ")}</div>
+                    <div className="text-red-500 font-bold">
+                        Ghế {arrayGhe.map(id => {
+                            const seat = data?.danhSachGhe?.find((s: any) => s.id === id);
+                            return seat ? `${seat.row}${seat.number}` : id;
+                        }).join(", ")}
+                    </div>
                     <div className="text-green-500 font-semibold">
                         {formatPrice(price)}
                     </div>
@@ -92,7 +109,10 @@ function Payment({ data, arrayGhe }: PaymentProps) {
                     Hình thức thanh toán
                 </div>
                 {arrayGhe && arrayGhe.length > 0 ? (
-                    <Bill totalPrice={price} arrayGhe={arrayGhe} id={id} />
+                    <div>
+                        <button className="bg-green-500 px-3 py-1 text-white text-xs rounded font-bold hover:bg-green-600 transition-colors" onClick={handleCreateOrder}>Thanh toán</button>
+                    </div>
+                    // <Bill totalPrice={price} arrayGhe={arrayGhe} id={id} />
                 ) : (
                     <div className="text-red-500 font-medium text-sm italic bg-red-50 p-3 rounded-lg border border-red-100 uppercase">
                         Vui lòng chọn ghế để hiển thị phương thức thanh toán phù hợp

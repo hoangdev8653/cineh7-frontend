@@ -1,6 +1,7 @@
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useOrderMutations } from "../../../../hooks/useOrder";
 
 interface BillProps {
     totalPrice: number;
@@ -10,7 +11,7 @@ interface BillProps {
 
 function Bill({ totalPrice, arrayGhe, id }: BillProps) {
     const navigate = useNavigate();
-
+    const { createOrderMutation } = useOrderMutations();
     async function createOrder(data: any, actions: any) {
         console.log(`Creating order for ${id} with ${arrayGhe.length} seats.`);
         return actions.order.create({
@@ -19,7 +20,7 @@ function Bill({ totalPrice, arrayGhe, id }: BillProps) {
                 {
                     description: "Thanh toán vé xem phim CineH7",
                     amount: {
-                        value: (totalPrice / 25000).toFixed(2), // Convert VND to USD roughly for sandbox testing
+                        value: (totalPrice / 25000).toFixed(2),
                     },
                 },
             ],
