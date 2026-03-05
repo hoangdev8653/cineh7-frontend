@@ -7,6 +7,7 @@ export const useTheaterSystems = () => {
         queryKey: ['theater-systems'],
         queryFn: async () => {
             const response = await getAllTheaterSystems();
+            console.log(response.data)
             return response.data;
         },
     });

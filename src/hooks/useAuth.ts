@@ -4,6 +4,7 @@ import type { LoginDto, RegisterDto } from "../types/auth.types"
 import { useAuthStore } from "../store/useAuthStore"
 import { useNavigate } from "react-router-dom"
 import { PATH } from "../utils/path"
+import { setLocalStorage } from "../utils/localStorage"
 
 export const useAuthMutations = () => {
     const queryClient = useQueryClient();
@@ -13,8 +14,10 @@ export const useAuthMutations = () => {
     const loginMutation = useMutation({
         mutationFn: (loginDto: LoginDto) => login(loginDto),
         onSuccess: (data: any) => {
-            const { user, accessToken } = data;
-            setAuth(user, accessToken);
+            const { user, access_token } = data;
+            setAuth(user, access_token);
+            setLocalStorage("user", user);
+            setLocalStorage("access_token", access_token);
             queryClient.invalidateQueries({ queryKey: ["auth"] });
             navigate(PATH.USER_LAYOUT);
         },

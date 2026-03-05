@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAllMovies, getMovieById, createMovie, updateMovie, deleteMovie } from '../apis/movie';
+import { getAllMovies, getMovieById, createMovie, updateMovie, deleteMovie, } from '../apis/movie';
 import { useMovieStore } from '../store/useMovieStore';
 import type { MovieDto } from '../types/movie.types';
 
@@ -12,6 +12,8 @@ export const useMovies = () => {
             const response = await getAllMovies();
 
             let movies = response.data;
+            console.log(response);
+
 
             if (filterStatus !== 'ALL') {
                 movies = movies.filter((m: any) => m.status === filterStatus);

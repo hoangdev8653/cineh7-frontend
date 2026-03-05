@@ -11,7 +11,7 @@ export const useUsers = (searchQuery?: string) => {
 
             if (searchQuery) {
                 users = users.filter((u: IUser) =>
-                    u.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    u.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                     u.email.toLowerCase().includes(searchQuery.toLowerCase())
                 );
             }

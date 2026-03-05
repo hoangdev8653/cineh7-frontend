@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { getAllSeats, createSeat, deleteSeat, getSeatById, updateSeat } from "../apis/seat"
+import { getAllSeats, getSeatByRoom, createSeat, deleteSeat, getSeatById, updateSeat } from "../apis/seat"
 import type { SeatDto } from "../types/seat.types"
 
 export const useSeats = () => {
@@ -22,6 +22,17 @@ export const useSeatDetail = (id: string) => {
         enabled: !!id,
     });
 };
+
+export const useSeatByRoom = (roomId: string) => {
+    return useQuery({
+        queryKey: ["seats", roomId],
+        queryFn: async () => {
+            const response = await getSeatByRoom(roomId);
+            return response.data;
+        },
+        enabled: !!roomId,
+    });
+}
 
 export const useSeatMutations = () => {
     const queryClient = useQueryClient();
