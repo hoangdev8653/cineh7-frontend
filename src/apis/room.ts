@@ -4,21 +4,21 @@ import type { RoomDto } from "../types/room.types"
 export const getAllRooms = async () => {
     return await axiosInstance({
         method: 'GET',
-        url: '/rooms',
+        url: '/room',
     })
 }
 
 export const getRoomById = async (id: string) => {
     return await axiosInstance({
         method: 'GET',
-        url: `/rooms/${id}`,
+        url: `/room/${id}`,
     })
 }
 
 export const createRoom = async (roomDto: RoomDto) => {
     return await axiosInstance({
         method: 'POST',
-        url: '/rooms',
+        url: '/room',
         data: roomDto,
     })
 }
@@ -26,7 +26,7 @@ export const createRoom = async (roomDto: RoomDto) => {
 export const updateRoom = async (id: string, roomDto: RoomDto) => {
     return await axiosInstance({
         method: 'PUT',
-        url: `/rooms/${id}`,
+        url: `/room/${id}`,
         data: roomDto,
     })
 }
@@ -34,6 +34,6 @@ export const updateRoom = async (id: string, roomDto: RoomDto) => {
 export const deleteRoom = async (id: string) => {
     return await axiosInstance({
         method: 'DELETE',
-        url: `/rooms/${id}`,
+        url: `/room/${id}`,
     })
 }

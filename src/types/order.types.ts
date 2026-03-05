@@ -8,7 +8,6 @@ export interface IOrder {
 }
 
 export interface OrderDto {
-    showtimeId: string;
-    seatIds: string[];
-    totalAmount: number;
+    showtime_id: string;
+    seat_ids: string[];
 }

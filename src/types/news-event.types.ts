@@ -3,15 +3,15 @@ export interface INewsEvent {
     title: string;
     description: string;
     content: string;
-    imageUrl: string;
+    image_url: string;
     type: 'NEWS' | 'EVENT';
-    createdAt: string;
+    created_at: string;
 }
 
 export interface NewsEventDto {
     title: string;
     description: string;
     content: string;
-    imageUrl: string;
+    image_url: string;
     type: 'NEWS' | 'EVENT';
 }

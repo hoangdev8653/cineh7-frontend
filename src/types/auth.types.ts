@@ -1,9 +1,11 @@
 export interface IUser {
     id: string;
     email: string;
-    fullName: string;
+    full_name: string;
     role: string;
     avatar?: string;
+    auth_method?: string;
+    is_active?: boolean;
 }
 
 export interface AuthState {
@@ -24,6 +26,6 @@ export interface LoginDto {
 export interface RegisterDto {
     email: string;
     password: string;
-    fullName: string;
+    full_name: string;
     phone?: string;
 }
