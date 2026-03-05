@@ -4,243 +4,282 @@ import {
     Film,
     Theater,
     Users,
-    Calendar,
     TrendingUp,
-    Clock,
-    Plus,
-    Newspaper,
-    Home
+    TrendingDown,
+    DollarSign,
+    MoreVertical,
+    ArrowUpRight,
 } from 'lucide-react';
 import { useMovies } from '../../../hooks/useMovie';
 import { useTheaters } from '../../../hooks/useTheater';
-import { useNewsEvents } from '../../../hooks/useNewsEvent';
-import { useRooms } from '../../../hooks/useRoom';
+import { useUsers } from "../../../hooks/useUser"
 
 const Dashboard: React.FC = () => {
-    const { data: movies, isLoading: moviesLoading } = useMovies();
-    const { data: theaters, isLoading: theatersLoading } = useTheaters();
-    const { data: newsEvents, isLoading: newsLoading } = useNewsEvents();
-    const { data: rooms, isLoading: roomsLoading } = useRooms();
+    const { data: movies } = useMovies();
+    const { data: theaters } = useTheaters();
+    const { data: users } = useUsers();
+
+    console.log(movies);
+
 
     const stats = [
+        {
+            label: 'Total Revenue',
+            value: '$45,231.89',
+            icon: DollarSign,
+            color: 'text-emerald-600',
+            bg: 'bg-emerald-50',
+            trend: '20.1%',
+            isUp: true
+        },
+        {
+            label: 'Active Users',
+            value: users?.length || 0,
+            icon: Users,
+            color: 'text-indigo-600',
+            bg: 'bg-indigo-50',
+            trend: '15.3%',
+            isUp: true
+        },
+        {
+            label: 'Total Theaters',
+            value: theaters?.length || 0,
+            icon: Theater,
+            color: 'text-rose-600',
+            bg: 'bg-rose-50',
+            trend: '4.2%',
+            isUp: false
+        },
         {
             label: 'Total Movies',
             value: movies?.length || 0,
             icon: Film,
-            color: 'bg-blue-500',
-            trend: '+12%',
-            loading: moviesLoading
-        },
-        {
-            label: 'Theaters',
-            value: theaters?.length || 0,
-            icon: Theater,
-            color: 'bg-purple-500',
-            trend: '+2',
-            loading: theatersLoading
-        },
-        {
-            label: 'Rooms',
-            value: rooms?.length || 0,
-            icon: Home,
-            color: 'bg-emerald-500',
-            trend: '+5%',
-            loading: roomsLoading
-        },
-        {
-            label: 'News & Events',
-            value: newsEvents?.length || 0,
-            icon: Newspaper,
-            color: 'bg-orange-500',
-            trend: 'Stable',
-            loading: newsLoading
+            color: 'text-blue-600',
+            bg: 'bg-blue-50',
+            trend: '8.7%',
+            isUp: true
         }
     ];
 
-    const container = {
-        hidden: { opacity: 0 },
-        show: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1
-            }
-        }
-    };
-
-    const item = {
-        hidden: { y: 20, opacity: 0 },
-        show: { y: 0, opacity: 1 }
-    };
-
     return (
-        <div className="space-y-8">
-            {/* Page Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold text-white">Dashboard Overview</h1>
-                    <p className="text-gray-400">Welcome back, here's what's happening today.</p>
-                </div>
-                <button className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-lg shadow-blue-900/20">
-                    <Plus size={20} />
-                    Create New Movie
-                </button>
+        <div className="space-y-10 pb-10">
+            {/* Header */}
+            <div>
+                <h1 className="text-3xl font-black text-slate-900 tracking-tight">Dashboard Overview</h1>
+                <p className="text-slate-400 font-medium mt-1">Welcome back! Here's what's happening with your business today.</p>
             </div>
 
             {/* Stats Grid */}
-            <motion.div
-                variants={container}
-                initial="hidden"
-                animate="show"
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-            >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {stats.map((stat, idx) => (
                     <motion.div
                         key={idx}
-                        variants={item}
-                        className="bg-gray-800 border border-gray-700 p-6 rounded-2xl hover:border-gray-600 transition-all group relative overflow-hidden"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col justify-between group hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500"
                     >
-                        <div className="flex items-center justify-between relative z-10">
-                            <div>
-                                <p className="text-sm font-medium text-gray-400 group-hover:text-gray-300 transition-colors uppercase tracking-wider">
-                                    {stat.label}
-                                </p>
-                                <h3 className="text-3xl font-bold mt-1 text-white">
-                                    {stat.loading ? '...' : stat.value}
-                                </h3>
-                            </div>
-                            <div className={`${stat.color} p-3 rounded-xl shadow-inner group-hover:scale-110 transition-transform`}>
-                                <stat.icon size={24} className="text-white" />
+                        <div className="flex items-center justify-between mb-4">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{stat.label}</span>
+                            <div className={`${stat.bg} ${stat.color} p-2.5 rounded-2xl group-hover:scale-110 transition-transform`}>
+                                <stat.icon size={20} />
                             </div>
                         </div>
-
-                        <div className="mt-4 flex items-center text-sm relative z-10">
-                            <span className={`flex items-center ${stat.trend.startsWith('+') ? 'text-emerald-400' : 'text-blue-400'} font-medium`}>
-                                {stat.trend.startsWith('+') && <TrendingUp size={14} className="mr-1" />}
-                                {stat.trend}
-                            </span>
-                            <span className="text-gray-500 ml-2">since last month</span>
+                        <div>
+                            <h3 className="text-2xl font-black text-slate-900 leading-tight tracking-tight">{stat.value}</h3>
+                            <div className="flex items-center mt-2">
+                                <span className={`flex items-center gap-1 text-[11px] font-black px-2 py-0.5 rounded-full ${stat.isUp ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
+                                    {stat.isUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                                    {stat.trend}
+                                </span>
+                                <span className="text-[10px] font-bold text-slate-400 ml-2 uppercase tracking-wider">vs last month</span>
+                            </div>
                         </div>
-
-                        {/* Aesthetic element */}
-                        <div className={`absolute -right-4 -bottom-4 w-24 h-24 rounded-full ${stat.color} opacity-5 blur-2xl group-hover:opacity-10 transition-opacity`}></div>
                     </motion.div>
                 ))}
-            </motion.div>
+            </div>
 
-            {/* Content Sections */}
+            {/* Charts Row */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Revenue Overview - Simulated Wave Chart */}
+                <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
+                    <div className="flex items-center justify-between mb-8 relative z-10">
+                        <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Revenue Overview</h3>
+                        <button className="text-slate-300 hover:text-slate-900 transition-colors"><MoreVertical size={20} /></button>
+                    </div>
+
+                    <div className="h-64 w-full relative z-10">
+                        {/* Simple SVG Wave Animation */}
+                        <svg viewBox="0 0 400 150" className="w-full h-full">
+                            <defs>
+                                <linearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="#4f46e5" stopOpacity="0.3" />
+                                    <stop offset="100%" stopColor="#4f46e5" stopOpacity="0" />
+                                </linearGradient>
+                            </defs>
+                            <motion.path
+                                initial={{ pathLength: 0 }}
+                                animate={{ pathLength: 1 }}
+                                transition={{ duration: 2, ease: "easeInOut" }}
+                                d="M0,80 C50,110 80,40 130,70 C180,100 230,20 280,60 C330,100 370,50 400,80 L400,150 L0,150 Z"
+                                fill="url(#gradient)"
+                            />
+                            <motion.path
+                                initial={{ pathLength: 0 }}
+                                animate={{ pathLength: 1 }}
+                                transition={{ duration: 2, ease: "easeInOut" }}
+                                d="M0,80 C50,110 80,40 130,70 C180,100 230,20 280,60 C330,100 370,50 400,80"
+                                fill="none"
+                                stroke="#4f46e5"
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                            />
+                            {/* Dots */}
+                            {[80, 130, 280, 400].map((cx, i) => (
+                                <motion.circle
+                                    key={i}
+                                    initial={{ scale: 0 }}
+                                    animate={{ scale: 1 }}
+                                    transition={{ delay: 1.5 + i * 0.2 }}
+                                    cx={cx}
+                                    cy={cx === 80 ? 80 : cx === 130 ? 70 : cx === 280 ? 60 : 80}
+                                    r="4"
+                                    fill="white"
+                                    stroke="#4f46e5"
+                                    strokeWidth="2"
+                                />
+                            ))}
+                        </svg>
+
+                        {/* X-Axis labels */}
+                        <div className="flex justify-between mt-4 px-2">
+                            {['Jan', 'Mar', 'May', 'Jul', 'Sep', 'Nov'].map(m => (
+                                <span key={m} className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{m}</span>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Profit vs Expenses - Simulated Bar Chart */}
+                <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm group">
+                    <div className="flex items-center justify-between mb-8">
+                        <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Profit vs Expenses</h3>
+                        <div className="flex gap-4">
+                            <div className="flex items-center gap-1.5">
+                                <div className="w-2.5 h-2.5 bg-slate-200 rounded-full"></div>
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Expenses</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                                <div className="w-2.5 h-2.5 bg-indigo-600 rounded-full"></div>
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Profit</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="h-64 flex items-end justify-between px-2 gap-2">
+                        {[40, 70, 45, 90, 65, 80, 95, 75, 85, 60, 55, 70].map((val, i) => (
+                            <div key={i} className="flex-1 flex flex-col gap-1 items-center">
+                                <motion.div
+                                    initial={{ height: 0 }}
+                                    animate={{ height: `${val}%` }}
+                                    transition={{ duration: 1, delay: i * 0.05 }}
+                                    className="w-full bg-indigo-600 rounded-t-lg relative group/bar"
+                                >
+                                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap z-20">
+                                        ${val},000
+                                    </div>
+                                </motion.div>
+                                <motion.div
+                                    initial={{ height: 0 }}
+                                    animate={{ height: `${val * 0.4}%` }}
+                                    transition={{ duration: 1, delay: 0.2 + i * 0.05 }}
+                                    className="w-full bg-slate-100 rounded-sm"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                    <div className="flex justify-between mt-4 px-1">
+                        {['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'].map((m, i) => (
+                            <span key={i} className="text-[10px] font-bold text-slate-300 w-full text-center">{m}</span>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Bottom Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Recent Movies List */}
-                <motion.div
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                    className="lg:col-span-2 bg-gray-800 border border-gray-700 rounded-2xl overflow-hidden"
-                >
-                    <div className="p-6 border-b border-gray-700 flex items-center justify-between">
-                        <h3 className="font-bold text-lg flex items-center gap-2">
-                            <Clock size={20} className="text-blue-400" />
-                            Recently Added Movies
-                        </h3>
-                        <button className="text-sm text-blue-400 hover:text-blue-300 font-medium">View All</button>
+                {/* Recent Orders */}
+                <div className="lg:col-span-2 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+                    <div className="p-8 border-b border-slate-50 flex items-center justify-between">
+                        <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Recent Orders</h3>
+                        <button className="text-xs font-black text-indigo-600 uppercase tracking-widest hover:underline">View All</button>
                     </div>
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left">
-                            <thead className="bg-gray-900/50 text-gray-400 text-xs uppercase tracking-wider">
-                                <tr>
-                                    <th className="px-6 py-4 font-semibold">Movie</th>
-                                    <th className="px-6 py-4 font-semibold">Status</th>
-                                    <th className="px-6 py-4 font-semibold text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-700">
-                                {movies?.slice(0, 5).map((movie: any) => (
-                                    <tr key={movie.id} className="hover:bg-gray-700/30 transition-colors">
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded bg-gray-700 flex-shrink-0 bg-cover bg-center" style={{ backgroundImage: `url(${movie.posterUrl})` }}></div>
-                                                <span className="font-medium text-gray-200">{movie.title}</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className={`px-2 py-1 rounded-full text-xs font-medium uppercase tracking-tighter ${movie.status === 'NOW_SHOWING' ? 'bg-emerald-900/40 text-emerald-400 border border-emerald-800' :
-                                                    movie.status === 'COMING_SOON' ? 'bg-orange-900/40 text-orange-400 border border-orange-800' :
-                                                        'bg-red-900/40 text-red-400 border border-red-800'
-                                                }`}>
-                                                {movie.status.replace('_', ' ')}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <button className="text-gray-400 hover:text-white transition-colors">Edit</button>
-                                        </td>
-                                    </tr>
-                                ))}
-                                {(!movies || movies.length === 0) && !moviesLoading && (
-                                    <tr>
-                                        <td colSpan={3} className="px-6 py-8 text-center text-gray-500">
-                                            No recent movies found.
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
+                    <div className="p-4">
+                        <div className="space-y-1">
+                            {[
+                                { name: 'John Doe', item: 'Wireless Headphones', price: '$129.99', status: 'Completed', color: 'text-emerald-600', bg: 'bg-emerald-50' },
+                                { name: 'Jane Smith', item: 'Smart Watch', price: '$299.99', status: 'Pending', color: 'text-amber-600', bg: 'bg-amber-50' },
+                                { name: 'Bob Johnson', item: 'Laptop Stand', price: '$49.99', status: 'Completed', color: 'text-emerald-600', bg: 'bg-emerald-50' },
+                                { name: 'Alice Williams', item: 'USB-C Cable', price: '$19.99', status: 'Processing', color: 'text-blue-600', bg: 'bg-blue-50' },
+                            ].map((order, i) => (
+                                <div key={i} className="flex items-center justify-between p-4 rounded-3xl hover:bg-slate-50 transition-colors group">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-11 h-11 bg-slate-100 rounded-2xl flex items-center justify-center font-bold text-slate-400 group-hover:bg-white group-hover:shadow-sm transition-all italic">
+                                            {order.name.split(' ').map(n => n[0]).join('')}
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-black text-slate-900 leading-none mb-1">{order.name}</p>
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{order.item}</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-sm font-black text-slate-900 mb-1">{order.price}</p>
+                                        <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full ${order.bg} ${order.color}`}>
+                                            {order.status}
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </motion.div>
+                </div>
 
-                {/* Quick Shortcuts / Activity */}
-                <motion.div
-                    initial={{ x: 20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.5 }}
-                    className="bg-gray-800 border border-gray-700 rounded-2xl p-6 h-fit"
-                >
-                    <h3 className="font-bold text-lg mb-6 flex items-center gap-2">
-                        <TrendingUp size={20} className="text-purple-400" />
-                        System Status
-                    </h3>
-                    <div className="space-y-6">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-blue-900/30 rounded-lg">
-                                    <Calendar size={18} className="text-blue-400" />
+                {/* Top Products */}
+                <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8">
+                    <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight mb-8">Top Products</h3>
+                    <div className="space-y-8">
+                        {[
+                            { name: 'Wireless Headphones', sales: '1,234 sales', revenue: '$160,410.00', growth: '12.5%' },
+                            { name: 'Smart Watch', sales: '987 sales', revenue: '$296,003.00', growth: '8.3%' },
+                            { name: 'Laptop Stand', sales: '856 sales', revenue: '$42,784.00', growth: '3.2%' },
+                            { name: 'USB-C Hub', sales: '743 sales', revenue: '$51,901.00', growth: '15.7%' },
+                        ].map((prod, i) => (
+                            <div key={i} className="group cursor-pointer">
+                                <div className="flex items-center justify-between mb-2">
+                                    <div>
+                                        <p className="text-sm font-black text-slate-900 leading-none mb-1 group-hover:text-indigo-600 transition-colors">{prod.name}</p>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{prod.sales}</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-sm font-black text-slate-900">{prod.revenue}</p>
+                                        <p className="text-[10px] font-black text-emerald-600 flex items-center justify-end gap-0.5">
+                                            <ArrowUpRight size={10} />
+                                            {prod.growth}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p className="text-sm font-medium">Coming Soon</p>
-                                    <p className="text-xs text-gray-500">Upcoming releases</p>
-                                </div>
-                            </div>
-                            <span className="font-bold text-blue-400">
-                                {movies?.filter((m: any) => m.status === 'COMING_SOON').length || 0}
-                            </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-emerald-900/30 rounded-lg">
-                                    <Film size={18} className="text-emerald-400" />
-                                </div>
-                                <div>
-                                    <p className="text-sm font-medium">Now Showing</p>
-                                    <p className="text-xs text-gray-500">Currently in theaters</p>
+                                <div className="w-full h-1.5 bg-slate-50 rounded-full overflow-hidden">
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${100 - i * 15}%` }}
+                                        transition={{ duration: 1.5, delay: 0.5 + i * 0.1 }}
+                                        className="h-full bg-indigo-600 rounded-full"
+                                    />
                                 </div>
                             </div>
-                            <span className="font-bold text-emerald-400">
-                                {movies?.filter((m: any) => m.status === 'NOW_SHOWING').length || 0}
-                            </span>
-                        </div>
-                        <div className="pt-6 border-t border-gray-700">
-                            <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Quick Actions</h4>
-                            <div className="grid grid-cols-2 gap-3">
-                                <button className="p-3 bg-gray-900 rounded-xl hover:bg-gray-700 transition-colors text-xs font-medium flex flex-col items-center gap-2 border border-gray-700">
-                                    <Users size={16} className="text-blue-400" />
-                                    Users
-                                </button>
-                                <button className="p-3 bg-gray-900 rounded-xl hover:bg-gray-700 transition-colors text-xs font-medium flex flex-col items-center gap-2 border border-gray-700">
-                                    <Calendar size={16} className="text-purple-400" />
-                                    Schedules
-                                </button>
-                            </div>
-                        </div>
+                        ))}
                     </div>
-                </motion.div>
+                </div>
             </div>
         </div>
     );
