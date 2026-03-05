@@ -61,7 +61,7 @@ function Header() {
                             <Link to={PATH.PROFILE} className="flex items-center gap-2 group">
                                 <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden border border-slate-200 group-hover:border-red-500 transition-all shadow-sm">
                                     {user.avatar ? (
-                                        <img src={user.avatar} alt={user.fullName} className="w-full h-full object-cover" />
+                                        <img src={user.avatar} alt={user.full_name} className="w-full h-full object-cover" />
                                     ) : (
                                         <User size={20} className="text-slate-500" />
                                     )}

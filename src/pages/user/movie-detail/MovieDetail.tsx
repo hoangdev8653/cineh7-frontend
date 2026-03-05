@@ -1,23 +1,46 @@
 import { useParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Play, Calendar, Clock, Star, Heart, Share2, Ticket, ChevronRight } from 'lucide-react';
-import { THEATERS } from '../../../data/theaters';
 import { useMovieDetail } from '../../../hooks/useMovie';
 import type { IMovie } from '../../../types/movie.types';
 import VideoModal from '../../../components/features/videoModal/VideoModal';
+import { useShowTimeGrouped } from '../../../hooks/useShowTime';
 
 function MovieDetail() {
     const { id } = useParams();
     const { data, isLoading } = useMovieDetail(id || '');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const { data: showtimeGrouped } = useShowTimeGrouped(id || '');
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (showtimeGrouped && Object.keys(showtimeGrouped).length > 0 && !selectedDate) {
+            setSelectedDate(Object.keys(showtimeGrouped)[0]);
+        }
+    }, [showtimeGrouped, selectedDate]);
 
     const movie = data ? {
         ...data,
         metadata: typeof data.metadata === 'string' ? JSON.parse(data.metadata) : data.metadata
     } as IMovie : null;
 
-    const showtimes = ['10:30', '13:15', '16:00', '19:45', '22:30'];
-    const selectedTheaters = THEATERS.slice(0, 3);
+    const groupedByTheater = selectedDate && showtimeGrouped?.[selectedDate]
+        ? showtimeGrouped[selectedDate].reduce((acc: any, showtime: any) => {
+            const theater = showtime.room?.theater;
+            const theaterId = theater?.id;
+            if (!theaterId) return acc;
+            if (!acc[theaterId]) {
+                acc[theaterId] = {
+                    info: theater,
+                    showtimes: []
+                };
+            }
+            acc[theaterId].showtimes.push(showtime);
+            return acc;
+        }, {})
+        : {};
+
+    console.log(showtimeGrouped);
 
 
     if (isLoading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
@@ -128,13 +151,37 @@ function MovieDetail() {
                                 <h2 className="text-3xl font-black italic tracking-tighter uppercase text-slate-900">Showtimes</h2>
                             </div>
 
+                            <div className="flex flex-wrap gap-3 mb-10">
+                                {showtimeGrouped && Object.keys(showtimeGrouped).map((date) => (
+                                    <button
+                                        key={date}
+                                        onClick={() => setSelectedDate(date)}
+                                        className={`px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all ${selectedDate === date
+                                            ? 'bg-red-600 text-white shadow-2xl shadow-red-600/40 scale-105'
+                                            : 'bg-slate-50 border-2 border-slate-100 text-slate-400 hover:border-red-600 hover:text-red-600 hover:bg-white'
+                                            }`}
+                                    >
+                                        <div className="flex flex-col items-center leading-none gap-1">
+                                            <span className="text-[10px] opacity-60">
+                                                {new Date(date).toLocaleDateString('vi-VN', { weekday: 'short' })}
+                                            </span>
+                                            <span className="text-lg">
+                                                {new Date(date).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' })}
+                                            </span>
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+
                             <div className="space-y-6">
-                                {selectedTheaters.map((theater) => (
-                                    <div key={theater.id} className="bg-slate-50 rounded-[2.5rem] p-8 border border-slate-100 hover:bg-white hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 group">
+                                {Object.values(groupedByTheater).map((group: any) => (
+                                    <div key={group.info.id} className="bg-slate-50 rounded-[2.5rem] p-8 border border-slate-100 hover:bg-white hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 group">
                                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                                             <div>
-                                                <h3 className="text-2xl font-black text-slate-900 group-hover:text-red-600 transition-colors">{theater.name}</h3>
-                                                <p className="text-slate-400 font-bold text-sm mt-1">{theater.address}</p>
+                                                <h3 className="text-2xl font-black text-slate-900 group-hover:text-red-600 transition-colors uppercase italic tracking-tighter">
+                                                    {group.info.name}
+                                                </h3>
+                                                <p className="text-slate-400 font-bold text-sm mt-1">{group.info.address}</p>
                                             </div>
                                             <button className="text-red-600 font-black text-xs uppercase tracking-widest flex items-center gap-2 hover:gap-3 transition-all">
                                                 View Map <ChevronRight size={16} />
@@ -142,14 +189,35 @@ function MovieDetail() {
                                         </div>
 
                                         <div className="flex flex-wrap gap-4">
-                                            {showtimes.map((time, idx) => (
-                                                <button key={idx} className="px-8 py-4 bg-white border-2 border-slate-100 rounded-2xl font-black text-slate-900 hover:bg-red-600 hover:border-red-600 hover:text-white hover:shadow-xl hover:shadow-red-600/20 transition-all duration-300">
-                                                    {time}
-                                                </button>
-                                            ))}
+                                            {group.showtimes.map((item: any, idx: number) => {
+                                                const time = new Date(item.start_time);
+                                                const hours = time.getUTCHours();
+                                                const minutes = time.getUTCMinutes().toString().padStart(2, '0');
+
+                                                let suffix = 'sáng';
+                                                if (hours >= 18) suffix = 'tối';
+                                                else if (hours >= 12 || (hours >= 1 && hours <= 6)) suffix = 'chiều';
+
+                                                const timeDisplay = `${hours}h${minutes} ${suffix}`;
+                                                return (
+                                                    <button key={idx} className="group/time relative px-8 py-4 cursor-pointer bg-white border-2 border-slate-100 rounded-3xl font-black text-slate-900 hover:bg-red-600 hover:border-red-600 hover:text-white hover:shadow-xl hover:shadow-red-600/20 transition-all duration-300 flex flex-col items-center">
+                                                        <a href={`/room/${item.room.id}`}>
+                                                            <span className="text-xl tracking-tighter ">{timeDisplay}</span>
+                                                        </a>
+                                                        <span className="text-[10px] uppercase opacity-40 group-hover/time:opacity-100 mt-1">
+                                                            {item.room?.name || 'Standard'}
+                                                        </span>
+                                                    </button>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 ))}
+                                {Object.keys(groupedByTheater).length === 0 && !isLoading && (
+                                    <div className="text-center py-20 bg-slate-50 rounded-[2.5rem] border-2 border-dashed border-slate-200">
+                                        <p className="text-slate-400 font-bold uppercase tracking-widest text-sm">No showtimes available for this date</p>
+                                    </div>
+                                )}
                             </div>
                         </section>
                     </div>

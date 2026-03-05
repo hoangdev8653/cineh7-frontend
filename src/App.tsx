@@ -3,8 +3,6 @@ import { PATH } from "../src/utils/path"
 import Register from "./pages/auth/Register"
 import Login from "./pages/auth/Login"
 
-
-
 import UserLayout from "./layouts/user/UserLayout"
 import Home from "./pages/user/home/Home"
 import MovieDetail from "./pages/user/movie-detail/MovieDetail"
@@ -14,7 +12,7 @@ import Theater from "./pages/user/theater/Theater"
 import NewsEventDetail from "./pages/user/newsEventDetail/NewsEventDetail"
 import NewsEvent from "./pages/user/newsEvent/NewsEvent"
 import Showtime from "./pages/user/showtime/Showtime"
-import BookTicket from "./pages/user/book-ticket/BookTicket"
+import Room from "./pages/user/room/Room"
 
 import AdminLayout from "../src/layouts/AdminLayout"
 import Movie from "./pages/admin/movie/Movie"
@@ -33,9 +31,10 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path={PATH.NOT_FOUND} element={<NotFound />} />
+        <Route path="*" element={<NotFound />} />
         <Route path={PATH.LOGIN} element={<Login />} />
         <Route path={PATH.REGISTER} element={<Register />} />
-        <Route path={PATH.BOOK_TICKET} element={<BookTicket />} />
+        <Route path={PATH.ROOM} element={<Room />} />
 
 
         {/* User Layout - Public & Private */}

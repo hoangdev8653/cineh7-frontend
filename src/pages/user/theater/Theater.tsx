@@ -13,7 +13,9 @@ function Theater() {
         setSelectedSystem(theaterSystems?.[0]?.id);
     }, [theaterSystems]);
 
-    const filteredTheaters = theaters?.filter((theater: any) => theater?.system?.id === selectedSystem);
+    const filteredTheaters = theaters?.data?.filter((theater: any) => theater?.system?.id === selectedSystem);
+    console.log(filteredTheaters)
+    console.log(theaters);
 
     return (
         <div className="bg-slate-50 min-h-screen pb-20">
@@ -65,7 +67,7 @@ function Theater() {
                             <div key={index} className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-100 group">
                                 <div className="h-56 overflow-hidden relative">
                                     <img
-                                        src={theater?.logo || theater?.system?.logo}
+                                        src={theater?.image_url || theater?.system?.logo}
                                         alt={theater.name}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                     />

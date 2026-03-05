@@ -12,7 +12,7 @@ export const PATH = {
     MOVIE_DETAIL: "/movie/:id",
     PROFILE: "/profile",
     SHOWTIME: "/showtime",
-    BOOK_TICKET: "/book-ticket/:id",
+    ROOM: "/room/:id",
 
     // PATH ADMIN
     ADMIN_LAYOUT: "/dashboard",
@@ -20,7 +20,7 @@ export const PATH = {
     USER: "/dashboard/user",
     NEWS_EVENT_ADMIN: "/dashboard/news-event",
     SHOWTIME_ADMIN: "/dashboard/showtime",
-    ROOM: "/dashboard/room",
+    ROOM_ADMIN: "/dashboard/room",
     THEATER_ADMIN: "/dashboard/theater",
 
     // PATH NOT FOUND
