@@ -5,8 +5,8 @@ export interface IShowtime {
     id: string;
     movie_id: string;
     room_id: string;
-    start_time: string;
-    end_time: string;
+    startTime: string;
+    endTime?: string;
     price: string | number;
     status: string;
     movie: IMovie;
@@ -17,7 +17,7 @@ export interface IShowtime {
 export interface ShowtimeDto {
     movie_id: string;
     room_id: string;
-    start_time: string;
-    end_time: string;
+    startTime: string;
+    endTime: string;
     price: number;
 }

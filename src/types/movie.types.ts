@@ -11,20 +11,28 @@ export interface IMovie {
     title: string;
     description: string;
     duration: number;
-    release_date: string;
-    video_url: string;
-    image_url?: string;
+    releaseDate: string;
+    trailer: string;
+    poster?: string;
+    rating: number;
+    comingSoon: boolean;
+    isShowing: boolean;
+    slug: string;
     created_at: string;
-    updated_at: string;
-    metadata: MovieMetadata;
+    updated_at?: string;
+    metadata?: MovieMetadata;
 }
 
 export interface MovieDto {
     title: string;
     description: string;
     duration: number;
-    release_date: string;
-    video_url: string;
+    releaseDate: string;
+    trailer: string;
     poster_url?: string;
-    metadata: MovieMetadata;
+    rating: number;
+    comingSoon: boolean;
+    isShowing: boolean;
+    slug: string;
+    metadata?: MovieMetadata;
 }
