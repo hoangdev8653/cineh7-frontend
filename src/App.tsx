@@ -1,29 +1,30 @@
 import { Route, Routes } from "react-router-dom";
-import { PATH } from "../src/utils/path"
-import Register from "./pages/auth/Register"
-import Login from "./pages/auth/Login"
+import { PATH } from "../src/utils/path";
+import Register from "./pages/auth/Register";
+import Login from "./pages/auth/Login";
 
-import UserLayout from "./layouts/user/UserLayout"
-import Home from "./pages/user/home/Home"
-import MovieDetail from "./pages/user/movie-detail/MovieDetail"
-import Profile from "./pages/user/profile/Profile"
-import Policy from "./pages/user/Policy"
-import Theater from "./pages/user/theater/Theater"
-import NewsEventDetail from "./pages/user/newsEventDetail/NewsEventDetail"
-import NewsEvent from "./pages/user/newsEvent/NewsEvent"
-import Showtime from "./pages/user/showtime/Showtime"
-import Room from "./pages/user/room/Room"
+import UserLayout from "./layouts/user/UserLayout";
+import Home from "./pages/user/home/Home";
+import MovieDetail from "./pages/user/movie-detail/MovieDetail";
+import Profile from "./pages/user/profile/Profile";
+import Policy from "./pages/user/Policy";
+import Theater from "./pages/user/theater/Theater";
+import NewsEventDetail from "./pages/user/newsEventDetail/NewsEventDetail";
+import NewsEvent from "./pages/user/newsEvent/NewsEvent";
+import Showtime from "./pages/user/showtime/Showtime";
+import Room from "./pages/user/room/Room";
+import Payment from "./pages/user/payment/Payment";
 
-import AdminLayout from "../src/layouts/AdminLayout"
-import Movie from "./pages/admin/movie/Movie"
-import User from "./pages/admin/user/User"
-import Dashboard from "./pages/admin/dashboard/Dashboard"
-import NewsEventAdmin from "./pages/admin/newsEvent/NewsEvent"
-import ShowTime from "./pages/admin/showtime/Showtime"
-import TheaterAdmin from "./pages/admin/theater/Theater"
+import AdminLayout from "../src/layouts/AdminLayout";
+import Movie from "./pages/admin/movie/Movie";
+import User from "./pages/admin/user/User";
+import Dashboard from "./pages/admin/dashboard/Dashboard";
+import NewsEventAdmin from "./pages/admin/newsEvent/NewsEvent";
+import ShowTime from "./pages/admin/showtime/Showtime";
+import TheaterAdmin from "./pages/admin/theater/Theater";
 
-import NotFound from "./pages/NotFound"
-import ProtectedRoute from "../src/utils/ProtectedRoute"
+import NotFound from "./pages/NotFound";
+import ProtectedRoute from "../src/utils/ProtectedRoute";
 
 function App() {
   return (
@@ -34,14 +35,10 @@ function App() {
         <Route path="*" element={<NotFound />} />
         <Route path={PATH.LOGIN} element={<Login />} />
         <Route path={PATH.REGISTER} element={<Register />} />
-        <Route path={PATH.ROOM} element={<Room />} />
-
+        <Route path={PATH.SHOWTIME_DETAIL} element={<Room />} />
 
         {/* User Layout - Public & Private */}
-        <Route
-          path={PATH.USER_LAYOUT}
-          element={<UserLayout />}
-        >
+        <Route path={PATH.USER_LAYOUT} element={<UserLayout />}>
           <Route index element={<Home />} />
           <Route path={PATH.MOVIE_DETAIL} element={<MovieDetail />} />
           <Route
@@ -57,6 +54,7 @@ function App() {
           <Route path={PATH.NEWS_EVENT_DETAIL} element={<NewsEventDetail />} />
           <Route path={PATH.NEWS_EVENT} element={<NewsEvent />} />
           <Route path={PATH.SHOWTIME} element={<Showtime />} />
+          <Route path={PATH.PAYMENT} element={<Payment />} />
         </Route>
 
         {/* Admin Layout */}
@@ -77,7 +75,7 @@ function App() {
         </Route>
       </Routes>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
