@@ -21,12 +21,12 @@ function AdminLayout() {
     const location = useLocation();
 
     const menuItems = [
-        { name: 'Dashboard', icon: LayoutDashboard, path: PATH.ADMIN_LAYOUT },
-        { name: 'Movies', icon: Film, path: PATH.MOVIE },
-        { name: 'Users', icon: Users, path: PATH.USER },
-        { name: 'Theaters', icon: Theater, path: PATH.THEATER_ADMIN },
-        { name: 'Showtimes', icon: Calendar, path: PATH.SHOWTIME_ADMIN },
-        { name: 'News & Events', icon: Newspaper, path: PATH.NEWS_EVENT_ADMIN },
+        { name: 'Bảng Điều Khiển', icon: LayoutDashboard, path: PATH.ADMIN_LAYOUT },
+        { name: 'Phim', icon: Film, path: PATH.MOVIE },
+        { name: 'Người Dùng', icon: Users, path: PATH.USER },
+        { name: 'Rạp Chiếu', icon: Theater, path: PATH.THEATER_ADMIN },
+        { name: 'Lịch Chiếu', icon: Calendar, path: PATH.SHOWTIME_ADMIN },
+        { name: 'Tin Tức & Sự Kiện', icon: Newspaper, path: PATH.NEWS_EVENT_ADMIN },
     ];
 
     return (
@@ -76,7 +76,7 @@ function AdminLayout() {
                 <div className="p-4 border-t border-slate-100 italic">
                     <button className="w-full flex items-center p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
                         <LogOut size={20} />
-                        {isSidebarOpen && <span className="ml-4 font-bold text-sm">Logout</span>}
+                        {isSidebarOpen && <span className="ml-4 font-bold text-sm">Đăng Xuất</span>}
                     </button>
                 </div>
             </aside>
@@ -97,7 +97,7 @@ function AdminLayout() {
                             <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                             <input
                                 type="text"
-                                placeholder="Search..."
+                                placeholder="Tìm kiếm..."
                                 className="w-full pl-12 pr-4 py-2.5 bg-slate-100 border-none rounded-2xl text-sm focus:ring-2 focus:ring-indigo-600/20 focus:bg-white transition-all text-slate-900 placeholder:text-slate-400"
                             />
                             <div className="absolute right-4 top-1/2 -translate-y-1/2 bg-white px-1.5 py-0.5 border border-slate-200 rounded text-[10px] font-bold text-slate-400 shadow-sm">
@@ -116,7 +116,7 @@ function AdminLayout() {
 
                         <div className="flex items-center gap-3 pl-2 group cursor-pointer">
                             <div className="text-right hidden sm:block">
-                                <p className="text-sm font-black text-slate-900 leading-none mb-1">Admin User</p>
+                                <p className="text-sm font-black text-slate-900 leading-none mb-1">Quản Trị Viên</p>
                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">admin@example.com</p>
                             </div>
                             <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center font-bold text-indigo-600 shadow-sm border border-indigo-200 transition-transform group-hover:scale-105">
