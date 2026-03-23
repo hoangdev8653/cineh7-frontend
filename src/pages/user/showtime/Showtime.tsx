@@ -3,7 +3,7 @@ import { useMovies } from "../../../hooks/useMovie"
 
 function Showtime() {
     const { data: movies } = useMovies()
-    console.log(movies)
+    // console.log(movies)
     return (
         <div className="bg-white min-h-screen">
             <div className="container mx-auto py-10 px-4 md:px-32">

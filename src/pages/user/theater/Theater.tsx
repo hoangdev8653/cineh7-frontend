@@ -7,19 +7,21 @@ import { useTheaterSystems } from "../../../hooks/useTheaterSystem"
 function Theater() {
     const { data: theaterSystems } = useTheaterSystems();
     const { data: theaters } = useTheaters();
-    const [selectedSystem, setSelectedSystem] = useState(theaterSystems?.[0]?.id);
+    const [selectedSystem, setSelectedSystem] = useState<string | undefined>();
 
     useEffect(() => {
-        setSelectedSystem(theaterSystems?.[0]?.id);
+        const systems = theaterSystems?.data;
+        if (systems && Array.isArray(systems) && systems.length > 0) {
+            setSelectedSystem(systems[0].id);
+        }
     }, [theaterSystems]);
 
-    const filteredTheaters = theaters?.data?.filter((theater: any) => theater?.system?.id === selectedSystem);
-    console.log(filteredTheaters)
-    console.log(theaters);
+    const filteredTheaters = theaters?.theater?.filter((theater: any) =>
+        (theater?.system?.id === selectedSystem) || (theater?.systemId === selectedSystem)
+    );
 
     return (
         <div className="bg-slate-50 min-h-screen pb-20">
-            {/* Banner Section */}
             <div className="relative h-60 overflow-hidden">
                 <img
                     src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1740&q=80"
@@ -36,7 +38,7 @@ function Theater() {
                 {/* System Selector */}
                 <div className="bg-white rounded-2xl shadow-xl p-6 mb-12 border border-slate-100">
                     <div className="flex flex-wrap justify-center gap-6 md:gap-12">
-                        {theaterSystems?.map((item: any, index: number) => (
+                        {theaterSystems?.data?.map((item: any, index: number) => (
                             <button
                                 key={index}
                                 onClick={() => setSelectedSystem(item.id)}
@@ -67,13 +69,13 @@ function Theater() {
                             <div key={index} className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-100 group">
                                 <div className="h-56 overflow-hidden relative">
                                     <img
-                                        src={theater?.image_url || theater?.system?.logo}
+                                        src={theater?.logo || theater?.system?.logo}
                                         alt={theater.name}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                     />
                                     <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 shadow-sm flex items-center gap-2">
                                         <MapPin size={14} className="text-red-600" />
-                                        <span className="text-xs font-bold text-slate-900">{theater.location}</span>
+                                        <span className="text-xs font-bold text-slate-900">{theater.location || "Cinema"}</span>
                                     </div>
                                 </div>
                                 <div className="p-6 text-slate-800">
@@ -104,7 +106,7 @@ function Theater() {
 
                                     <div className="flex gap-3">
                                         <a
-                                            href={theater.mapUrl}
+                                            href={theater.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(theater.name + ' ' + theater.address)}`}
                                             target="_blank"
                                             rel="noreferrer"
                                             className="grow flex items-center justify-center gap-2 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-bold rounded-2xl transition-all"

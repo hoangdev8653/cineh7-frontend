@@ -1,58 +1,39 @@
-import { useNavigate } from 'react-router-dom';
-import { NEWS_EVENTS } from "../../../data/newsEvents";
-import Carousel from "../../../components/features/carousel/Carousel"
+import { Link, useNavigate } from 'react-router-dom';
 import { PATH } from '../../../utils/path';
+import { useNewsEvents } from '../../../hooks/useNewsEvent';
+import { useMovies } from '../../../hooks/useMovie';
 
 function NewsEvent() {
     const navigate = useNavigate();
-    const responsiveSettings = [
-        {
-            breakpoint: 1024,
-            settings: {
-                slidesToShow: 3,
-                slidesToScroll: 1,
-            },
-        },
-        {
-            breakpoint: 768,
-            settings: {
-                slidesToShow: 2,
-                slidesToScroll: 1,
-            },
-        },
-        {
-            breakpoint: 480,
-            settings: {
-                slidesToShow: 1,
-                slidesToScroll: 1,
-                infinite: true,
-            },
-        },
-    ];
+    const { data: newsEvents } = useNewsEvents();
+    const { data: movies } = useMovies();
+
+    console.log(movies);
 
     return (
-        <div className="bg-white min-h-screen py-16">
-            <div className="container mx-auto px-32">
+        <div className="bg-white min-h-screen py-12">
+            <div className="container mx-auto px-24">
                 {/* Section Header */}
-                <h1 className="text-3xl font-black italic tracking-tighter text-slate-900 mb-12 border-l-4 border-red-600 pl-4">
-                    TIN TỨC & KHUYẾN MÃI
+                <h1 className="text-3xl font-black italic tracking-tighter text-slate-900 mb-12 border-l-4 border-red-600 pl-4 uppercase">
+                    Tin tức & Khuyến mãi
                 </h1>
 
                 {/* News Grid */}
-                <div className="w-full">
-                    <Carousel responsiveSettings={responsiveSettings} slidesToShow={3} slidesToScroll={1}>
-                        {NEWS_EVENTS.map((item) => (
+                <div className='w-full flex gap-10 items-start'>
+                    {/* Left Column: News Grid (8/12) */}
+                    <div className="w-9/12 grid grid-cols-3 gap-x-6 gap-y-10">
+                        {newsEvents?.map((item: any, index: number) => (
                             <div
-                                key={item.id}
-                                className="px-2 cursor-pointer"
+                                key={index}
+                                className="cursor-pointer group"
                                 onClick={() => navigate(PATH.NEWS_EVENT_DETAIL.replace(':id', item.id))}
                             >
                                 {/* Image Container */}
-                                <div className="relative aspect-square overflow-hidden rounded-3xl mb-6 shadow-sm group-hover:shadow-xl transition-all duration-500">
+                                <div className="relative overflow-hidden mb-6 shadow-sm group-hover:shadow-xl transition-all duration-500 ">
                                     <img
-                                        src={item.image}
-                                        alt={item.title}
-                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                        src={item?.thumbnail}
+                                        alt={item?.title}
+                                        className="w-full h-[380px] object-cover group-hover:scale-110 transition-transform duration-700"
                                     />
                                     {/* Overlay/Gradient */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -60,23 +41,69 @@ function NewsEvent() {
 
                                 {/* Content */}
                                 <div className="px-2">
-                                    <h3 className="text-lg font-black text-slate-900 leading-tight mb-3 group-hover:text-red-600 transition-colors uppercase tracking-tight">
-                                        {item.title}
+                                    <h3 className="text-lg font-black text-slate-900 leading-tight mb-3 group-hover:text-red-600 transition-colors uppercase tracking-tight line-clamp-2">
+                                        {item?.title}
                                     </h3>
-                                    <p className="text-slate-500 text-sm leading-relaxed line-clamp-4 font-medium">
-                                        {item.description}
+                                    <p className="text-slate-500 text-sm leading-relaxed line-clamp-3 font-medium">
+                                        {item?.content?.summary}
                                     </p>
                                 </div>
                             </div>
                         ))}
-                    </Carousel>
-                </div>
+                    </div>
 
-                {/* Load More Button */}
-                <div className="mt-20 flex justify-center">
-                    <button className="px-10 py-4 border-2 border-slate-200 text-slate-900 font-black rounded-2xl hover:bg-red-600 hover:border-red-600 hover:text-white transition-all duration-300 uppercase tracking-widest text-xs">
-                        Xem thêm khuyến mãi
-                    </button>
+                    <div className="flex-1 space-y-8">
+                        {/* Section Tag */}
+                        <div className="flex items-center gap-2 mb-6">
+                            <div className="w-1 h-6 bg-blue-600" />
+                            <h2 className="text-xl font-bold text-slate-900 uppercase">Phim đang chiếu</h2>
+                        </div>
+
+                        {/* Movie List */}
+                        <div className="space-y-6">
+                            {movies?.slice(0, 3)?.map((movie: any, index: number) => (
+                                <div key={index} className="group cursor-pointer">
+                                    <div className="relative overflow-hidden rounded-xl mb-3 shadow-md aspect-[2/3] w-full">
+                                        <img
+                                            src={movie?.poster}
+                                            alt={movie?.title}
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                        />
+                                        {/* Overlay Button */}
+                                        <a href={`/movie/${movie.id}`}>
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                                <button className="bg-orange-500 cursor-pointer text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 text-sm hover:bg-orange-600 transition-colors">
+                                                    <span>🎟️</span> Mua vé
+                                                </button>
+                                            </div>
+                                        </a>
+
+                                        {/* Badge Info */}
+                                        <div className="absolute bottom-3 right-3 flex flex-col gap-1.5 items-end z-10">
+                                            <div className="bg-white/95 px-2 py-1 rounded-lg text-[11px] font-black text-slate-900 flex items-center gap-1 shadow-sm">
+                                                <span className="text-yellow-500">⭐</span> {movie?.rating}
+                                            </div>
+                                            <div className="bg-orange-500/90 backdrop-blur-sm px-2 py-1 rounded-lg text-[11px] font-black text-white shadow-sm">
+                                                {movie?.duration} Phút
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h3 className="font-bold text-slate-900 text-sm group-hover:text-blue-600 transition-colors line-clamp-2">
+                                        {movie?.title}
+                                    </h3>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Secondary Button */}
+                        <div className="flex justify-end">
+                            <Link to={PATH.MOVIE}>
+                                <button className="text-red-500 font-bold text-sm hover:bg-red-500 hover:text-white cursor-pointer border-2 border-red-500 px-4 py-2 ">
+                                    Xem thêm &gt;
+                                </button>
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

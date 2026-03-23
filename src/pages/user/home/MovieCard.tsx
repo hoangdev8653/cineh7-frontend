@@ -3,9 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { PATH } from '../../../utils/path';
 
 const MovieCard = (movie: any) => {
-    const { id, title, metadata, image_url } = movie;
+    const { id, title, metadata, poster } = movie;
     const navigate = useNavigate();
-
     return (
         <div
             onClick={() => navigate(PATH.MOVIE_DETAIL.replace(':id', id))}
@@ -13,7 +12,7 @@ const MovieCard = (movie: any) => {
         >
             <div className="relative aspect-[2/3] overflow-hidden rounded-2xl">
                 <img
-                    src={image_url}
+                    src={poster}
                     alt={title}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />

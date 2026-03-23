@@ -1,6 +1,9 @@
 import Carousel from '../../../components/features/carousel/Carousel'
+import { useMovies } from '../../../hooks/useMovie'
 
 function Banner() {
+    const { data: movies } = useMovies();
+
     const responsiveSettings = [
         {
             breakpoint: 900,
@@ -32,24 +35,12 @@ function Banner() {
     return (
         <div className='w-full'>
             <Carousel responsiveSettings={responsiveSettings} showSliderScroll={true} dots={true} showSlider={true}>
-                <div className="w-full">
-                    <img className="w-full object-cover h-[600px]" src="https://images.unsplash.com/photo-1511485977113-f34c92461ad9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="" />
-                </div>
-                <div className="w-full">
-                    <img className="w-full object-cover h-[600px]" src="https://images.unsplash.com/photo-1511485977113-f34c92461ad9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="" />
-                </div>
-                <div className="w-full">
-                    <img className="w-full object-cover h-[600px]" src="https://images.unsplash.com/photo-1511485977113-f34c92461ad9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="" />
-                </div>
-                <div className="w-full">
-                    <img className="w-full object-cover h-[600px]" src="https://images.unsplash.com/photo-1511485977113-f34c92461ad9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="" />
-                </div>
-                <div className="w-full">
-                    <img className="w-full object-cover h-[600px]" src="https://images.unsplash.com/photo-1511485977113-f34c92461ad9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="" />
-                </div>
-                <div className="w-full">
-                    <img className="w-full object-cover h-[600px]" src="https://images.unsplash.com/photo-1511485977113-f34c92461ad9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="" />
-                </div>
+                {movies?.map((movie: any) => (
+                    <div className="w-full">
+                        <img className="w-full object-cover h-[600px]" src={movie.poster} alt={movie.title} />
+                    </div>
+                ))}
+
             </Carousel>
         </div>
     )

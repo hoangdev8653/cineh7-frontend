@@ -67,8 +67,8 @@ function Header() {
                                     )}
                                 </div>
                                 <div className="hidden sm:flex flex-col">
-                                    <span className="text-xs text-slate-500 font-medium">{user?.full_name}</span>
-                                    <span className="text-sm font-bold text-slate-800 group-hover:text-red-600 transition-colors">{user.email}</span>
+                                    <span className="text-sm font-bold text-slate-800 group-hover:text-red-600 transition-colors">{user?.name}</span>
+                                    <span className="text-xs text-slate-500 font-medium">{user.email}</span>
                                 </div>
                             </Link>
                             <button

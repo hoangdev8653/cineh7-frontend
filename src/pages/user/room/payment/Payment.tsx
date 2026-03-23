@@ -9,13 +9,15 @@ import type { OrderDto } from "../../../../types/order.types";
 interface PaymentProps {
     data: any;
     arrayGhe: string[];
+    showtimeId: string;
 }
 
-function Payment({ data, arrayGhe }: PaymentProps) {
+function Payment({ data, arrayGhe, showtimeId }: PaymentProps) {
     const [price, setPrice] = useState(0);
+    const [selectedMethod, setSelectedMethod] = useState<string>('paypal');
     const user = getLocalStorage("user") || { email: "guest@example.com", phone: "0123456789" };
     const { createOrderMutation } = useOrderMutations();
-    const id = data?._id || "mock-id";
+
 
     useEffect(() => {
         if (arrayGhe.length === 0) {
@@ -25,15 +27,21 @@ function Payment({ data, arrayGhe }: PaymentProps) {
         }
     }, [arrayGhe, data]);
 
+    // console.log(data);
+
+
     const handleCreateOrder = () => {
         const orderDto: OrderDto = {
-            showtime_id: id,
+            showtime_id: showtimeId,
             seat_ids: arrayGhe,
         }
         console.log(orderDto);
 
-        createOrderMutation.mutate(orderDto);
+        // createOrderMutation.mutate(orderDto);
     }
+
+    // console.log(arrayGhe);
+
 
     return (
         <div
@@ -67,7 +75,7 @@ function Payment({ data, arrayGhe }: PaymentProps) {
                     <div className="text-red-500 font-bold">
                         Ghế {arrayGhe.map(id => {
                             const seat = data?.danhSachGhe?.find((s: any) => s.id === id);
-                            return seat ? `${seat.row}${seat.number}` : id;
+                            return seat ? `${seat.row}${seat.column}` : id;
                         }).join(", ")}
                     </div>
                     <div className="text-green-500 font-semibold">
@@ -105,17 +113,37 @@ function Payment({ data, arrayGhe }: PaymentProps) {
             </div>
 
             <div className="my-6">
-                <div className="text-gray-400 text-xs font-medium uppercase tracking-wider mb-3">
+                <div className="text-gray-400 text-xs font-medium uppercase tracking-wider mb-4">
                     Hình thức thanh toán
                 </div>
+
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                    {[
+                        { id: 'paypal', name: 'PayPal', icon: '💳' },
+                        { id: 'momo', name: 'Ví MoMo', icon: '🌸' },
+                        { id: 'vnpay', name: 'VNPay', icon: '🏦' },
+                        { id: 'zalopay', name: 'ZaloPay', icon: '📱' }
+                    ].map((method) => (
+                        <div
+                            key={method.id}
+                            onClick={() => setSelectedMethod(method.id)}
+                            className={`p-3 rounded-lg border-2 cursor-pointer transition-all flex flex-col items-center justify-center gap-2 ${selectedMethod === method.id ? 'border-green-500 bg-green-50 shadow-sm' : 'border-gray-100 bg-white hover:border-gray-200 hover:bg-gray-50'}`}
+                        >
+                            <span className="text-2xl disable-select">{method.icon}</span>
+                            <span className={`text-xs font-semibold ${selectedMethod === method.id ? 'text-green-700' : 'text-gray-600'}`}>
+                                {method.name}
+                            </span>
+                        </div>
+                    ))}
+                </div>
+
                 {arrayGhe && arrayGhe.length > 0 ? (
                     <div>
-                        <button className="bg-green-500 px-3 py-1 text-white text-xs rounded font-bold hover:bg-green-600 transition-colors" onClick={handleCreateOrder}>Thanh toán</button>
+                        <Bill totalPrice={price} arrayGhe={arrayGhe} showtimeId={showtimeId} selectedMethod={selectedMethod} />
                     </div>
-                    // <Bill totalPrice={price} arrayGhe={arrayGhe} id={id} />
                 ) : (
-                    <div className="text-red-500 font-medium text-sm italic bg-red-50 p-3 rounded-lg border border-red-100 uppercase">
-                        Vui lòng chọn ghế để hiển thị phương thức thanh toán phù hợp
+                    <div className="text-red-500 font-medium text-sm italic bg-red-50 p-3 rounded-lg border border-red-100 uppercase text-center">
+                        Vui lòng chọn ghế trước
                     </div>
                 )}
             </div>
