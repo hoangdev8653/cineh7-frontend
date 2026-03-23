@@ -10,11 +10,7 @@ export const useMovies = () => {
         queryKey: ['movies', searchQuery, filterStatus],
         queryFn: async () => {
             const response = await getAllMovies();
-
-            let movies = response.data;
-            console.log(response);
-
-
+            let movies = response?.data?.movie;
             if (filterStatus !== 'ALL') {
                 movies = movies.filter((m: any) => m.status === filterStatus);
             }

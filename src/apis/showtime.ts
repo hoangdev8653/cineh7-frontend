@@ -22,12 +22,7 @@ export const getShowtimeByMovieId = async (movieId: string) => {
     })
 }
 
-export const getSeatByShowtimeId = async (showtimeId: string) => {
-    return await axiosInstance({
-        method: 'GET',
-        url: `/showtime/${showtimeId}/seats`,
-    })
-}
+
 
 export const getShowtimeGrouped = async (movieId: string) => {
     return await axiosInstance({

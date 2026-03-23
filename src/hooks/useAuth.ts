@@ -14,7 +14,7 @@ export const useAuthMutations = () => {
     const loginMutation = useMutation({
         mutationFn: (loginDto: LoginDto) => login(loginDto),
         onSuccess: (data: any) => {
-            const { user, access_token } = data;
+            const { user, access_token } = data.data;
             setAuth(user, access_token);
             setLocalStorage("user", user);
             setLocalStorage("access_token", access_token);

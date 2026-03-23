@@ -22,6 +22,13 @@ export const getSeatByRoom = async (roomId: string) => {
     })
 }
 
+export const getSeatByShowTime = async (showTimeId: string) => {
+    return await axiosInstance({
+        method: 'GET',
+        url: `/seat/showtime/${showTimeId}`,
+    })
+}
+
 export const createSeat = async (seatDto: SeatDto) => {
     return await axiosInstance({
         method: 'POST',

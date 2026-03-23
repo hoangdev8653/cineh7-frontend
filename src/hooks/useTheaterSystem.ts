@@ -7,8 +7,7 @@ export const useTheaterSystems = () => {
         queryKey: ['theater-systems'],
         queryFn: async () => {
             const response = await getAllTheaterSystems();
-            console.log(response.data)
-            return response.data;
+            return response?.data;
         },
     });
 };
@@ -26,7 +25,6 @@ export const useTheaterSystemDetail = (id: string) => {
 
 export const useTheaterSystemMutations = () => {
     const queryClient = useQueryClient();
-
     const createMutation = useMutation({
         mutationFn: (theaterSystemDto: TheaterSystemDto) => createTheaterSystem(theaterSystemDto),
         onSuccess: () => {
@@ -37,9 +35,9 @@ export const useTheaterSystemMutations = () => {
     const updateMutation = useMutation({
         mutationFn: ({ id, theaterSystemDto }: { id: string; theaterSystemDto: TheaterSystemDto }) =>
             updateTheaterSystem(id, theaterSystemDto),
-        onSuccess: (data, variables) => {
+        onSuccess: (_data, variables) => {
             queryClient.invalidateQueries({ queryKey: ['theater-systems'] });
-            queryClient.invalidateQueries({ queryKey: ['theater-system', variables.id] });
+            queryClient.invalidateQueries({ queryKey: ['theater', variables.id] });
         },
     });
 

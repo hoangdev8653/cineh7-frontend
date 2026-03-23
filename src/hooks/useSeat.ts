@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { getAllSeats, getSeatByRoom, createSeat, deleteSeat, getSeatById, updateSeat } from "../apis/seat"
+import { getAllSeats, getSeatByRoom, getSeatByShowTime, createSeat, deleteSeat, getSeatById, updateSeat } from "../apis/seat"
 import type { SeatDto } from "../types/seat.types"
 
 export const useSeats = () => {
@@ -31,6 +31,17 @@ export const useSeatByRoom = (roomId: string) => {
             return response.data;
         },
         enabled: !!roomId,
+    });
+}
+
+export const useSeatByShowTime = (showTimeId: string) => {
+    return useQuery({
+        queryKey: ["seats-showtime", showTimeId],
+        queryFn: async () => {
+            const response = await getSeatByShowTime(showTimeId);
+            return response.data;
+        },
+        enabled: !!showTimeId,
     });
 }
 

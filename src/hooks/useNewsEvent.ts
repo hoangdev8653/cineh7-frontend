@@ -7,7 +7,7 @@ export const useNewsEvents = () => {
         queryKey: ['news-events'],
         queryFn: async () => {
             const response = await getAllNewsEvents();
-            return response.data;
+            return response?.data?.events;
         },
     });
 };
@@ -17,7 +17,7 @@ export const useNewsEventDetail = (id: string) => {
         queryKey: ['news-event', id],
         queryFn: async () => {
             const response = await getNewsEventById(id);
-            return response.data;
+            return response?.data;
         },
         enabled: !!id,
     });

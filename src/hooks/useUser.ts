@@ -7,12 +7,11 @@ export const useUsers = (searchQuery?: string) => {
         queryKey: ['users', searchQuery],
         queryFn: async () => {
             const response = await getAllUsers();
-            let users = response.data;
-
+            let users = response.data.user;
             if (searchQuery) {
                 users = users.filter((u: IUser) =>
-                    u.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    u.email.toLowerCase().includes(searchQuery.toLowerCase())
+                    u.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    u.email?.toLowerCase().includes(searchQuery.toLowerCase())
                 );
             }
             return users;

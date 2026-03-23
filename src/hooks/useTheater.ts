@@ -2,11 +2,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { createTheater, deleteTheater, getAllTheaters, getTheaterById, updateTheater } from "../apis/theater"
 import type { TheaterDto } from '../types/theater.types';
 
-export const useTheaters = () => {
+export const useTheaters = (params?: { page?: number; limit?: number }) => {
     return useQuery({
-        queryKey: ['theaters'],
+        queryKey: ['theaters', params],
         queryFn: async () => {
-            const response = await getAllTheaters();
+            const response = await getAllTheaters(params);
             return response.data;
         },
     });

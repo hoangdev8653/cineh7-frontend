@@ -1,10 +1,11 @@
 import axiosInstance from "../utils/axios-Instance"
 import type { TheaterDto } from "../types/theater.types"
 
-export const getAllTheaters = async () => {
+export const getAllTheaters = async (params?: { page?: number; limit?: number }) => {
     return await axiosInstance({
         method: 'GET',
         url: '/theater',
+        params,
     })
 }
 
