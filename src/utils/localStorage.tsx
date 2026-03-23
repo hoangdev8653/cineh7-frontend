@@ -1,12 +1,24 @@
 export const setLocalStorage = (key: string, value: any) => {
+    if (value === undefined || value === null) {
+        localStorage.removeItem(key);
+        return;
+    }
     localStorage.setItem(key, JSON.stringify(value));
 };
 
 export const getLocalStorage = (key: string) => {
-    const value = JSON.parse(localStorage.getItem(key) || '{}');
-    return value;
+    try {
+        const item = localStorage.getItem(key);
+        if (item === null || item === "undefined") {
+            return null;
+        }
+        return JSON.parse(item);
+    } catch (error) {
+        console.error(`Error parsing localStorage key "${key}":`, error);
+        return null;
+    }
 };
 
 export const clearLocalStorage = () => {
-    return localStorage.clear();
+    localStorage.clear();
 };

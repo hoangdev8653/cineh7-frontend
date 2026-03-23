@@ -3,7 +3,7 @@ export interface ITheater {
     name: string;
     address: string;
     location: string;
-    image_url: string | null;
+    logo: string | null;
     system_id: string;
     system: {
         id: string;
@@ -19,5 +19,5 @@ export interface TheaterDto {
     address: string;
     location: string;
     system_id: string;
-    image_url?: string | null;
+    logo?: string | null;
 }
