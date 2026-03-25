@@ -80,9 +80,9 @@ axiosInstance.interceptors.response.use(
                 // Gọi API Refresh Token
                 // Backend cần endpoint này và trả về access_token mới
                 // Refresh token sẽ được tự động gửi kèm qua HttpOnly Cookie
-                axiosInstance.post('/auth/refresh-token')
+                axiosInstance.post('/refresh-token')
                     .then((res: any) => {
-                        const { accessToken } = res; // Giả sử backend trả về field accessToken
+                        const { data: { accessToken } } = res;
 
                         // Cập nhật token mới vào Zustand Store
                         useAuthStore.getState().setAccessToken(accessToken);

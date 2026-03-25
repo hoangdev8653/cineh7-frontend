@@ -5,9 +5,6 @@ import { PATH } from "./path";
 
 const ProtectedRoute = ({ allowedRoles, children }: { allowedRoles: string[], children: React.ReactNode }) => {
     const { user } = useAuthStore();
-    console.log(
-        user
-    );
 
 
     if (!user || Object.keys(user).length === 0) {
