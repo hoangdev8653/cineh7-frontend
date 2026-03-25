@@ -5,21 +5,14 @@ import {
     Edit,
     Trash2,
     FileText,
-    ChevronLeft,
-    ChevronRight
 } from 'lucide-react';
-import type { INewsEvent } from '../../../../types/news-event.types';
+import type { IEvent } from '../../../../types/event.types';
 
 interface NewsEventTableProps {
-    items: INewsEvent[];
+    items: IEvent[];
     isLoading: boolean;
-    onEdit: (item: INewsEvent) => void;
+    onEdit: (item: IEvent) => void;
     onDelete: (id: string) => void;
-    pagination?: {
-        page: number;
-        total: number;
-        totalPage: number;
-    };
 }
 
 const NewsEventTable: React.FC<NewsEventTableProps> = ({
@@ -27,7 +20,6 @@ const NewsEventTable: React.FC<NewsEventTableProps> = ({
     isLoading,
     onEdit,
     onDelete,
-    pagination
 }) => {
     const formatDate = (dateStr: string) => {
         try {
@@ -40,7 +32,6 @@ const NewsEventTable: React.FC<NewsEventTableProps> = ({
             return dateStr;
         }
     };
-    console.log(items);
 
     return (
         <div className="space-y-6">
@@ -70,7 +61,7 @@ const NewsEventTable: React.FC<NewsEventTableProps> = ({
                                         </td>
                                     </tr>
                                 ))
-                            ) : items?.map((item: INewsEvent) => (
+                            ) : items?.map((item: IEvent) => (
                                 <tr key={item.id} className="hover:bg-slate-50 transition-all group">
                                     <td className="px-8 py-6">
                                         <div className="flex items-center gap-4">
@@ -138,35 +129,6 @@ const NewsEventTable: React.FC<NewsEventTableProps> = ({
                     </table>
                 </div>
             </div>
-
-            {/* Pagination Footer */}
-            {pagination && (
-                <div className="flex flex-col md:flex-row items-center justify-between px-6 py-2 gap-4">
-                    <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest italic">
-                        Total <span className="text-slate-900 not-italic">{pagination.total}</span> strategic publications active
-                    </p>
-                    <div className="flex items-center gap-1 bg-white p-1 rounded-xl shadow-sm border border-slate-100">
-                        <button className="p-2 text-slate-300 hover:text-slate-900 transition-colors disabled:opacity-20" disabled={pagination.page === 1}><ChevronLeft size={20} /></button>
-                        <div className="flex items-center gap-1">
-                            {Array.from({ length: pagination.totalPage }).map((_, i) => (
-                                <button
-                                    key={i + 1}
-                                    className={`w-9 h-9 rounded-lg flex items-center justify-center text-xs font-black transition-all ${pagination.page === i + 1
-                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                                        : 'text-slate-400 hover:bg-slate-50'
-                                        }`}
-                                >
-                                    {i + 1}
-                                </button>
-                            ))}
-                            {pagination.totalPage === 0 && (
-                                <span className="w-9 h-9 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs font-black shadow-lg shadow-indigo-600/20">1</span>
-                            )}
-                        </div>
-                        <button className="p-2 text-slate-300 hover:text-slate-900 transition-colors disabled:opacity-20" disabled={pagination.page === pagination.totalPage || pagination.totalPage === 0}><ChevronRight size={20} /></button>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
