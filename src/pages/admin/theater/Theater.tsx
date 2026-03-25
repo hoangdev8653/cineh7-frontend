@@ -17,14 +17,17 @@ const Theater: React.FC = () => {
     const { data: systemsData } = useTheaterSystems();
     const { createTheater, updateTheater, deleteTheater } = useTheaterMutations();
 
+    console.log(theatersData);
+
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingTheater, setEditingTheater] = useState<ITheater | null>(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [theaterToDelete, setTheaterToDelete] = useState<string | null>(null);
 
-    const theaters = Array.isArray(theatersData?.theater) ? theatersData?.theater : (theatersData as any)?.data || [];
+    const theaters = Array.isArray(theatersData?.data?.theater) ? theatersData?.data?.theater : (theatersData as any)?.data || [];
     const systems = Array.isArray(systemsData) ? systemsData : (systemsData as any)?.data || [];
-    const totalPages = (theatersData as any)?.totalPage || 1;
+    const totalPages = (theatersData as any)?.data?.totalPages || 1;
 
     const filteredTheaters = theaters.filter((t: ITheater) =>
         t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -70,7 +73,7 @@ const Theater: React.FC = () => {
             <TheaterSearch value={searchQuery} onChange={setSearchQuery} />
 
             <TheaterList
-                theaters={filteredTheaters}
+                theaterData={theatersData}
                 isLoading={isLoading}
                 onEdit={handleOpenEdit}
                 onDelete={(id) => {

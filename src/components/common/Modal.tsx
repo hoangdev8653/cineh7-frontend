@@ -17,9 +17,9 @@ function ModalCustom({ onClose, children, className }: { onClose: () => void, ch
             >
                 <div
                     onClick={onClose}
-                    className="absolute top-2 right-2 cursor-pointer hover:opacity-70 z-50"
+                    className="absolute top-6 right-6 p-2 rounded-full cursor-pointer text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all z-50"
                 >
-                    <IoMdClose className="text-2xl" />
+                    <IoMdClose className="text-xl" />
                 </div>
                 {children}
             </div>

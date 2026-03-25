@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Edit, Plus, AlertCircle } from 'lucide-react';
+import { Edit, Plus } from 'lucide-react';
 import ModalCustom from '../../../../components/common/Modal';
 import { movieSchema } from '../../../../schema/movie';
 import type { IMovie } from '../../../../types/movie.types';
@@ -28,28 +28,22 @@ const MovieFormModal: React.FC<MovieFormModalProps> = ({
         resolver: zodResolver(movieSchema) as any,
         defaultValues: editingMovie ? {
             title: editingMovie.title,
+            slug: editingMovie.slug,
             description: editingMovie.description,
-            release_date: editingMovie.releaseDate?.split('T')[0] || '',
+            releaseDate: editingMovie.releaseDate?.split('T')[0] || '',
             duration: editingMovie.duration,
-            director: editingMovie.metadata?.director || '',
-            actors: editingMovie.metadata?.actors?.join(', ') || '',
-            genre: editingMovie.metadata?.genre || '',
-            rating: editingMovie.metadata?.rating || 'P',
-            language: editingMovie.metadata?.language || 'Tiếng Việt',
-            image_url: editingMovie.poster || '',
-            video_url: editingMovie.trailer || '',
+            rating: editingMovie.rating,
+            comingSoon: editingMovie.comingSoon,
+            isShowing: editingMovie.isShowing,
         } : {
             title: '',
+            slug: '',
             description: '',
-            release_date: '',
+            releaseDate: '',
             duration: 120,
-            genre: '',
-            director: '',
-            actors: '',
-            rating: 'P',
-            language: 'Tiếng Việt',
-            image_url: '',
-            video_url: '',
+            rating: 10,
+            comingSoon: false,
+            isShowing: true,
         }
     });
 
@@ -67,138 +61,119 @@ const MovieFormModal: React.FC<MovieFormModalProps> = ({
                     </div>
                     <div>
                         <h2 className="text-3xl font-black tracking-tight">{editingMovie ? 'Chỉnh Sửa Phim' : 'Thêm Phim Mới'}</h2>
-                        <p className="text-slate-400 font-medium text-sm">Cập nhật thông tin chi tiết cho bộ phim.</p>
+                        <p className="text-slate-400 font-medium text-sm">Cập nhật thông tin dựa trên yêu cầu API mới.</p>
                     </div>
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* Left Column */}
+                        {/* Title & Slug */}
                         <div className="space-y-6">
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Tên Phim</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Tên Phim (title)</label>
                                 <input
                                     {...register('title')}
                                     className="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 text-slate-900 focus:ring-2 focus:ring-indigo-600/20 focus:bg-white outline-none transition-all font-bold text-sm"
                                     placeholder="Nhập tên phim"
                                 />
-                                {errors.title && (
-                                    <p className="text-xs text-rose-500 font-bold flex items-center gap-1.5 mt-1 ml-1">
-                                        <AlertCircle size={14} /> {String(errors.title.message)}
-                                    </p>
-                                )}
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Ngày Phát Hành</label>
-                                    <input
-                                        type="date"
-                                        {...register('release_date')}
-                                        className="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 text-slate-900 focus:ring-2 focus:ring-indigo-600/20 focus:bg-white outline-none transition-all font-bold text-sm"
-                                    />
-                                    {errors.release_date && <p className="text-xs text-rose-500 font-bold mt-1 ml-1">{String(errors.release_date.message)}</p>}
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Thời Lượng (phút)</label>
-                                    <input
-                                        type="number"
-                                        {...register('duration', { valueAsNumber: true })}
-                                        className="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 text-slate-900 focus:ring-2 focus:ring-indigo-600/20 focus:bg-white outline-none transition-all font-bold text-sm"
-                                    />
-                                    {errors.duration && <p className="text-xs text-rose-500 font-bold mt-1 ml-1">{String(errors.duration.message)}</p>}
-                                </div>
+                                {errors.title && <p className="text-xs text-rose-500 font-bold mt-1 ml-1">{String(errors.title.message)}</p>}
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Đạo Diễn</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Đường dẫn thân thiện (slug)</label>
                                 <input
-                                    {...register('director')}
+                                    {...register('slug')}
                                     className="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 text-slate-900 focus:ring-2 focus:ring-indigo-600/20 focus:bg-white outline-none transition-all font-bold text-sm"
-                                    placeholder="Tên đạo diễn"
+                                    placeholder="biet-doi-san-ma-..."
                                 />
-                                {errors.director && <p className="text-xs text-rose-500 font-bold mt-1 ml-1">{String(errors.director.message)}</p>}
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Độ Tuổi</label>
-                                <select
-                                    {...register('rating')}
-                                    className="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 text-slate-900 focus:ring-2 focus:ring-indigo-600/20 focus:bg-white outline-none transition-all cursor-pointer font-bold text-sm appearance-none"
-                                >
-                                    <option value="P">P - Mọi lứa tuổi</option>
-                                    <option value="K">K - Trẻ em</option>
-                                    <option value="T13">T13 - 13 tuổi trở lên</option>
-                                    <option value="T16">T16 - 16 tuổi trở lên</option>
-                                    <option value="T18">T18 - 18 tuổi trở lên</option>
-                                    <option value="C">C - Cấm phổ biến</option>
-                                </select>
-                                {errors.rating && <p className="text-xs text-rose-500 font-bold mt-1 ml-1">{String(errors.rating.message)}</p>}
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Ngôn Ngữ</label>
-                                <input
-                                    {...register('language')}
-                                    className="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 text-slate-900 focus:ring-2 focus:ring-indigo-600/20 focus:bg-white outline-none transition-all font-bold text-sm"
-                                    placeholder="Tiếng Việt / Phụ đề Tiếng Anh"
-                                />
-                                {errors.language && <p className="text-xs text-rose-500 font-bold mt-1 ml-1">{String(errors.language.message)}</p>}
+                                {errors.slug && <p className="text-xs text-rose-500 font-bold mt-1 ml-1">{String(errors.slug.message)}</p>}
                             </div>
                         </div>
 
-                        {/* Right Column */}
+                        {/* Trailer & Poster (Files) */}
                         <div className="space-y-6">
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Thể Loại (Cách nhau bằng dấu phẩy)</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Trailer (File)</label>
                                 <input
-                                    {...register('genre')}
-                                    className="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 text-slate-900 focus:ring-2 focus:ring-indigo-600/20 focus:bg-white outline-none transition-all font-bold text-sm"
-                                    placeholder="Hành động, Phiêu lưu, Viễn tưởng"
+                                    type="file"
+                                    {...register('trailer')}
+                                    className="w-full bg-slate-50 border-none rounded-2xl px-5 py-2.5 text-slate-900 focus:ring-2 focus:ring-indigo-600/20 focus:bg-white outline-none transition-all font-bold text-xs file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100"
                                 />
-                                {errors.genre && <p className="text-xs text-rose-500 font-bold mt-1 ml-1">{String(errors.genre.message)}</p>}
+                                {editingMovie?.trailer && !errors.trailer && <p className="text-[10px] text-slate-400 ml-1">Hiện tại: {editingMovie.trailer.split('/').pop()}</p>}
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Diễn Viên (Cách nhau bằng dấu phẩy)</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Poster (File)</label>
                                 <input
-                                    {...register('actors')}
-                                    className="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 text-slate-900 focus:ring-2 focus:ring-indigo-600/20 focus:bg-white outline-none transition-all font-bold text-sm"
-                                    placeholder="Diễn viên 1, Diễn viên 2..."
+                                    type="file"
+                                    {...register('poster')}
+                                    className="w-full bg-slate-50 border-none rounded-2xl px-5 py-2.5 text-slate-900 focus:ring-2 focus:ring-indigo-600/20 focus:bg-white outline-none transition-all font-bold text-xs file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100"
                                 />
-                                {errors.actors && <p className="text-xs text-rose-500 font-bold mt-1 ml-1">{String(errors.actors.message)}</p>}
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">URL Poster</label>
-                                <input
-                                    {...register('image_url')}
-                                    className="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 text-slate-900 focus:ring-2 focus:ring-indigo-600/20 focus:bg-white outline-none transition-all font-bold text-sm"
-                                    placeholder="https://example.com/poster.jpg"
-                                />
-                                {errors.image_url && <p className="text-xs text-rose-500 font-bold mt-1 ml-1">{String(errors.image_url.message)}</p>}
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">URL Trailer</label>
-                                <input
-                                    {...register('video_url')}
-                                    className="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 text-slate-900 focus:ring-2 focus:ring-indigo-600/20 focus:bg-white outline-none transition-all font-bold text-sm"
-                                    placeholder="https://youtube.com/..."
-                                />
-                                {errors.video_url && <p className="text-xs text-rose-500 font-bold mt-1 ml-1">{String(errors.video_url.message)}</p>}
+                                {editingMovie?.poster && !errors.poster && <p className="text-[10px] text-slate-400 ml-1">Hiện tại: {editingMovie.poster.split('/').pop()}</p>}
                             </div>
                         </div>
 
-                        {/* Full Width Column */}
+                        {/* Description */}
                         <div className="md:col-span-2 space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Mô Tả</label>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Mô Tả (description)</label>
                             <textarea
                                 {...register('description')}
-                                rows={4}
+                                rows={3}
                                 className="w-full bg-slate-50 border-none rounded-[1.5rem] px-6 py-4 text-slate-900 focus:ring-2 focus:ring-indigo-600/20 focus:bg-white outline-none transition-all resize-none font-bold text-sm"
                                 placeholder="Nhập mô tả phim..."
                             />
                             {errors.description && <p className="text-xs text-rose-500 font-bold mt-1 ml-1">{String(errors.description.message)}</p>}
+                        </div>
+
+                        {/* ReleaseDate, Rating, Duration */}
+                        <div className="grid grid-cols-3 md:col-span-2 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Ngày chiếu (releaseDate)</label>
+                                <input
+                                    type="date"
+                                    {...register('releaseDate')}
+                                    className="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 text-slate-900 focus:ring-2 focus:ring-indigo-600/20 focus:bg-white outline-none transition-all font-bold text-sm"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Đánh giá (rating)</label>
+                                <input
+                                    type="number"
+                                    step="0.1"
+                                    {...register('rating', { valueAsNumber: true })}
+                                    className="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 text-slate-900 focus:ring-2 focus:ring-indigo-600/20 focus:bg-white outline-none transition-all font-bold text-sm"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Thời lượng (duration)</label>
+                                <input
+                                    type="number"
+                                    {...register('duration', { valueAsNumber: true })}
+                                    className="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 text-slate-900 focus:ring-2 focus:ring-indigo-600/20 focus:bg-white outline-none transition-all font-bold text-sm"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Booleans */}
+                        <div className="md:col-span-2 flex items-center gap-12 p-6 bg-slate-50 rounded-3xl border border-slate-100">
+                            <div className="flex items-center gap-3">
+                                <input
+                                    type="checkbox"
+                                    id="comingSoon"
+                                    {...register('comingSoon')}
+                                    className="w-5 h-5 rounded-lg border-2 border-slate-300 text-indigo-600 focus:ring-indigo-600/20 transition-all cursor-pointer"
+                                />
+                                <label htmlFor="comingSoon" className="text-sm font-black text-slate-700 cursor-pointer uppercase tracking-tight">Sắp Chiếu (comingSoon)</label>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <input
+                                    type="checkbox"
+                                    id="isShowing"
+                                    {...register('isShowing')}
+                                    className="w-5 h-5 rounded-lg border-2 border-slate-300 text-indigo-600 focus:ring-indigo-600/20 transition-all cursor-pointer"
+                                />
+                                <label htmlFor="isShowing" className="text-sm font-black text-slate-700 cursor-pointer uppercase tracking-tight">Đang Chiếu (isShowing)</label>
+                            </div>
                         </div>
                     </div>
 

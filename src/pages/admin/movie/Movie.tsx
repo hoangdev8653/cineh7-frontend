@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useMovies, useMovieMutations } from '../../../hooks/useMovie';
 import { useMovieStore } from '../../../store/useMovieStore';
-import type { IMovie, MovieDto } from '../../../types/movie.types';
+import type { IMovie } from '../../../types/movie.types';
 import MovieHeader from './components/MovieHeader';
 import MovieFilters from './components/MovieFilters';
 import MovieTable from './components/MovieTable';
@@ -11,9 +11,10 @@ import DeleteMovieModal from './components/DeleteMovieModal';
 
 const Movie: React.FC = () => {
     const { searchQuery, filterStatus, setSearchQuery, setFilterStatus } = useMovieStore();
-    const { data: movies, isLoading } = useMovies();
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const { data: movies, isLoading } = useMovies({ page, limit });
     const { createMovie, updateMovie, deleteMovie } = useMovieMutations();
-
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingMovie, setEditingMovie] = useState<IMovie | null>(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -30,32 +31,29 @@ const Movie: React.FC = () => {
     };
 
     const handleFormSubmit = (data: any) => {
-        const dto: MovieDto = {
-            title: data.title,
-            description: data.description,
-            duration: data.duration,
-            releaseDate: data.release_date,
-            trailer: data.video_url,
-            poster_url: data.image_url,
-            slug: editingMovie?.slug || data.title.toLowerCase().replace(/ /g, '-'),
-            rating: Number(data.rating.replace(/\D/g, '')) || 10,
-            comingSoon: editingMovie?.comingSoon || false,
-            isShowing: editingMovie?.isShowing || true,
-            metadata: {
-                director: data.director,
-                actors: data.actors.split(',').map((a: string) => a.trim()),
-                genre: data.genre,
-                rating: data.rating,
-                language: data.language
-            }
-        };
+        const formData = new FormData();
+        formData.append('title', data.title);
+        formData.append('slug', data.slug);
+        formData.append('description', data.description);
+        formData.append('releaseDate', data.releaseDate);
+        formData.append('rating', data.rating.toString());
+        formData.append('duration', data.duration.toString());
+        formData.append('comingSoon', data.comingSoon.toString());
+        formData.append('isShowing', data.isShowing.toString());
+
+        if (data.poster?.[0]) {
+            formData.append('poster', data.poster[0]);
+        }
+        if (data.trailer?.[0]) {
+            formData.append('trailer', data.trailer[0]);
+        }
 
         if (editingMovie) {
-            updateMovie.mutate({ id: editingMovie.id, movieDto: dto }, {
+            updateMovie.mutate({ id: editingMovie.id, movieDto: formData }, {
                 onSuccess: () => setIsModalOpen(false)
             });
         } else {
-            createMovie.mutate(dto, {
+            createMovie.mutate(formData, {
                 onSuccess: () => setIsModalOpen(false)
             });
         }
@@ -69,8 +67,7 @@ const Movie: React.FC = () => {
         }
     };
 
-    // Filtering logic (Search + Status)
-    const filteredMovies = movies?.filter((movie: IMovie) => {
+    const filteredMovies = movies?.data?.movie?.filter((movie: IMovie) => {
         const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             movie.metadata?.director?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             movie.metadata?.actors?.some(actor => actor.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -86,7 +83,7 @@ const Movie: React.FC = () => {
     return (
         <div className="space-y-8 pb-10">
             <MovieHeader
-                totalMovies={movies?.length || 0}
+                totalMovies={movies?.data?.movie?.length || 0}
                 onAdd={handleOpenAdd}
             />
 
@@ -98,7 +95,7 @@ const Movie: React.FC = () => {
             />
 
             <MovieTable
-                movies={filteredMovies}
+                movies={movies}
                 isLoading={isLoading}
                 onEdit={handleOpenEdit}
                 onDelete={(id) => {
@@ -107,7 +104,12 @@ const Movie: React.FC = () => {
                 }}
             />
 
-            <MoviePagination totalMovies={filteredMovies?.length || 0} />
+            <MoviePagination
+                totalMovies={movies?.data?.total || movies?.data?.movie?.length || 0}
+                page={page}
+                limit={limit}
+                onPageChange={setPage}
+            />
 
             {isModalOpen && (
                 <MovieFormModal

@@ -16,7 +16,7 @@ function Theater() {
         }
     }, [theaterSystems]);
 
-    const filteredTheaters = theaters?.theater?.filter((theater: any) =>
+    const filteredTheaters = theaters?.data?.theater?.filter((theater: any) =>
         (theater?.system?.id === selectedSystem) || (theater?.systemId === selectedSystem)
     );
 

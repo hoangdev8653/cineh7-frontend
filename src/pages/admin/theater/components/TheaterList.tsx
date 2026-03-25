@@ -1,9 +1,10 @@
 import React from 'react';
-import { Edit, Trash2, MapPin, Theater as TheaterIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Edit, Trash2, MapPin, Theater as TheaterIcon } from 'lucide-react';
 import type { ITheater } from '../../../../types/theater.types';
+import AdminPagination from '../../../../components/common/AdminPagination';
 
 interface TheaterListProps {
-    theaters: ITheater[];
+    theaterData?: any;
     isLoading: boolean;
     onEdit: (theater: ITheater) => void;
     onDelete: (id: string) => void;
@@ -13,7 +14,7 @@ interface TheaterListProps {
 }
 
 const TheaterList: React.FC<TheaterListProps> = ({
-    theaters,
+    theaterData,
     isLoading,
     onEdit,
     onDelete,
@@ -21,7 +22,7 @@ const TheaterList: React.FC<TheaterListProps> = ({
     totalPages,
     onPageChange
 }) => {
-    console.log(theaters);
+
     return (
         <div className="space-y-6">
             <div className="bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden shadow-sm">
@@ -51,7 +52,7 @@ const TheaterList: React.FC<TheaterListProps> = ({
                                     </tr>
                                 ))
                             ) : (
-                                theaters.map((theater: ITheater) => (
+                                theaterData?.data?.theater?.map((theater: ITheater) => (
                                     <tr key={theater.id} className="hover:bg-slate-50 transition-all group">
                                         <td className="px-8 py-6">
                                             <div className="flex items-center gap-4">
@@ -97,7 +98,7 @@ const TheaterList: React.FC<TheaterListProps> = ({
                                     </tr>
                                 ))
                             )}
-                            {!isLoading && theaters.length === 0 && (
+                            {!isLoading && theaterData?.data?.theater?.length === 0 && (
                                 <tr>
                                     <td colSpan={5} className="px-8 py-24 text-center">
                                         <div className="flex flex-col items-center opacity-20">
@@ -116,38 +117,15 @@ const TheaterList: React.FC<TheaterListProps> = ({
             {/* Pagination */}
             <div className="flex flex-col md:flex-row items-center justify-between px-6 py-2 gap-4">
                 <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest">
-                    Hiển thị <span className="text-slate-900">{theaters.length}</span> địa điểm rạp
+                    Hiển thị <span className="text-slate-900">{theaterData?.data?.theater?.length || 0}</span> địa điểm rạp
                 </p>
-                <div className="flex items-center gap-1 bg-white p-1 rounded-xl shadow-sm border border-slate-100">
-                    <button
-                        className="p-2 text-slate-300 hover:text-slate-900 transition-colors disabled:opacity-20"
-                        disabled={page === 1}
-                        onClick={() => onPageChange(page - 1)}
-                    >
-                        <ChevronLeft size={20} />
-                    </button>
-                    <div className="flex items-center gap-1">
-                        {Array.from({ length: totalPages }, (_, i) => (
-                            <button
-                                key={i + 1}
-                                onClick={() => onPageChange(i + 1)}
-                                className={`w-9 h-9 rounded-lg flex items-center justify-center text-xs font-black transition-all ${page === i + 1
-                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                                    : 'text-slate-400 hover:bg-slate-50'
-                                    }`}
-                            >
-                                {i + 1}
-                            </button>
-                        ))}
-                    </div>
-                    <button
-                        className="p-2 text-slate-300 hover:text-slate-900 transition-colors disabled:opacity-20"
-                        disabled={page === totalPages}
-                        onClick={() => onPageChange(page + 1)}
-                    >
-                        <ChevronRight size={20} />
-                    </button>
-                </div>
+                {totalPages > 0 && (
+                    <AdminPagination
+                        totalPages={totalPages}
+                        page={page}
+                        onPageChange={onPageChange}
+                    />
+                )}
             </div>
         </div>
     );

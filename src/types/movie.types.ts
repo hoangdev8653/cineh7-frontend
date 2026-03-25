@@ -9,15 +9,15 @@ export interface MovieMetadata {
 export interface IMovie {
     id: string;
     title: string;
-    description: string;
-    duration: number;
-    releaseDate: string;
+    slug: string;
     trailer: string;
-    poster?: string;
+    description: string;
+    releaseDate: string;
     rating: number;
+    duration: number;
+    poster?: string;
     comingSoon: boolean;
     isShowing: boolean;
-    slug: string;
     created_at: string;
     updated_at?: string;
     metadata?: MovieMetadata;
@@ -25,14 +25,13 @@ export interface IMovie {
 
 export interface MovieDto {
     title: string;
+    slug: string;
+    trailer: File | string;
     description: string;
-    duration: number;
     releaseDate: string;
-    trailer: string;
-    poster_url?: string;
     rating: number;
+    duration: number;
+    poster: File | string;
     comingSoon: boolean;
     isShowing: boolean;
-    slug: string;
-    metadata?: MovieMetadata;
 }

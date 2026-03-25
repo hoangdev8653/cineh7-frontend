@@ -3,23 +3,16 @@ import { getAllMovies, getMovieById, createMovie, updateMovie, deleteMovie, } fr
 import { useMovieStore } from '../store/useMovieStore';
 import type { MovieDto } from '../types/movie.types';
 
-export const useMovies = () => {
+export const useMovies = (params?: { page?: number; limit?: number }) => {
     const { searchQuery, filterStatus } = useMovieStore();
 
     return useQuery({
         queryKey: ['movies', searchQuery, filterStatus],
         queryFn: async () => {
-            const response = await getAllMovies();
-            let movies = response?.data?.movie;
-            if (filterStatus !== 'ALL') {
-                movies = movies.filter((m: any) => m.status === filterStatus);
-            }
-            if (searchQuery) {
-                movies = movies.filter((m: any) =>
-                    m.title.toLowerCase().includes(searchQuery.toLowerCase())
-                );
-            }
-            return movies;
+            const response = await getAllMovies(params);
+
+
+            return response;
         },
     });
 };
@@ -39,16 +32,16 @@ export const useMovieMutations = () => {
     const queryClient = useQueryClient();
 
     const createMutation = useMutation({
-        mutationFn: (movieDto: MovieDto) => createMovie(movieDto),
+        mutationFn: (movieDto: MovieDto | FormData) => createMovie(movieDto),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['movies'] });
         },
     });
 
     const updateMutation = useMutation({
-        mutationFn: ({ id, movieDto }: { id: string; movieDto: MovieDto }) =>
+        mutationFn: ({ id, movieDto }: { id: string; movieDto: MovieDto | FormData }) =>
             updateMovie(id, movieDto),
-        onSuccess: (data, variables) => {
+        onSuccess: (_, variables) => {
             queryClient.invalidateQueries({ queryKey: ['movies'] });
             queryClient.invalidateQueries({ queryKey: ['movie', variables.id] });
         },

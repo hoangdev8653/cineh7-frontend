@@ -1,10 +1,11 @@
 import axiosInstance from "../utils/axios-Instance"
 import type { MovieDto } from "../types/movie.types"
 
-export const getAllMovies = async () => {
+export const getAllMovies = async (params?: { page?: number; limit?: number }) => {
     return await axiosInstance({
         method: 'GET',
         url: '/movie',
+        params,
     })
 }
 
@@ -15,7 +16,7 @@ export const getMovieById = async (id: string) => {
     })
 }
 
-export const createMovie = async (movieDto: MovieDto) => {
+export const createMovie = async (movieDto: MovieDto | FormData) => {
     return await axiosInstance({
         method: 'POST',
         url: '/movie',
@@ -23,7 +24,7 @@ export const createMovie = async (movieDto: MovieDto) => {
     })
 }
 
-export const updateMovie = async (id: string, movieDto: MovieDto) => {
+export const updateMovie = async (id: string, movieDto: MovieDto | FormData) => {
     return await axiosInstance({
         method: 'PUT',
         url: `/movie/${id}`,

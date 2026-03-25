@@ -35,7 +35,7 @@ function Banner() {
     return (
         <div className='w-full'>
             <Carousel responsiveSettings={responsiveSettings} showSliderScroll={true} dots={true} showSlider={true}>
-                {movies?.map((movie: any) => (
+                {movies?.data?.movie?.map((movie: any) => (
                     <div className="w-full">
                         <img className="w-full object-cover h-[600px]" src={movie.poster} alt={movie.title} />
                     </div>

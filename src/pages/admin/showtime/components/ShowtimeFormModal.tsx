@@ -7,6 +7,7 @@ import { showtimeSchema, type ShowtimeFormData } from '../../../../schema/showti
 import type { IShowtime } from '../../../../types/showtime.types';
 import type { IMovie } from '../../../../types/movie.types';
 import type { IRoom } from '../../../../types/room.types';
+import type { ITheater } from '../../../../types/theater.types';
 
 interface ShowtimeFormModalProps {
     isOpen: boolean;
@@ -15,6 +16,7 @@ interface ShowtimeFormModalProps {
     onSubmit: (data: ShowtimeFormData) => void;
     movies: IMovie[];
     rooms: IRoom[];
+    theaters: ITheater[];
     isPending: boolean;
 }
 
@@ -25,15 +27,22 @@ const ShowtimeFormModal: React.FC<ShowtimeFormModalProps> = ({
     onSubmit,
     movies,
     rooms,
+    theaters,
     isPending
 }) => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<ShowtimeFormData>({
         resolver: zodResolver(showtimeSchema),
     });
 
+    const [selectedTheaterId, setSelectedTheaterId] = React.useState<string>('');
+
     useEffect(() => {
         if (isOpen) {
             if (editingShowtime) {
+                const room = rooms.find(r => r.id === editingShowtime.room_id);
+                if (room) {
+                    setSelectedTheaterId(room.theaterId);
+                }
                 reset({
                     movie_id: editingShowtime.movie_id,
                     room_id: editingShowtime.room_id,
@@ -42,6 +51,7 @@ const ShowtimeFormModal: React.FC<ShowtimeFormModalProps> = ({
                     price: Number(editingShowtime.price),
                 });
             } else {
+                setSelectedTheaterId('');
                 reset({
                     movie_id: '',
                     room_id: '',
@@ -51,7 +61,12 @@ const ShowtimeFormModal: React.FC<ShowtimeFormModalProps> = ({
                 });
             }
         }
-    }, [isOpen, editingShowtime, reset]);
+    }, [isOpen, editingShowtime, reset, rooms]);
+
+    const filteredRooms = React.useMemo(() => {
+        if (!selectedTheaterId) return [];
+        return rooms.filter(r => r.theaterId === selectedTheaterId);
+    }, [rooms, selectedTheaterId]);
 
     if (!isOpen) return null;
 
@@ -71,8 +86,8 @@ const ShowtimeFormModal: React.FC<ShowtimeFormModalProps> = ({
                     </div>
                 </div>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Chọn Phim</label>
                             <div className="relative">
@@ -93,15 +108,38 @@ const ShowtimeFormModal: React.FC<ShowtimeFormModalProps> = ({
                         </div>
 
                         <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Chọn Rạp Chiếu</label>
+                            <div className="relative">
+                                <select
+                                    value={selectedTheaterId}
+                                    onChange={(e) => {
+                                        setSelectedTheaterId(e.target.value);
+                                        reset((formValues) => ({ ...formValues, room_id: '' }));
+                                    }}
+                                    className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-indigo-600/20 outline-none transition-all appearance-none cursor-pointer font-bold text-slate-900"
+                                >
+                                    <option value="">Chọn một rạp chiếu</option>
+                                    {theaters?.theater?.map((t: ITheater) => (
+                                        <option key={t.id} value={t.id}>{t.name}</option>
+                                    ))}
+                                </select>
+                                <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                    <ChevronRight size={16} className="rotate-90" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Phòng Chiếu</label>
                             <div className="relative">
                                 <select
                                     {...register('room_id')}
-                                    className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-indigo-600/20 outline-none transition-all appearance-none cursor-pointer font-bold text-slate-900"
+                                    disabled={!selectedTheaterId}
+                                    className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-indigo-600/20 outline-none transition-all appearance-none cursor-pointer font-bold text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    <option value="">Chọn một phòng</option>
-                                    {rooms?.map((r: IRoom) => (
-                                        <option key={r.id} value={r.id}>{r.name} - {r.theater?.name || 'Không rõ rạp'}</option>
+                                    <option value="">{selectedTheaterId ? "Chọn một phòng" : "Vui lòng chọn rạp trước"}</option>
+                                    {filteredRooms?.map((r: IRoom) => (
+                                        <option key={r.id} value={r.id}>{r.name} - {r.type}</option>
                                     ))}
                                 </select>
                                 <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">

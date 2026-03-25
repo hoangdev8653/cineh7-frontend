@@ -2,13 +2,16 @@ import Banner from "./Banner"
 import MovieCard from "./MovieCard"
 import Carousel from "../../../components/features/carousel/Carousel"
 import { useMovies } from "../../../hooks/useMovie"
-import { useNewsEvents } from "../../../hooks/useNewsEvent"
+import { useEvents } from "../../../hooks/useEvent"
 import type { IMovie } from "../../../types/movie.types"
 
 
 function Home() {
     const { data: movies } = useMovies()
-    const { data: newsEvents } = useNewsEvents()
+    const { data: Events } = useEvents()
+
+    console.log(movies?.data?.movie);
+
 
     const responsiveSettings = [
         {
@@ -43,7 +46,7 @@ function Home() {
                 <h2 className="text-2xl font-bold text-slate-900 mb-6">Phim đang chiếu</h2>
                 <div className="w-full ">
                     <Carousel responsiveSettings={responsiveSettings} slidesToShow={4} slidesToScroll={1}>
-                        {movies?.map((movie: IMovie) => (
+                        {movies?.data?.movie?.map((movie: IMovie) => (
                             <div key={movie.id} className="px-2">
                                 <MovieCard {...movie} />
                             </div>
@@ -58,7 +61,7 @@ function Home() {
                 </div>
                 <div className="w-full">
                     <Carousel responsiveSettings={responsiveSettings} slidesToShow={3} slidesToScroll={1}>
-                        {newsEvents?.map((item: any, index: number) => (
+                        {Events?.map((item: any, index: number) => (
                             <div
                                 key={index}
                                 className="px-2 cursor-pointer"

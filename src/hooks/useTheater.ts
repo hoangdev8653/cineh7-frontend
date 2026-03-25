@@ -7,7 +7,7 @@ export const useTheaters = (params?: { page?: number; limit?: number }) => {
         queryKey: ['theaters', params],
         queryFn: async () => {
             const response = await getAllTheaters(params);
-            return response.data;
+            return response;
         },
     });
 };

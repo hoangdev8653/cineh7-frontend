@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { useShowTimes, useShowTimeMutations } from '../../../hooks/useShowTime';
 import { useMovies } from '../../../hooks/useMovie';
 import { useRooms } from '../../../hooks/useRoom';
+import { useTheaters } from '../../../hooks/useTheater';
 import type { IShowtime } from '../../../types/showtime.types';
 import type { IMovie } from '../../../types/movie.types';
 import type { IRoom } from '../../../types/room.types';
+import type { ITheater } from '../../../types/theater.types';
 import { type ShowtimeFormData } from '../../../schema/showtime';
 
 import ShowtimeHeader from './components/ShowtimeHeader';
@@ -18,6 +20,7 @@ const Showtime: React.FC = () => {
     const { data: showtimes, isLoading: isLoadingShowtimes } = useShowTimes();
     const { data: movies } = useMovies();
     const { data: rooms } = useRooms();
+    const { data: theaters } = useTheaters();
     const { createShowTime, updateShowTime, deleteShowTime } = useShowTimeMutations();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -86,6 +89,7 @@ const Showtime: React.FC = () => {
                 onSubmit={onSubmit}
                 movies={(movies as IMovie[]) || []}
                 rooms={(rooms as IRoom[]) || []}
+                theaters={(theaters as ITheater[]) || []}
                 isPending={createShowTime.isPending || updateShowTime.isPending}
             />
 
