@@ -1,23 +1,23 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-interface MoviePaginationProps {
-    totalMovies: number;
+interface AdminPaginationProps {
     page: number;
-    limit: number;
+    totalPages: number;
     onPageChange: (page: number) => void;
 }
 
-const MoviePagination: React.FC<MoviePaginationProps> = ({ totalMovies, page, limit, onPageChange }) => {
-    const totalPages = Math.ceil(totalMovies / limit) || 1;
+const AdminPagination: React.FC<AdminPaginationProps> = ({ page, totalPages, onPageChange }) => {
+    // Đảm bảo totalPages luôn ít nhất là 1
+    const safeTotalPages = Math.max(1, totalPages);
 
     return (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 px-6">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 px-6 pt-4 pb-2">
             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                Đang ở trang {page} - Hiển thị tối đa {limit} phim mỗi trang
+                Đang ở trang <span className="text-indigo-600">{page}</span> / {safeTotalPages}
             </p>
             <div className="flex items-center gap-3">
-                <button
+                <button 
                     onClick={() => onPageChange(page - 1)}
                     disabled={page <= 1}
                     className="p-3 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:text-indigo-600 hover:border-indigo-100 transition-all disabled:opacity-30 shadow-sm disabled:cursor-not-allowed">
@@ -28,9 +28,9 @@ const MoviePagination: React.FC<MoviePaginationProps> = ({ totalMovies, page, li
                         {page}
                     </button>
                 </div>
-                <button
+                <button 
                     onClick={() => onPageChange(page + 1)}
-                    disabled={page >= totalPages && totalMovies > 0}
+                    disabled={page >= safeTotalPages}
                     className="p-3 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:text-indigo-600 hover:border-indigo-100 transition-all disabled:opacity-30 shadow-sm disabled:cursor-not-allowed">
                     <ChevronRight size={20} />
                 </button>
@@ -39,4 +39,4 @@ const MoviePagination: React.FC<MoviePaginationProps> = ({ totalMovies, page, li
     );
 };
 
-export default MoviePagination;
+export default AdminPagination;
