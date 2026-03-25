@@ -1,13 +1,27 @@
-import { User, Mail, Phone, MapPin, Calendar, CreditCard, Shield, LogOut, ChevronRight, Settings, Ticket } from 'lucide-react';
+import { useState } from 'react';
+import { User, Mail, Calendar, CreditCard, Shield, LogOut, ChevronRight, Settings, Ticket } from 'lucide-react';
+import { getLocalStorage } from '../../../utils/localStorage';
+import { PATH } from "../../../utils/path"
 
 function Profile() {
+    const [activeTab, setActiveTab] = useState("Thông tin cá nhân");
+    const users = getLocalStorage("user");
+    console.log(users);
+
+    const handleLogout = () => {
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        window.location.href = PATH.LOGIN;
+    };
+
     const user = {
-        name: "Hoàng Dev",
-        email: "hoangdev8653@gmail.com",
-        phone: "0987 654 321",
-        rank: "Gold Member",
-        points: 2450,
-        avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+        name: users?.name || "Khách",
+        email: users?.email || "Chưa cập nhật",
+        phone: users?.phone || "Chưa cập nhật",
+        role: users?.role || "USER",
+        points: users?.points || 0,
+        avatar: users?.avarta || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        status: users?.status || "ACTIVE"
     };
 
     const bookings = [
@@ -66,7 +80,7 @@ function Profile() {
                                 </div>
 
                                 <h1 className="text-2xl font-black text-slate-900 mb-1">{user.name}</h1>
-                                <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-6">{user.rank}</p>
+                                <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-6">{user.role}</p>
 
                                 {/* Points Card */}
                                 <div className="w-full bg-slate-50 rounded-2xl p-6 border border-slate-100 flex items-center justify-between group hover:border-green-500 transition-colors">
@@ -83,15 +97,21 @@ function Profile() {
                             {/* Navigation Sidebar */}
                             <div className="border-t border-slate-50 p-4 space-y-1">
                                 {[
-                                    { icon: User, label: "Thông tin cá nhân", active: true },
-                                    { icon: Calendar, label: "Lịch sử đặt vé", active: false },
-                                    { icon: CreditCard, label: "Thẻ thành viên", active: false },
-                                    { icon: Shield, label: "Bảo mật & Đổi mật khẩu", active: false },
-                                    { icon: LogOut, label: "Đăng xuất", active: false, danger: true }
+                                    { icon: User, label: "Thông tin cá nhân" },
+                                    { icon: Calendar, label: "Lịch sử đặt vé" },
+                                    { icon: Shield, label: "Bảo mật & Đổi mật khẩu" },
+                                    { icon: LogOut, label: "Đăng xuất", danger: true }
                                 ].map((item, idx) => (
                                     <button
                                         key={idx}
-                                        className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all ${item.active
+                                        onClick={() => {
+                                            if (item.label === "Đăng xuất") {
+                                                handleLogout();
+                                            } else {
+                                                setActiveTab(item.label);
+                                            }
+                                        }}
+                                        className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all ${activeTab === item.label
                                             ? 'bg-green-50 text-green-600'
                                             : item.danger
                                                 ? 'text-red-500 hover:bg-red-50'
@@ -99,10 +119,10 @@ function Profile() {
                                             }`}
                                     >
                                         <div className="flex items-center gap-4">
-                                            <item.icon size={20} className={item.active ? "text-green-500" : "text-slate-400"} />
+                                            <item.icon size={20} className={activeTab === item.label ? "text-green-500" : "text-slate-400"} />
                                             <span className="font-bold text-sm tracking-tight">{item.label}</span>
                                         </div>
-                                        <ChevronRight size={16} className={item.active ? "text-green-500" : "text-slate-300"} />
+                                        <ChevronRight size={16} className={activeTab === item.label ? "text-green-500" : "text-slate-300"} />
                                     </button>
                                 ))}
                             </div>
@@ -112,91 +132,130 @@ function Profile() {
                     {/* Right Column: Main Content */}
                     <div className="lg:col-span-8 space-y-12">
                         {/* Personal Info Section */}
-                        <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100">
-                            <div className="flex items-center gap-3 mb-10">
-                                <span className="w-1.5 h-8 bg-green-500 rounded-full" />
-                                <h2 className="text-3xl font-black italic tracking-tighter uppercase text-slate-900">Thông tin cá nhân</h2>
-                            </div>
+                        {activeTab === "Thông tin cá nhân" && (
+                            <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 animate-in fade-in duration-500">
+                                <div className="flex items-center gap-3 mb-10">
+                                    <span className="w-1.5 h-8 bg-green-500 rounded-full" />
+                                    <h2 className="text-3xl font-black italic tracking-tighter uppercase text-slate-900">Thông tin cá nhân</h2>
+                                </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Họ và tên</label>
-                                    <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 focus-within:border-green-500 focus-within:bg-white transition-all group">
-                                        <User size={18} className="text-slate-400 group-focus-within:text-green-500" />
-                                        <input type="text" defaultValue={user.name} className="bg-transparent border-none focus:outline-none w-full font-bold text-slate-900" />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Họ và tên</label>
+                                        <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 focus-within:border-green-500 focus-within:bg-white transition-all group">
+                                            <User size={18} className="text-slate-400 group-focus-within:text-green-500" />
+                                            <input type="text" defaultValue={user.name} className="bg-transparent border-none focus:outline-none w-full font-bold text-slate-900" />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Email</label>
+                                        <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 group">
+                                            <Mail size={18} className="text-slate-400" />
+                                            <input type="email" defaultValue={user.email} disabled className="bg-transparent border-none focus:outline-none w-full font-bold text-slate-400 cursor-not-allowed" />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Chức vụ</label>
+                                        <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 group">
+                                            <Shield size={18} className="text-slate-400" />
+                                            <input type="text" defaultValue={user.role} disabled className="bg-transparent border-none focus:outline-none w-full font-bold text-slate-400 cursor-not-allowed uppercase" />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Trạng thái</label>
+                                        <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 group">
+                                            <Shield size={18} className="text-slate-400" />
+                                            <input type="text" defaultValue={user.status} disabled className="bg-transparent border-none focus:outline-none w-full font-bold text-slate-400 cursor-not-allowed uppercase" />
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Email</label>
-                                    <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 group">
-                                        <Mail size={18} className="text-slate-400" />
-                                        <input type="email" defaultValue={user.email} disabled className="bg-transparent border-none focus:outline-none w-full font-bold text-slate-400 cursor-not-allowed" />
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Số điện thoại</label>
-                                    <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 focus-within:border-green-500 focus-within:bg-white transition-all group">
-                                        <Phone size={18} className="text-slate-400 group-focus-within:text-green-500" />
-                                        <input type="text" defaultValue={user.phone} className="bg-transparent border-none focus:outline-none w-full font-bold text-slate-900" />
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Địa chỉ</label>
-                                    <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 focus-within:border-green-500 focus-within:bg-white transition-all group">
-                                        <MapPin size={18} className="text-slate-400 group-focus-within:text-green-500" />
-                                        <input type="text" defaultValue="TP. Hồ Chí Minh" className="bg-transparent border-none focus:outline-none w-full font-bold text-slate-900" />
-                                    </div>
-                                </div>
-                            </div>
 
-                            <button className="mt-12 px-10 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-green-600 transition-all shadow-xl hover:shadow-green-500/20 active:scale-95">
-                                Cập nhật thông tin
-                            </button>
-                        </div>
+                                <button className="mt-12 px-10 py-4 cursor-pointer bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-green-600 transition-all shadow-xl hover:shadow-green-500/20 active:scale-95">
+                                    Cập nhật thông tin
+                                </button>
+                            </div>
+                        )}
 
                         {/* Recent Bookings Section */}
-                        <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100">
-                            <div className="flex items-center justify-between mb-10">
-                                <div className="flex items-center gap-3">
-                                    <span className="w-1.5 h-8 bg-green-500 rounded-full" />
-                                    <h2 className="text-3xl font-black italic tracking-tighter uppercase text-slate-900">Lịch sử đặt vé</h2>
+                        {activeTab === "Lịch sử đặt vé" && (
+                            <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 animate-in fade-in duration-500">
+                                <div className="flex items-center justify-between mb-10">
+                                    <div className="flex items-center gap-3">
+                                        <span className="w-1.5 h-8 bg-green-500 rounded-full" />
+                                        <h2 className="text-3xl font-black italic tracking-tighter uppercase text-slate-900">Lịch sử đặt vé</h2>
+                                    </div>
+                                    <button className="text-xs font-black uppercase tracking-widest text-slate-400 hover:text-green-600 transition-colors">Xem tất cả</button>
                                 </div>
-                                <button className="text-xs font-black uppercase tracking-widest text-slate-400 hover:text-green-600 transition-colors">Xem tất cả</button>
-                            </div>
 
-                            <div className="space-y-4">
-                                {bookings.map((booking, idx) => (
-                                    <div key={idx} className="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500 group">
-                                        <div className="flex items-center gap-6">
-                                            <div className="w-14 h-14 bg-white rounded-2xl p-2 shadow-sm border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-green-500 group-hover:border-green-100 transition-all">
-                                                <Ticket size={24} />
+                                <div className="space-y-4">
+                                    {bookings.map((booking, idx) => (
+                                        <div key={idx} className="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500 group">
+                                            <div className="flex items-center gap-6">
+                                                <div className="w-14 h-14 bg-white rounded-2xl p-2 shadow-sm border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-green-500 group-hover:border-green-100 transition-all">
+                                                    <Ticket size={24} />
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-black text-slate-900 uppercase tracking-tight leading-none mb-1">{booking.movie}</h4>
+                                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{booking.date} • {booking.theater}</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <h4 className="font-black text-slate-900 uppercase tracking-tight leading-none mb-1">{booking.movie}</h4>
-                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{booking.date} • {booking.theater}</p>
+
+                                            <div className="flex items-center justify-between md:justify-end gap-12">
+                                                <div className="text-right">
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Mã vé</p>
+                                                    <p className="font-bold text-slate-900">{booking.id}</p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Trạng thái</p>
+                                                    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${booking.status === "Sắp tới" ? "bg-green-100 text-green-600" : "bg-slate-200 text-slate-500"
+                                                        }`}>
+                                                        {booking.status}
+                                                    </span>
+                                                </div>
+                                                <button className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-300 hover:text-slate-900 border border-slate-100 hover:border-slate-200 transition-all">
+                                                    <ChevronRight size={20} />
+                                                </button>
                                             </div>
                                         </div>
-
-                                        <div className="flex items-center justify-between md:justify-end gap-12">
-                                            <div className="text-right">
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Mã vé</p>
-                                                <p className="font-bold text-slate-900">{booking.id}</p>
-                                            </div>
-                                            <div className="text-right">
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Trạng thái</p>
-                                                <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${booking.status === "Sắp tới" ? "bg-green-100 text-green-600" : "bg-slate-200 text-slate-500"
-                                                    }`}>
-                                                    {booking.status}
-                                                </span>
-                                            </div>
-                                            <button className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-300 hover:text-slate-900 border border-slate-100 hover:border-slate-200 transition-all">
-                                                <ChevronRight size={20} />
-                                            </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                        {activeTab === "Bảo mật & Đổi mật khẩu" && (
+                            <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 animate-in fade-in duration-500">
+                                <div className="flex items-center gap-3 mb-10">
+                                    <span className="w-1.5 h-8 bg-green-500 rounded-full" />
+                                    <h2 className="text-3xl font-black italic tracking-tighter uppercase text-slate-900">Bảo mật</h2>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Mật khẩu hiện tại</label>
+                                        <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 focus-within:border-green-500 focus-within:bg-white transition-all group">
+                                            <Shield size={18} className="text-slate-400 group-focus-within:text-green-500" />
+                                            <input type="password" placeholder="••••••••" className="bg-transparent border-none focus:outline-none w-full font-bold text-slate-900" />
                                         </div>
                                     </div>
-                                ))}
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Mật khẩu mới</label>
+                                        <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 focus-within:border-green-500 focus-within:bg-white transition-all group">
+                                            <Shield size={18} className="text-slate-400 group-focus-within:text-green-500" />
+                                            <input type="password" placeholder="••••••••" className="bg-transparent border-none focus:outline-none w-full font-bold text-slate-900" />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2 md:col-span-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Xác nhận mật khẩu mới</label>
+                                        <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 focus-within:border-green-500 focus-within:bg-white transition-all group">
+                                            <Shield size={18} className="text-slate-400 group-focus-within:text-green-500" />
+                                            <input type="password" placeholder="••••••••" className="bg-transparent border-none focus:outline-none w-full font-bold text-slate-900" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button className="mt-12 px-10 py-4 cursor-pointer bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-green-600 transition-all shadow-xl hover:shadow-green-500/20 active:scale-95">
+                                    Cập nhật mật khẩu
+                                </button>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </div>
             </div>

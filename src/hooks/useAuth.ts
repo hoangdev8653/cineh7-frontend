@@ -19,7 +19,11 @@ export const useAuthMutations = () => {
             setLocalStorage("user", user);
             setLocalStorage("access_token", access_token);
             queryClient.invalidateQueries({ queryKey: ["auth"] });
-            navigate(PATH.USER_LAYOUT);
+            if (user.role === "ADMIN") {
+                navigate(PATH.ADMIN_LAYOUT);
+            } else {
+                navigate(PATH.USER_LAYOUT);
+            }
         },
     });
 

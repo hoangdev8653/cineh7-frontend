@@ -42,8 +42,8 @@ function Header() {
                     <NavLink to={PATH.THEATER} className={navLinkClass}>
                         <MapPin size={18} /> Hệ thống rạp
                     </NavLink>
-                    <NavLink to={PATH.NEWS_EVENT} className={navLinkClass}>
-                        <Newspaper size={18} /> Khuyến mãi
+                    <NavLink to={PATH.EVENT} className={navLinkClass}>
+                        <Newspaper size={18} /> Sự kiện
                     </NavLink>
                     <NavLink to={PATH.POLICY} className={navLinkClass}>
                         <Newspaper size={18} /> Chính sách
