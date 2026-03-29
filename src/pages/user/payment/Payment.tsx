@@ -1,4 +1,3 @@
-"use client";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
@@ -8,10 +7,8 @@ const Payment = () => {
   const [status, setStatus] = useState("processing");
 
   useEffect(() => {
-    // Lấy toàn bộ chuỗi query trên URL (ví dụ: ?vnp_Amount=...&vnp_BankCode=...)
     const queryString = searchParams.toString();
 
-    // Gửi xuống Backend để verify chữ ký và cập nhật database
     axios
       .get(`http://localhost:3000/api/payment/vnpay-return?${queryString}`)
       .then((response) => {

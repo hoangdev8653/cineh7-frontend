@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Payment from "./payment/Payment";
 import "./Room.css";
 import ExpiredTime from "./ExpiredTime";
@@ -6,32 +6,32 @@ import { getLocalStorage } from "../../../utils/localStorage";
 import Screen from "../../../assets/screen.png";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useRoomDetail } from "../../../hooks/useRoom";
-import { useShowTimeDetail, } from "../../../hooks/useShowTime";
-import { useSeatByShowTime } from "../../../hooks/useSeat"
+import { useShowTimeDetail } from "../../../hooks/useShowTime";
+import { useSeatByShowTime } from "../../../hooks/useSeat";
+import { io } from "socket.io-client";
+
+const socket = io("http://localhost:3007");
 
 function Room() {
   const [searchParams] = useSearchParams();
   const [arrayGhe, setArrayGhe] = useState<string[]>([]);
+  const [lockedSeatIds, setLockedSeatIds] = useState<string[]>([]);
   const { id } = useParams();
   const showtimeId = searchParams.get("showtimeId") || "";
-
   const { data: roomDetail } = useRoomDetail(id || "");
   const { data: showtimeDetail } = useShowTimeDetail(showtimeId);
   const { data: seatByShowtime } = useSeatByShowTime(showtimeId);
   const storedUser = getLocalStorage("user");
-
-  console.log(roomDetail);
-
 
   const data = {
     _id: id,
     danhSachGhe: seatByShowtime || [],
     gioChieu: showtimeDetail?.startTime
       ? new Date(showtimeDetail.startTime).toLocaleTimeString("vi-VN", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      })
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        })
       : "--:--",
     tienGhe: showtimeDetail?.price || 0,
     ngayChieuId: {
@@ -48,25 +48,78 @@ function Room() {
     suatChieuId: {
       movieId: {
         tenPhim: showtimeDetail?.movie?.title || "Phim",
-        hinhAnh: showtimeDetail?.movie?.poster || "https://homepage.momocdn.net/placeholder/movie.png",
+        hinhAnh:
+          showtimeDetail?.movie?.poster ||
+          "https://homepage.momocdn.net/placeholder/movie.png",
       },
     },
     giaVe: showtimeDetail?.price || 0,
   };
 
-  const handleAddClass = (seatId: string) => {
-    setArrayGhe((prevArrayGhe) => {
-      const newArrayGhe = [...prevArrayGhe];
-      const selectedIndex = newArrayGhe.indexOf(seatId);
-
-      if (selectedIndex !== -1) {
-        newArrayGhe.splice(selectedIndex, 1);
-      } else {
-        newArrayGhe.push(seatId);
+  useEffect(() => {
+    if (seatByShowtime) {
+      const initialLocked = seatByShowtime
+        .filter((seat: any) => seat.isLocking)
+        .map((seat: any) => seat.id);
+      setLockedSeatIds(initialLocked);
+    }
+  }, [seatByShowtime]);
+  useEffect(() => {
+    // 1. Chỉ gọi emit joinShowtime đúng 1 lần khi giao diện load xong
+    socket.emit("joinShowtime", showtimeId);
+    // 2. Lắng nghe người khác CHỌN ghế
+    socket.on("seatSelected", (data) => {
+      const { seatId, userId, status } = data;
+      // Tránh việc tự mình nhận lại sự kiện của chính mình báo lên
+      if (userId !== storedUser?.id && status === "locking") {
+        console.log(`Người khác vừa CHỌN ghế ${seatId}`);
+        // Cập nhật lại mảng danh sách ghế ĐANG BỊ KHOÁ (đổi sang màu xám)
+        setLockedSeatIds((prev) =>
+          prev.includes(seatId) ? prev : [...prev, seatId],
+        );
       }
-      return newArrayGhe;
     });
+    // 3. Lắng nghe người khác HUỶ (nhả) ghế
+    socket.on("seatUnselected", (data) => {
+      const { seatId, userId } = data;
+      if (userId !== storedUser?.id) {
+        console.log(`Người khác vừa NHẢ ghế ${seatId}`);
+        // Xoá ghế này khỏi mảng ghế ĐANG BỊ KHOÁ (trở lại màu trắng)
+        setLockedSeatIds((prev) => prev.filter((id) => id !== seatId));
+      }
+    });
+    // 4. Cleanup (Cực kỳ quan trọng để không bị lỗi gọi nhiều lần khi chuyển trang)
+    return () => {
+      socket.off("seatSelected");
+      socket.off("seatUnselected");
+    };
+  }, [showtimeId, storedUser?.id]); // Thêm dependencies cần thiết
+
+  const handleAddClass = (seatId: string) => {
+    const isAlreadySelected = arrayGhe.includes(seatId);
+
+    if (isAlreadySelected) {
+      console.log("seatId", seatId);
+      console.log("userId", storedUser?.id);
+      console.log("showtimeId", showtimeId);
+
+      socket.emit("unselectSeat", {
+        showtimeId,
+        seatId,
+        userId: storedUser?.id,
+      });
+
+      setArrayGhe((prev) => prev.filter((id) => id !== seatId));
+    } else {
+      socket.emit("selectSeat", {
+        showtimeId,
+        seatId,
+        userId: storedUser?.id,
+      });
+      setArrayGhe((prev) => [...prev, seatId]);
+    }
   };
+
   const imgageDeafaut = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
   return (
@@ -168,40 +221,42 @@ function Room() {
                       gap: "8px",
                     }}
                   >
-                    {(data.danhSachGhe || []).map((item: any, index: number) => {
-                      const seatLabel = `${item.row}${item.column}`;
-                      const isSelected = arrayGhe.includes(item.id);
-                      const isBooked = item.isBooked;
-                      const isLocking = item.isLocking;
-                      const isAvailable = item.isActive;
+                    {(data.danhSachGhe || []).map(
+                      (item: any, index: number) => {
+                        const seatLabel = `${item.row}${item.column}`;
+                        const isSelected = arrayGhe.includes(item.id);
+                        const isBooked = item.isBooked;
+                        const isLocking = lockedSeatIds.includes(item.id);
+                        const isAvailable = item.isActive;
 
-                      return (
-                        <div key={index} className="flex justify-center p-1">
-                          <button
-                            disabled={isBooked || isLocking || !isAvailable}
-                            onClick={() => handleAddClass(item.id)}
-                            className={`
-                                                            ${isSelected ? "selected" : ""}
-                                                            ${(isBooked || isLocking) ? "gheDaChon" : ""}
-                                                            ${!isAvailable ? "opacity-50 cursor-not-allowed" : "cursor-pointer status hover:scale-110"}
-                                                            relative transition-transform
-                                                        `}
-                          >
-                            <svg
-                              viewBox="0 0 24 24"
-                              width={32}
-                              height={32}
-                              className={`${item.type === "VIP" ? "gheVip" : "gheThuong"}`}
+                        return (
+                          <div key={index} className="flex justify-center p-1">
+                            <button
+                              disabled={isBooked || isLocking || !isAvailable}
+                              onClick={() => handleAddClass(item.id)}
+                              className={`
+                                ${isSelected ? "selected" : ""}
+                                ${isBooked ? "gheDaChon" : ""}
+                                ${!isAvailable ? "opacity-50 cursor-not-allowed" : "cursor-pointer status hover:scale-110"}
+                                relative transition-transform
+                              `}
                             >
-                              <path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 16H4c-.55 0-1-.45-1-1v-1c0-.55.45-1 1-1h16c.55 0 1 .45 1 1v1c0 .55-.45 1-1 1z"></path>
-                            </svg>
-                            <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white opacity-0 hover:opacity-100">
-                              {seatLabel}
-                            </span>
-                          </button>
-                        </div>
-                      );
-                    })}
+                              <svg
+                                viewBox="0 0 24 24"
+                                width={32}
+                                height={32}
+                                className={`${isLocking ? "gheVip" : "gheThuong"}`}
+                              >
+                                <path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 16H4c-.55 0-1-.45-1-1v-1c0-.55.45-1 1-1h16c.55 0 1 .45 1 1v1c0 .55-.45 1-1 1z"></path>
+                              </svg>
+                              <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white opacity-0 hover:opacity-100">
+                                {seatLabel}
+                              </span>
+                            </button>
+                          </div>
+                        );
+                      },
+                    )}
                   </div>
                   <div className="w-full border-t border-slate-200 my-4"></div>
                   <div className="flex justify-center gap-12 mt-4 mb-8 rounded-2xl w-full">
@@ -214,14 +269,6 @@ function Room() {
                       </p>
                     </div>
                     <div className="flex flex-col items-center gap-2">
-                      <svg viewBox="0 0 24 24" width={24} className="gheVip">
-                        <path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 16H4c-.55 0-1-.45-1-1v-1c0-.55.45-1 1-1h16c.55 0 1 .45 1 1v1c0 .55-.45 1-1 1z"></path>
-                      </svg>
-                      <p className="text-xs text-gray-500 font-medium whitespace-nowrap">
-                        Ghế VIP
-                      </p>
-                    </div>
-                    <div className="flex flex-col items-center gap-2">
                       <svg
                         viewBox="0 0 24 24"
                         width={24}
@@ -231,6 +278,14 @@ function Room() {
                       </svg>
                       <p className="text-xs text-gray-500 font-medium whitespace-nowrap">
                         Đang Chọn
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-center gap-2">
+                      <svg viewBox="0 0 24 24" width={24} className="gheVip">
+                        <path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 16H4c-.55 0-1-.45-1-1v-1c0-.55.45-1 1-1h16c.55 0 1 .45 1 1v1c0 .55-.45 1-1 1z"></path>
+                      </svg>
+                      <p className="text-xs text-gray-500 font-medium whitespace-nowrap">
+                        Người Khác Chọn
                       </p>
                     </div>
                     <div className="flex flex-col items-center gap-2">
@@ -249,7 +304,11 @@ function Room() {
         </div>
       </div>
       <div className="w-[30%] shadow-[-10px_0_30px_rgba(0,0,0,0.05)] z-10">
-        <Payment data={data} arrayGhe={arrayGhe} showtimeId={showtimeId || ""} />
+        <Payment
+          data={data}
+          arrayGhe={arrayGhe}
+          showtimeId={showtimeId || ""}
+        />
       </div>
     </div>
   );

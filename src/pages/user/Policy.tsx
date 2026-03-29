@@ -2,19 +2,14 @@
 const Policy = () => {
     return (
         <div className="min-h-screen  py-12 px-4 sm:px-8 lg:px-16 text-[#1e293b]">
-            {/* Background decoration */}
             <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-br from-blue-600 to-indigo-700 -z-10 rounded-b-[3rem] opacity-10" />
 
             <div className="w-full max-w-7xl mx-auto bg-white rounded-3xl shadow-xl shadow-slate-200/50 p-8 md:p-16 border border-slate-100 relative overflow-hidden">
-                {/* Glossy overlay */}
                 <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl" />
-
                 <h1 className="text-5xl font-black text-center mb-16 text-[#0f172a] tracking-tight relative">
                     Chính sách <span className="text-blue-600">&</span> Điều khoản
                 </h1>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 relative">
-                    {/* Section 1 */}
                     <section className="space-y-4">
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center font-black text-xl">01</div>
@@ -24,8 +19,6 @@ const Policy = () => {
                             Chào mừng bạn đến với <span className="font-bold text-blue-600">CINE-H7</span>. Bằng cách sử dụng trang web của chúng tôi, bạn đồng ý tuân thủ các điều khoản và điều kiện được nêu tại đây. Chúng tôi có quyền cập nhật các điều khoản này bất cứ lúc nào mà không cần thông báo trước.
                         </p>
                     </section>
-
-                    {/* Section 2 */}
                     <section className="space-y-4">
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center font-black text-xl">02</div>
@@ -35,8 +28,6 @@ const Policy = () => {
                             Chúng tôi cam kết bảo vệ thông tin cá nhân của bạn. Thông tin được thu thập chỉ nhằm mục đích nâng cao trải nghiệm người dùng và xử lý đặt vé. Chúng tôi không bao giờ chia sẻ dữ liệu của bạn cho bên thứ ba.
                         </p>
                     </section>
-
-                    {/* Section 3 */}
                     <section className="space-y-4 md:col-span-2 bg-slate-50 p-8 rounded-3xl border border-slate-100">
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-black text-xl shadow-lg shadow-blue-200">03</div>
@@ -57,8 +48,6 @@ const Policy = () => {
                             </div>
                         </div>
                     </section>
-
-                    {/* Section 4 */}
                     <section className="space-y-4 md:col-span-2">
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-12 bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center font-black text-xl">04</div>
@@ -69,8 +58,6 @@ const Policy = () => {
                         </p>
                     </section>
                 </div>
-
-
             </div>
         </div>
     );

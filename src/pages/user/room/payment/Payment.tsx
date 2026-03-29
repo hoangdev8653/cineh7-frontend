@@ -27,8 +27,6 @@ function Payment({ data, arrayGhe, showtimeId }: PaymentProps) {
         }
     }, [arrayGhe, data]);
 
-    // console.log(data);
-
 
     const handleCreateOrder = () => {
         const orderDto: OrderDto = {

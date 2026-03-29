@@ -1,12 +1,55 @@
 import { useState } from 'react';
-import { User, Mail, Calendar, CreditCard, Shield, LogOut, ChevronRight, Settings, Ticket } from 'lucide-react';
+import { User, Mail, Calendar, CreditCard, Shield, LogOut, ChevronRight, Settings, Ticket, Loader2, Inbox } from 'lucide-react';
 import { getLocalStorage } from '../../../utils/localStorage';
 import { PATH } from "../../../utils/path"
+import { useOrderMutations } from '../../../hooks/useOrder';
+
+const formatDate = (dateStr: string) => {
+    try {
+        const d = new Date(dateStr);
+        const pad = (n: number) => n.toString().padStart(2, '0');
+        return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    } catch {
+        return dateStr;
+    }
+};
+
+const formatCurrency = (amount: number | string) => {
+    const num = typeof amount === 'string' ? parseFloat(amount) : amount;
+    return num.toLocaleString('vi-VN') + 'đ';
+};
+
+const getStatusConfig = (status: string) => {
+    switch (status?.toUpperCase()) {
+        case 'PAID':
+            return { label: 'Đã thanh toán', className: 'bg-green-100 text-green-600' };
+        case 'PENDING':
+            return { label: 'Chờ thanh toán', className: 'bg-yellow-100 text-yellow-600' };
+        case 'CANCELLED':
+            return { label: 'Đã hủy', className: 'bg-red-100 text-red-600' };
+        case 'EXPIRED':
+            return { label: 'Hết hạn', className: 'bg-slate-200 text-slate-500' };
+        default:
+            return { label: status, className: 'bg-slate-200 text-slate-500' };
+    }
+};
+
+const getPaymentLabel = (method: string) => {
+    switch (method?.toUpperCase()) {
+        case 'VNPAY': return 'VNPay';
+        case 'MOMO': return 'MoMo';
+        case 'CASH': return 'Tiền mặt';
+        default: return method || '—';
+    }
+};
 
 function Profile() {
     const [activeTab, setActiveTab] = useState("Thông tin cá nhân");
     const users = getLocalStorage("user");
-    console.log(users);
+    const { getOrderByUserQuery } = useOrderMutations();
+
+    const orders = getOrderByUserQuery?.data?.data || [];
+    const isLoadingOrders = getOrderByUserQuery?.isLoading;
 
     const handleLogout = () => {
         localStorage.removeItem("user");
@@ -23,33 +66,6 @@ function Profile() {
         avatar: users?.avarta || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
         status: users?.status || "ACTIVE"
     };
-
-    const bookings = [
-        {
-            id: "#BH-92831",
-            movie: "Captain Marvel",
-            date: "23/02/2026",
-            theater: "CineH7 Trần Hưng Đạo",
-            status: "Sắp tới",
-            total: "198,000đ"
-        },
-        {
-            id: "#BH-92830",
-            movie: "Avengers: Endgame",
-            date: "20/02/2026",
-            theater: "CineH7 Hai Bà Trưng",
-            status: "Hoàn tất",
-            total: "250,000đ"
-        },
-        {
-            id: "#BH-92829",
-            movie: "Spider-Man: No Way Home",
-            date: "15/02/2026",
-            theater: "CineH7 Võ Văn Tần",
-            status: "Hoàn tất",
-            total: "180,000đ"
-        }
-    ];
 
     return (
         <div className="bg-slate-50 min-h-screen pb-20 font-sans text-slate-800">
@@ -184,41 +200,75 @@ function Profile() {
                                         <span className="w-1.5 h-8 bg-green-500 rounded-full" />
                                         <h2 className="text-3xl font-black italic tracking-tighter uppercase text-slate-900">Lịch sử đặt vé</h2>
                                     </div>
-                                    <button className="text-xs font-black uppercase tracking-widest text-slate-400 hover:text-green-600 transition-colors">Xem tất cả</button>
+                                    <span className="text-xs font-black uppercase tracking-widest text-slate-400">
+                                        {orders.length} đơn hàng
+                                    </span>
                                 </div>
 
-                                <div className="space-y-4">
-                                    {bookings.map((booking, idx) => (
-                                        <div key={idx} className="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500 group">
-                                            <div className="flex items-center gap-6">
-                                                <div className="w-14 h-14 bg-white rounded-2xl p-2 shadow-sm border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-green-500 group-hover:border-green-100 transition-all">
-                                                    <Ticket size={24} />
-                                                </div>
-                                                <div>
-                                                    <h4 className="font-black text-slate-900 uppercase tracking-tight leading-none mb-1">{booking.movie}</h4>
-                                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{booking.date} • {booking.theater}</p>
-                                                </div>
-                                            </div>
+                                {/* Loading State */}
+                                {isLoadingOrders && (
+                                    <div className="flex flex-col items-center justify-center py-20 text-slate-400">
+                                        <Loader2 size={40} className="animate-spin mb-4 text-green-500" />
+                                        <p className="text-sm font-bold uppercase tracking-widest">Đang tải dữ liệu...</p>
+                                    </div>
+                                )}
 
-                                            <div className="flex items-center justify-between md:justify-end gap-12">
-                                                <div className="text-right">
-                                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Mã vé</p>
-                                                    <p className="font-bold text-slate-900">{booking.id}</p>
-                                                </div>
-                                                <div className="text-right">
-                                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Trạng thái</p>
-                                                    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${booking.status === "Sắp tới" ? "bg-green-100 text-green-600" : "bg-slate-200 text-slate-500"
-                                                        }`}>
-                                                        {booking.status}
-                                                    </span>
-                                                </div>
-                                                <button className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-300 hover:text-slate-900 border border-slate-100 hover:border-slate-200 transition-all">
-                                                    <ChevronRight size={20} />
-                                                </button>
-                                            </div>
+                                {/* Empty State */}
+                                {!isLoadingOrders && orders.length === 0 && (
+                                    <div className="flex flex-col items-center justify-center py-20 text-slate-400">
+                                        <div className="w-20 h-20 bg-slate-100 rounded-3xl flex items-center justify-center mb-6">
+                                            <Inbox size={36} className="text-slate-300" />
                                         </div>
-                                    ))}
-                                </div>
+                                        <p className="font-bold text-slate-500 mb-1">Chưa có đơn hàng nào</p>
+                                        <p className="text-xs text-slate-400">Hãy đặt vé xem phim để bắt đầu!</p>
+                                    </div>
+                                )}
+
+                                {/* Order List */}
+                                {!isLoadingOrders && orders.length > 0 && (
+                                    <div className="space-y-4">
+                                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                        {orders.map((order: any) => {
+                                            const statusConfig = getStatusConfig(order.status);
+                                            const seatNames = order.tickets?.map((t: any) => t.seat_name).filter(Boolean).join(', ') || '—';
+                                            const ticketCount = order.tickets?.length || 0;
+
+                                            return (
+                                                <div key={order.id} className="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500 group">
+                                                    <div className="flex items-center gap-6">
+                                                        <div className="w-14 h-14 bg-white rounded-2xl p-2 shadow-sm border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-green-500 group-hover:border-green-100 transition-all">
+                                                            <Ticket size={24} />
+                                                        </div>
+                                                        <div>
+                                                            <h4 className="font-black text-slate-900 uppercase tracking-tight leading-none mb-1.5">
+                                                                {ticketCount} vé • Ghế {seatNames}
+                                                            </h4>
+                                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                                                {formatDate(order.created_at)} • {getPaymentLabel(order.payment_method)}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex items-center justify-between md:justify-end gap-8">
+                                                        <div className="text-right">
+                                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Tổng tiền</p>
+                                                            <p className="font-black text-slate-900">{formatCurrency(order.total_amount)}</p>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Trạng thái</p>
+                                                            <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${statusConfig.className}`}>
+                                                                {statusConfig.label}
+                                                            </span>
+                                                        </div>
+                                                        <button className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-300 hover:text-slate-900 border border-slate-100 hover:border-slate-200 transition-all">
+                                                            <ChevronRight size={20} />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
                             </div>
                         )}
                         {activeTab === "Bảo mật & Đổi mật khẩu" && (

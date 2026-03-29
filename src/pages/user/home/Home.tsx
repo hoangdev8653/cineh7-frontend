@@ -10,9 +10,6 @@ function Home() {
     const { data: movies } = useMovies()
     const { data: Events } = useEvents()
 
-    console.log(movies?.data?.movie);
-
-
     const responsiveSettings = [
         {
             breakpoint: 900,
