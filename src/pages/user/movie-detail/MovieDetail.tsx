@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Play,
   Calendar,
@@ -11,9 +11,9 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useMovieDetail } from "../../../hooks/useMovie";
-import type { IMovie } from "../../../types/movie.types";
 import VideoModal from "../../../components/features/videoModal/VideoModal";
 import { useShowtimeByMovieId } from "../../../hooks/useShowTime";
+import MovieReviews from "./MovieReviews";
 
 function MovieDetail() {
   const { id } = useParams();
@@ -21,16 +21,13 @@ function MovieDetail() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { data: showtime } = useShowtimeByMovieId(id || "");
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
-
+  const showtimeRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (showtime && showtime.length > 0 && !selectedDate) {
       setSelectedDate(showtime[0].date);
     }
   }, [showtime, selectedDate]);
-
-  console.log(movie);
-
 
   const currentDayGroup = showtime?.find(
     (item: any) => item.date === selectedDate,
@@ -64,7 +61,7 @@ function MovieDetail() {
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
           <p className="text-slate-400 font-bold uppercase tracking-widest text-sm animate-pulse">
-            Loading Magic...
+            Đang tải...
           </p>
         </div>
       </div>
@@ -75,13 +72,13 @@ function MovieDetail() {
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center">
           <h2 className="text-4xl font-black text-slate-900 mb-4 uppercase italic tracking-tighter">
-            Movie not found
+            Không tìm thấy phim
           </h2>
           <a
             href="/"
             className="text-red-600 font-bold uppercase tracking-widest text-sm hover:underline"
           >
-            Back to Home
+            Quay về trang chủ
           </a>
         </div>
       </div>
@@ -89,7 +86,6 @@ function MovieDetail() {
 
   return (
     <div className="bg-slate-50 min-h-screen pb-32 font-sans text-slate-800 selection:bg-red-600 selection:text-white">
-      {/* Hero Section */}
       <div className="relative h-[65vh] md:h-[85vh] w-full overflow-hidden bg-slate-900">
         <img
           src={movie.poster}
@@ -98,10 +94,8 @@ function MovieDetail() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-50 via-slate-900/60 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-transparent to-transparent hidden md:block" />
-
         <div className="absolute inset-0 flex items-end md:items-center pb-12 md:pb-0">
           <div className="container mx-auto px-4 md:px-12 lg:px-24 flex flex-col md:flex-row gap-12 items-center md:items-start">
-            {/* Poster Card */}
             <div className="relative group w-48 md:w-80 aspect-[2/3] shrink-0 hidden md:block">
               <div className="absolute -inset-4 bg-red-600/20 blur-2xl rounded-[2.5rem] group-hover:bg-red-600/30 transition-all duration-500" />
               <div className="relative h-full w-full rounded-[2rem] overflow-hidden border-4 border-white/10 shadow-2xl backdrop-blur-sm z-10 transition-transform duration-500 group-hover:-translate-y-2">
@@ -121,7 +115,6 @@ function MovieDetail() {
               </div>
             </div>
 
-            {/* Movie Content */}
             <div className="flex-grow text-center md:text-left z-10">
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-8">
                 <span className="px-5 py-2 bg-white/10 backdrop-blur-xl rounded-full text-[12px] font-black tracking-[0.2em] uppercase text-white border border-white/20">
@@ -154,7 +147,7 @@ function MovieDetail() {
                   </div>
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50 mb-1 leading-none">
-                      Rating
+                      Đánh giá
                     </p>
                     <p className="text-2xl font-black text-white leading-none">
                       {movie.rating}/10
@@ -182,7 +175,7 @@ function MovieDetail() {
                   </div>
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50 mb-1 leading-none">
-                      Released
+                      Khởi chiếu
                     </p>
                     <p className="text-2xl font-black text-white leading-none">
                       {new Date(movie.releaseDate).getFullYear()}
@@ -192,8 +185,10 @@ function MovieDetail() {
               </div>
 
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
-                <button className="px-12 py-6 bg-red-600 text-white rounded-[1.5rem] font-black italic tracking-[0.2em] uppercase hover:bg-red-700 hover:shadow-[0_20px_50px_rgba(220,38,38,0.4)] transition-all active:scale-95 flex items-center gap-4 text-lg">
-                  <Ticket size={28} className="-rotate-12" /> Buy Tickets
+                <button
+                  onClick={() => showtimeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                  className="px-12 py-6 bg-red-600 text-white rounded-[1.5rem] font-black italic tracking-[0.2em] uppercase hover:bg-red-700 hover:shadow-[0_20px_50px_rgba(220,38,38,0.4)] transition-all active:scale-95 flex items-center gap-4 text-lg cursor-pointer">
+                  <Ticket size={28} className="-rotate-12" /> Mua Vé
                 </button>
                 <button
                   onClick={() => setIsModalOpen(true)}
@@ -215,16 +210,14 @@ function MovieDetail() {
         </div>
       </div>
 
-      {/* Main Content Sections */}
       <div className="container mx-auto px-4 md:px-12 lg:px-24 mt-20 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
           <div className="lg:col-span-8 space-y-24">
-            {/* Synopsis */}
             <section className="relative">
               <div className="flex items-center gap-5 mb-10">
                 <div className="w-2.5 h-10 bg-red-600 rounded-full shadow-[0_0_15px_rgba(220,38,38,0.5)]" />
                 <h2 className="text-4xl font-black italic tracking-tighter uppercase text-slate-900">
-                  Synopsis
+                  Nội dung phim
                 </h2>
               </div>
               <div className="relative group">
@@ -237,12 +230,11 @@ function MovieDetail() {
               </div>
             </section>
 
-            {/* Showtimes */}
-            <section>
+            <section ref={showtimeRef}>
               <div className="flex items-center gap-5 mb-10">
                 <div className="w-2.5 h-10 bg-red-600 rounded-full shadow-[0_0_15px_rgba(220,38,38,0.5)]" />
                 <h2 className="text-4xl font-black italic tracking-tighter uppercase text-slate-900">
-                  Showtimes
+                  Lịch chiếu
                 </h2>
               </div>
 
@@ -300,14 +292,12 @@ function MovieDetail() {
                         </div>
                       </div>
                       <button className="shrink-0 px-6 py-3 bg-slate-50 rounded-2xl text-red-600 font-black text-xs uppercase tracking-widest flex items-center gap-3 hover:bg-red-600 hover:text-white transition-all transform hover:-translate-y-1">
-                        Map Connection <ChevronRight size={16} />
+                        Xem bản đồ <ChevronRight size={16} />
                       </button>
                     </div>
 
                     <div className="relative flex flex-wrap gap-4">
                       {group.showtimes.map((item: any, idx: number) => {
-                        console.log(item);
-
                         const time = new Date(item.startTime);
                         const hours = time.getHours();
                         const minutes = time
@@ -349,15 +339,16 @@ function MovieDetail() {
                       <Ticket size={32} className="text-slate-200 rotate-12" />
                     </div>
                     <p className="text-slate-400 font-black uppercase tracking-[0.2em] text-sm">
-                      Waiting for schedules...
+                      Chưa có lịch chiếu...
                     </p>
                   </div>
                 )}
               </div>
             </section>
+
+            <MovieReviews movieId={movie.id} movieTitle={movie.title} />
           </div>
 
-          {/* Sidebar Details */}
           <div className="lg:col-span-4 lg:sticky lg:top-24 h-fit pb-12">
             <div className="relative group p-1">
               <div className="absolute -inset-1 bg-gradient-to-b from-slate-900 to-slate-800 rounded-[3.5rem] blur-2xl opacity-20 group-hover:opacity-30 transition duration-500" />
@@ -365,13 +356,13 @@ function MovieDetail() {
                 <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-x-10 -translate-y-20 blur-3xl" />
 
                 <h3 className="text-3xl font-black italic mb-12 border-b-4 border-red-600 inline-block pb-2 tracking-tighter uppercase">
-                  Movie Intel
+                  Thông tin phim
                 </h3>
 
                 <div className="space-y-10">
                   <div className="group/intel">
                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-red-500 mb-2">
-                      Cast Ensemble
+                      Diễn viên
                     </p>
                     <div className="flex flex-wrap gap-2 pt-1">
                       {movie.metadata?.actors?.map((actor: string, i: number) => (
@@ -399,7 +390,7 @@ function MovieDetail() {
 
                   <div className="group/intel">
                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-red-500 mb-2">
-                      Premiere Date
+                      Ngày công chiếu
                     </p>
                     <p className="text-xl font-bold group-hover:text-red-400 transition-colors">
                       {new Date(movie.releaseDate).toLocaleDateString("vi-VN", {
@@ -412,7 +403,7 @@ function MovieDetail() {
 
                   <div className="group/intel">
                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-red-500 mb-2">
-                      Language
+                      Ngôn ngữ
                     </p>
                     <p className="text-xl font-bold uppercase italic group-hover:text-red-400 transition-colors">
                       {movie.metadata?.language || "Tiếng Việt"}
