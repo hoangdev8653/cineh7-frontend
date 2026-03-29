@@ -1,22 +1,21 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Mail, Lock, CheckCircle2, Github } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Mail, Lock, CheckCircle2 } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { PATH } from "../../utils/path";
 import { useAuthMutations } from "../../hooks/useAuth";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
+import { setLocalStorage } from "../../utils/localStorage";
+import { loginSchema } from "../../schema/auth";
 
-const loginSchema = z.object({
-  email: z.string().email("Email không hợp lệ"),
-  password: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
-  rememberMe: z.boolean().optional(),
-});
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 function Login() {
+  const navigate = useNavigate();
+
   const { loginMutation } = useAuthMutations();
   const {
     register,
@@ -24,23 +23,25 @@ function Login() {
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    // defaultValues: {
-    //     rememberMe: false,
-    // },
   });
 
   const onSubmit = async (data: LoginFormValues) => {
     await loginMutation.mutate(data);
   };
 
-  const handleSuccess = async (credentialResponse) => {
+  const handleSuccess = async (credentialResponse: any) => {
     try {
-      // credentialResponse.credential chính là chuỗi Token mà Backend đang mong đợi
-      const res = await axios.post("http://localhost:3000/auth/google", {
+      const res = await axios.post("http://localhost:3007/auth/google", {
         googleToken: credentialResponse.credential,
       });
-      console.log("Đăng nhập thành công, nhận JWT từ Backend:", res.data);
-      // Lưu res.data.access_token vào localStorage hoặc Context
+      const { user, access_token } = res?.data?.data;
+      setLocalStorage("user", user);
+      setLocalStorage("access_token", access_token);
+      if (user.role === "ADMIN") {
+        navigate(PATH.ADMIN_LAYOUT);
+      } else {
+        navigate(PATH.USER_LAYOUT);
+      }
     } catch (error) {
       console.error("Lỗi khi gửi token lên Backend:", error);
     }
@@ -86,9 +87,8 @@ function Login() {
                 type="email"
                 id="email"
                 placeholder="hhoang@gmail.com"
-                className={`w-full bg-[#f8fafc] border ${
-                  errors.email ? "border-red-500" : "border-[#e2e8f0]"
-                } rounded-xl py-2.5 pl-11 pr-4 text-[#1e293b] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all placeholder:text-[#94a3b8] text-sm`}
+                className={`w-full bg-[#f8fafc] border ${errors.email ? "border-red-500" : "border-[#e2e8f0]"
+                  } rounded-xl py-2.5 pl-11 pr-4 text-[#1e293b] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all placeholder:text-[#94a3b8] text-sm`}
               />
             </div>
             {errors.email && (
@@ -115,9 +115,8 @@ function Login() {
                 type="password"
                 id="password"
                 placeholder="••••••••••"
-                className={`w-full bg-[#f8fafc] border ${
-                  errors.password ? "border-red-500" : "border-[#e2e8f0]"
-                } rounded-xl py-2.5 pl-11 pr-4 text-[#1e293b] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all placeholder:text-[#94a3b8] text-sm`}
+                className={`w-full bg-[#f8fafc] border ${errors.password ? "border-red-500" : "border-[#e2e8f0]"
+                  } rounded-xl py-2.5 pl-11 pr-4 text-[#1e293b] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all placeholder:text-[#94a3b8] text-sm`}
               />
             </div>
             {errors.password && (
@@ -177,27 +176,11 @@ function Login() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <button className="flex items-center justify-center gap-2 border border-[#e2e8f0] rounded-xl py-2.5 hover:bg-[#f8fafc] transition-colors group">
-              <img
-                src="https://www.svgrepo.com/show/475656/google-color.svg"
-                alt="Google"
-                className="w-5 h-5"
-              />
-              <span className="text-sm font-semibold text-[#475569]">
-                Google
-              </span>
-            </button>
+          <div className="grid grid-cols-1 gap-4">
             <GoogleLogin
               onSuccess={handleSuccess}
               onError={() => console.log("Đăng nhập thất bại")}
             />
-            <button className="flex items-center justify-center gap-2 border border-[#e2e8f0] rounded-xl py-2.5 hover:bg-[#000] hover:text-white transition-colors group text-[#475569]">
-              <Github size={20} />
-              <span className="text-sm font-semibold group-hover:text-white">
-                Github
-              </span>
-            </button>
           </div>
         </div>
 

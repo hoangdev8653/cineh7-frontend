@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 function NotFound() {
     return (
         <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white p-4 overflow-hidden relative">
-            {/* Background Decorative Elements */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
                 <motion.div
                     animate={{

@@ -9,7 +9,7 @@ import MovieDetail from "./pages/user/movie-detail/MovieDetail";
 import Profile from "./pages/user/profile/Profile";
 import Policy from "./pages/user/Policy";
 import Theater from "./pages/user/theater/Theater";
-import EventDetail from "./pages/user/EventDetail/EventDetail";
+import EventDetail from "./pages/user/eventDetail/EventDetail";
 import Event from "./pages/user/event/Event";
 import Showtime from "./pages/user/showtime/Showtime";
 import Room from "./pages/user/room/Room";
