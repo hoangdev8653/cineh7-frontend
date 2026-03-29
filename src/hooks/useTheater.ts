@@ -27,14 +27,14 @@ export const useTheaterMutations = () => {
     const queryClient = useQueryClient();
 
     const createMutation = useMutation({
-        mutationFn: (theaterDto: TheaterDto) => createTheater(theaterDto),
+        mutationFn: (theaterDto: TheaterDto | FormData) => createTheater(theaterDto),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['theaters'] });
         },
     });
 
     const updateMutation = useMutation({
-        mutationFn: ({ id, theaterDto }: { id: string; theaterDto: TheaterDto }) =>
+        mutationFn: ({ id, theaterDto }: { id: string; theaterDto: TheaterDto | FormData }) =>
             updateTheater(id, theaterDto),
         onSuccess: (data, variables) => {
             queryClient.invalidateQueries({ queryKey: ['theaters'] });

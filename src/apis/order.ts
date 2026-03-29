@@ -15,6 +15,13 @@ export const getOrderById = async (id: string) => {
     })
 }
 
+export const getOrderByUser = async () => {
+    return await axiosInstance({
+        method: 'GET',
+        url: `/order/getOrderByUser`,
+    })
+}
+
 export const createOrder = async (orderDto: OrderDto) => {
     return await axiosInstance({
         method: 'POST',

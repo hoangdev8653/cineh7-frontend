@@ -16,19 +16,21 @@ export const getTheaterById = async (id: string) => {
     })
 }
 
-export const createTheater = async (theaterDto: TheaterDto) => {
+export const createTheater = async (theaterDto: TheaterDto | FormData) => {
     return await axiosInstance({
         method: 'POST',
         url: '/theater',
         data: theaterDto,
+        headers: theaterDto instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : undefined
     })
 }
 
-export const updateTheater = async (id: string, theaterDto: TheaterDto) => {
+export const updateTheater = async (id: string, theaterDto: TheaterDto | FormData) => {
     return await axiosInstance({
         method: 'PUT',
         url: `/theater/${id}`,
         data: theaterDto,
+        headers: theaterDto instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : undefined
     })
 }
 

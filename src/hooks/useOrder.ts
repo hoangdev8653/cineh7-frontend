@@ -1,5 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { createOrder, deleteOrder, updateOrder } from "../apis/order"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { createOrder, deleteOrder, updateOrder, getOrderByUser } from "../apis/order"
 import type { OrderDto } from "../types/order.types"
 
 export const useOrderMutations = () => {
@@ -23,17 +23,10 @@ export const useOrderMutations = () => {
             queryClient.invalidateQueries({ queryKey: ["orders"] });
         },
     })
-    return { createOrderMutation, updateOrderMutation, deleteOrderMutation }
+    const getOrderByUserQuery = useQuery({
+        queryKey: ["order-user"],
+        queryFn: () => getOrderByUser(),
+    })
+    return { createOrderMutation, updateOrderMutation, deleteOrderMutation, getOrderByUserQuery }
 }
 
-// export const useOrderQueries = () => {
-//     const getAllOrdersQuery = useQuery({
-//         queryKey: ["orders"],
-//         queryFn: () => getAllOrders(),
-//     })
-//     const getOrderByIdQuery = useQuery({
-//         queryKey: ["order"],
-//         queryFn: ({ id }: { id: string }) => getOrderById(id),
-//     })
-//     return { getAllOrdersQuery, getOrderByIdQuery }
-// }

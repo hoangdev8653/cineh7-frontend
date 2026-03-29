@@ -10,8 +10,6 @@ export const useMovies = (params?: { page?: number; limit?: number }) => {
         queryKey: ['movies', searchQuery, filterStatus],
         queryFn: async () => {
             const response = await getAllMovies(params);
-
-
             return response;
         },
     });
