@@ -1,7 +1,7 @@
 import React from 'react';
 import { Edit, Trash2, MapPin, Theater as TheaterIcon } from 'lucide-react';
-import type { ITheater } from '../../../../types/theater.types';
-import AdminPagination from '../../../../components/common/AdminPagination';
+import type { ITheater } from '../../../types/theater.types';
+import AdminPagination from '../../../components/common/AdminPagination';
 
 interface TheaterListProps {
     theaterData?: any;

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useEvents, useEventMutations } from '../../../hooks/useEvent';
 import type { IEvent } from '../../../types/event.types';
-import NewsEventHeader from './components/EventHeader';
-import NewsEventFilters from './components/EventFilters';
-import NewsEventTable from './components/EventTable';
-import NewsEventForm from './components/EventForm';
-import DeleteNewsEventModal from './components/DeleteEventModal';
+import NewsEventHeader from './EventHeader';
+import NewsEventFilters from './EventFilters';
+import NewsEventTable from './EventTable';
+import NewsEventForm from './EventForm';
+import DeleteNewsEventModal from './DeleteEventModal';
 import AdminPagination from '../../../components/common/AdminPagination';
 
 const NewsEvent: React.FC = () => {
@@ -22,7 +22,6 @@ const NewsEvent: React.FC = () => {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
-    // Reset page to 1 on search or filter changes
     useEffect(() => {
         setPage(1);
     }, [searchQuery, typeFilter]);

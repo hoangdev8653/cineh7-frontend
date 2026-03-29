@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { useMovies, useMovieMutations } from '../../../hooks/useMovie';
 import { useMovieStore } from '../../../store/useMovieStore';
 import type { IMovie } from '../../../types/movie.types';
-import MovieHeader from './components/MovieHeader';
-import MovieFilters from './components/MovieFilters';
-import MovieTable from './components/MovieTable';
-import MoviePagination from './components/MoviePagination';
-import MovieFormModal from './components/MovieFormModal';
-import DeleteMovieModal from './components/DeleteMovieModal';
+import MovieHeader from './MovieHeader';
+import MovieFilters from './MovieFilters';
+import MovieTable from './MovieTable';
+import MoviePagination from './MoviePagination';
+import MovieFormModal from './MovieFormModal';
+import DeleteMovieModal from './DeleteMovieModal';
 
 const Movie: React.FC = () => {
     const { searchQuery, filterStatus, setSearchQuery, setFilterStatus } = useMovieStore();

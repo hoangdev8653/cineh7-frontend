@@ -10,8 +10,8 @@ import {
     ChevronRight,
     Image as ImageIcon
 } from 'lucide-react';
-import ModalCustom from '../../../../components/common/Modal';
-import type { IEvent } from '../../../../types/event.types';
+import ModalCustom from '../../../components/common/Modal';
+import type { IEvent } from '../../../types/event.types';
 
 const newsEventSchema = z.object({
     title: z.string().min(1, 'Tiêu đề không được để trống'),

@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Search, Filter } from 'lucide-react';
 import { useUsers, useUserMutations } from '../../../hooks/useUser';
 import type { IUser } from '../../../types/auth.types';
-import UserTable from './components/UserTable';
-import EditRoleModal from './components/EditRoleModal';
-import DeleteUserModal from './components/DeleteUserModal';
-import UserPagination from './components/UserPagination';
+import UserTable from './UserTable';
+import EditRoleModal from './EditRoleModal';
+import DeleteUserModal from './DeleteUserModal';
+import UserPagination from './UserPagination';
 
 const User: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');

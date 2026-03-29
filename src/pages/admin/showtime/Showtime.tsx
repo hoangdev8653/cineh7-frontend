@@ -4,16 +4,14 @@ import { useMovies } from '../../../hooks/useMovie';
 import { useRooms } from '../../../hooks/useRoom';
 import { useTheaters } from '../../../hooks/useTheater';
 import type { IShowtime } from '../../../types/showtime.types';
-import type { IMovie } from '../../../types/movie.types';
 import type { IRoom } from '../../../types/room.types';
-import type { ITheater } from '../../../types/theater.types';
 import { type ShowtimeFormData } from '../../../schema/showtime';
 
-import ShowtimeHeader from './components/ShowtimeHeader';
-import ShowtimeSearch from './components/ShowtimeSearch';
-import ShowtimeList from './components/ShowtimeList';
-import ShowtimeFormModal from './components/ShowtimeFormModal';
-import ShowtimeDeleteModal from './components/ShowtimeDeleteModal';
+import ShowtimeHeader from './ShowtimeHeader';
+import ShowtimeSearch from './ShowtimeSearch';
+import ShowtimeList from './ShowtimeList';
+import ShowtimeFormModal from './ShowtimeFormModal';
+import ShowtimeDeleteModal from './ShowtimeDeleteModal';
 
 const Showtime: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -22,7 +20,6 @@ const Showtime: React.FC = () => {
     const { data: rooms } = useRooms();
     const { data: theaters } = useTheaters();
     const { createShowTime, updateShowTime, deleteShowTime } = useShowTimeMutations();
-
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingShowtime, setEditingShowtime] = useState<IShowtime | null>(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -87,9 +84,9 @@ const Showtime: React.FC = () => {
                 onClose={() => setIsModalOpen(false)}
                 editingShowtime={editingShowtime}
                 onSubmit={onSubmit}
-                movies={(movies as IMovie[]) || []}
-                rooms={(rooms as IRoom[]) || []}
-                theaters={(theaters as ITheater[]) || []}
+                movies={movies as any}
+                rooms={rooms as IRoom[]}
+                theaters={theaters as any}
                 isPending={createShowTime.isPending || updateShowTime.isPending}
             />
 

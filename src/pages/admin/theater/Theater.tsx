@@ -3,11 +3,11 @@ import { useTheaters, useTheaterMutations } from '../../../hooks/useTheater';
 import type { ITheater, TheaterDto } from '../../../types/theater.types';
 import { useTheaterSystems } from '../../../hooks/useTheaterSystem';
 
-import TheaterHeader from './components/TheaterHeader';
-import TheaterSearch from './components/TheaterSearch';
-import TheaterList from './components/TheaterList';
-import TheaterFormModal from './components/TheaterFormModal';
-import TheaterDeleteModal from './components/TheaterDeleteModal';
+import TheaterHeader from './TheaterHeader';
+import TheaterSearch from './TheaterSearch';
+import TheaterList from './TheaterList';
+import TheaterFormModal from './TheaterFormModal';
+import TheaterDeleteModal from './TheaterDeleteModal';
 
 const Theater: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -46,7 +46,7 @@ const Theater: React.FC = () => {
         setIsModalOpen(true);
     };
 
-    const handleSubmit = (dto: TheaterDto) => {
+    const handleSubmit = (dto: TheaterDto | FormData) => {
         if (editingTheater) {
             updateTheater.mutate({ id: editingTheater.id, theaterDto: dto }, {
                 onSuccess: () => setIsModalOpen(false)

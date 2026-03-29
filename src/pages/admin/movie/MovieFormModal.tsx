@@ -2,9 +2,9 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Edit, Plus } from 'lucide-react';
-import ModalCustom from '../../../../components/common/Modal';
-import { movieSchema } from '../../../../schema/movie';
-import type { IMovie } from '../../../../types/movie.types';
+import ModalCustom from '../../../components/common/Modal';
+import { movieSchema } from '../../../schema/movie';
+import type { IMovie } from '../../../types/movie.types';
 import * as z from 'zod';
 
 type MovieFormData = z.infer<typeof movieSchema>;

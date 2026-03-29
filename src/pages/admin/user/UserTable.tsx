@@ -1,6 +1,6 @@
 import React from 'react';
 import { Mail, Shield, ShieldCheck, Trash2, User as UserIcon } from 'lucide-react';
-import type { IUser } from '../../../../types/auth.types';
+import type { IUser } from '../../../types/auth.types';
 
 interface UserTableProps {
     users: IUser[] | undefined;

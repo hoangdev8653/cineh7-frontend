@@ -1,6 +1,6 @@
 import React from 'react';
 import { Trash2 } from 'lucide-react';
-import ModalCustom from '../../../../components/common/Modal';
+import ModalCustom from '../../../components/common/Modal';
 
 interface DeleteMovieModalProps {
     isOpen: boolean;

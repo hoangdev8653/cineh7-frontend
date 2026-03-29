@@ -1,7 +1,7 @@
 import React from 'react';
 import { Edit, Trash2, Calendar, Clock, Monitor, Ticket, Film, ChevronLeft, ChevronRight } from 'lucide-react';
-import type { IShowtime } from '../../../../types/showtime.types';
-import { formatDateTime } from '../../../../utils/date';
+import type { IShowtime } from '../../../types/showtime.types';
+import { formatDateTime } from '../../../utils/date';
 
 interface ShowtimeListProps {
     showtimes: IShowtime[];
@@ -49,7 +49,7 @@ const ShowtimeList: React.FC<ShowtimeListProps> = ({
                                     const movie = showtime.movie;
                                     const room = showtime.room;
                                     const start = formatDateTime(showtime.startTime);
-                                    
+
                                     const startDate = new Date(showtime.startTime);
                                     const endDate = new Date(startDate.getTime() + (movie?.duration || 0) * 60000);
                                     const end = formatDateTime(endDate.toISOString());

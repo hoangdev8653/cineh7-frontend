@@ -1,7 +1,7 @@
 import React from 'react';
 import { Shield, ShieldCheck, User as UserIcon, CheckCircle2 } from 'lucide-react';
-import type { IUser } from '../../../../types/auth.types';
-import ModalCustom from '../../../../components/common/Modal';
+import type { IUser } from '../../../types/auth.types';
+import ModalCustom from '../../../components/common/Modal';
 
 interface EditRoleModalProps {
     isOpen: boolean;
@@ -62,7 +62,7 @@ const EditRoleModal: React.FC<EditRoleModalProps> = ({ isOpen, onClose, editingU
                         </div>
                         {editingUser?.role === 'EMPLOYEE' && <CheckCircle2 size={24} className="text-indigo-600" />}
                     </button>
-                    
+
                     <button
                         onClick={() => onRoleChange('USER')}
                         className={`flex items-center justify-between p-5 rounded-[1.5rem] border-2 transition-all ${editingUser?.role === 'USER'

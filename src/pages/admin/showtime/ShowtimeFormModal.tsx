@@ -2,12 +2,12 @@ import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Edit, Plus, AlertCircle, ChevronRight, Ticket } from 'lucide-react';
-import ModalCustom from '../../../../components/common/Modal';
-import { showtimeSchema, type ShowtimeFormData } from '../../../../schema/showtime';
-import type { IShowtime } from '../../../../types/showtime.types';
-import type { IMovie } from '../../../../types/movie.types';
-import type { IRoom } from '../../../../types/room.types';
-import type { ITheater } from '../../../../types/theater.types';
+import ModalCustom from '../../../components/common/Modal';
+import { showtimeSchema, type ShowtimeFormData } from '../../../schema/showtime';
+import type { IShowtime } from '../../../types/showtime.types';
+import type { IMovie } from '../../../types/movie.types';
+import type { IRoom } from '../../../types/room.types';
+import type { ITheater } from '../../../types/theater.types';
 
 interface ShowtimeFormModalProps {
     isOpen: boolean;
@@ -33,7 +33,6 @@ const ShowtimeFormModal: React.FC<ShowtimeFormModalProps> = ({
     const { register, handleSubmit, reset, formState: { errors } } = useForm<ShowtimeFormData>({
         resolver: zodResolver(showtimeSchema),
     });
-
     const [selectedTheaterId, setSelectedTheaterId] = React.useState<string>('');
 
     useEffect(() => {
@@ -96,7 +95,7 @@ const ShowtimeFormModal: React.FC<ShowtimeFormModalProps> = ({
                                     className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-indigo-600/20 outline-none transition-all appearance-none cursor-pointer font-bold text-slate-900"
                                 >
                                     <option value="">Chọn một bộ phim</option>
-                                    {movies?.map((m: IMovie) => (
+                                    {movies?.data?.movie?.map((m: any) => (
                                         <option key={m.id} value={m.id}>{m.title}</option>
                                     ))}
                                 </select>
@@ -119,7 +118,7 @@ const ShowtimeFormModal: React.FC<ShowtimeFormModalProps> = ({
                                     className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-indigo-600/20 outline-none transition-all appearance-none cursor-pointer font-bold text-slate-900"
                                 >
                                     <option value="">Chọn một rạp chiếu</option>
-                                    {theaters?.theater?.map((t: ITheater) => (
+                                    {theaters?.data?.theater?.map((t: any) => (
                                         <option key={t.id} value={t.id}>{t.name}</option>
                                     ))}
                                 </select>
@@ -138,7 +137,7 @@ const ShowtimeFormModal: React.FC<ShowtimeFormModalProps> = ({
                                     className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-indigo-600/20 outline-none transition-all appearance-none cursor-pointer font-bold text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <option value="">{selectedTheaterId ? "Chọn một phòng" : "Vui lòng chọn rạp trước"}</option>
-                                    {filteredRooms?.map((r: IRoom) => (
+                                    {filteredRooms?.map((r: any) => (
                                         <option key={r.id} value={r.id}>{r.name} - {r.type}</option>
                                     ))}
                                 </select>
@@ -159,15 +158,7 @@ const ShowtimeFormModal: React.FC<ShowtimeFormModalProps> = ({
                             {errors.startTime && <p className="text-[10px] text-rose-500 mt-1 font-black uppercase tracking-wider">{errors.startTime.message}</p>}
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Thời Gian Kết Thúc</label>
-                            <input
-                                type="datetime-local"
-                                {...register('endTime')}
-                                className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-indigo-600/20 outline-none transition-all font-bold text-slate-900"
-                            />
-                            {errors.endTime && <p className="text-[10px] text-rose-500 mt-1 font-black uppercase tracking-wider">{errors.endTime.message}</p>}
-                        </div>
+
                     </div>
 
                     <div className="space-y-2">
@@ -188,14 +179,14 @@ const ShowtimeFormModal: React.FC<ShowtimeFormModalProps> = ({
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 py-4 bg-slate-50 text-slate-400 hover:text-slate-900 font-black text-sm uppercase tracking-widest transition-all rounded-2xl"
+                            className="flex-1 cursor-pointer py-4 bg-slate-50 text-slate-400 hover:text-slate-900 font-black text-sm uppercase tracking-widest transition-all rounded-2xl"
                         >
                             Hủy Bỏ
                         </button>
                         <button
                             type="submit"
                             disabled={isPending}
-                            className="flex-[2] bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-black uppercase tracking-widest transition-all shadow-xl shadow-indigo-600/20 disabled:opacity-50 text-sm flex items-center justify-center gap-3 active:scale-[0.98]"
+                            className="flex-1 cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-black uppercase tracking-widest transition-all shadow-xl shadow-indigo-600/20 disabled:opacity-50 text-sm flex items-center justify-center gap-3 active:scale-[0.98]"
                         >
                             {isPending && (
                                 <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
