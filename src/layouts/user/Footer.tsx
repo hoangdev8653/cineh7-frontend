@@ -10,7 +10,6 @@ function Footer() {
         <div className="relative">
             <footer className="bg-[#0b0c10] text-[#9ca3af] pt-8 pb-8 border-t border-white/5">
                 <div className="container mx-auto px-4 lg:px-20 grid grid-cols-1 md:grid-cols-3 gap-16">
-                    {/* Column 1: VỀ CINE-H7 */}
                     <div className="space-y-8">
                         <div>
                             <h4 className="text-white font-bold text-xl uppercase mb-3">Về CINE-H7</h4>
@@ -24,7 +23,6 @@ function Footer() {
 
                     </div>
 
-                    {/* Column 2: QUY ĐỊNH & ĐIỀU KHOẢN */}
                     <div className="space-y-8">
                         <div>
                             <h4 className="text-white font-bold text-xl uppercase mb-3 text-nowrap">Quy định & điều khoản</h4>
@@ -39,7 +37,6 @@ function Footer() {
                         </ul>
                     </div>
 
-                    {/* Column 3: CHĂM SÓC KHÁCH HÀNG */}
                     <div className="space-y-8">
                         <div>
                             <h4 className="text-white font-bold text-xl uppercase mb-3">Chăm sóc khách hàng</h4>
@@ -72,7 +69,6 @@ function Footer() {
                 </div>
             </footer>
 
-            {/* Floating Actions */}
             <div className="fixed right-6 bottom-24 flex flex-col gap-4 z-[100]">
                 <a href="tel:19001234" className="w-14 h-14 bg-[#25d366] text-white rounded-full flex items-center justify-center shadow-lg hover:animate-pulse transition-all">
                     <Phone size={28} />
@@ -92,7 +88,7 @@ function Footer() {
             </div>
 
             <div className="bg-[#151720] py-6 border-t border-white/5 text-center text-xs font-semibold tracking-wide text-gray-500">
-                © 2024 CINE-H7. ALL RIGHTS RESERVED.
+                © 2025 CINE-H7. ALL RIGHTS RESERVED.
             </div>
         </div>
     );

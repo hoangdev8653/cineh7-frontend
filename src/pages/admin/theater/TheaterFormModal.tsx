@@ -3,23 +3,11 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
     Edit, Plus, AlertCircle, MapPin, Building2,
-    Globe, Image, ChevronDown, Sparkles, Upload, X
+    Image, ChevronDown, Sparkles, Upload, X
 } from 'lucide-react';
 import ModalCustom from '../../../components/common/Modal';
-import type { ITheater, TheaterDto } from '../../../types/theater.types';
 import { theaterSchema } from '../../../schema/theater';
-import * as z from 'zod';
-
-type TheaterFormData = z.infer<typeof theaterSchema>;
-
-interface TheaterFormModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    editingTheater: ITheater | null;
-    onSubmit: (data: TheaterDto | FormData) => void;
-    systems: any[];
-    isPending: boolean;
-}
+import type { TheaterFormData, TheaterFormModalProps } from '../../../types/theater.types';
 
 const TheaterFormModal: React.FC<TheaterFormModalProps> = ({
     isOpen,
@@ -36,7 +24,7 @@ const TheaterFormModal: React.FC<TheaterFormModalProps> = ({
     const [logoPreview, setLogoPreview] = useState<string | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const watchedSystemId = watch('system_id');
+    const watchedSystemId = watch('systemId');
 
     const selectedSystem = systems.find((s: any) => s.id === watchedSystemId);
 
@@ -48,8 +36,7 @@ const TheaterFormModal: React.FC<TheaterFormModalProps> = ({
                 reset({
                     name: editingTheater.name,
                     address: editingTheater.address,
-                    location: editingTheater.location,
-                    system_id: editingTheater.system_id,
+                    systemId: editingTheater.system_id,
                     logo: editingTheater.logo || '',
                 });
             } else {
@@ -57,8 +44,7 @@ const TheaterFormModal: React.FC<TheaterFormModalProps> = ({
                 reset({
                     name: '',
                     address: '',
-                    location: '',
-                    system_id: '',
+                    systemId: '',
                     logo: '',
                 });
             }
@@ -89,8 +75,7 @@ const TheaterFormModal: React.FC<TheaterFormModalProps> = ({
         const formData = new FormData();
         formData.append('name', data.name);
         formData.append('address', data.address);
-        formData.append('location', data.location);
-        formData.append('system_id', data.system_id);
+        formData.append('systemId', data.systemId);
 
         if (selectedFile) {
             formData.append('logo', selectedFile);
@@ -108,7 +93,6 @@ const TheaterFormModal: React.FC<TheaterFormModalProps> = ({
             onClose={onClose}
             className={`w-full ${isEditing ? 'max-w-3xl' : 'max-w-lg'} !bg-white !text-slate-900 border-none rounded-[2rem] p-0 overflow-hidden shadow-2xl`}
         >
-            {/* Header */}
             <div className="relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-700" />
                 <div className="absolute inset-0 opacity-10">
@@ -135,9 +119,7 @@ const TheaterFormModal: React.FC<TheaterFormModalProps> = ({
                 </div>
             </div>
 
-            {/* Body */}
             <div className={`p-8 ${isEditing ? 'flex gap-8' : ''}`}>
-                {/* Logo Preview Panel - Only in edit mode */}
                 {isEditing && (
                     <div className="w-56 flex-shrink-0 flex flex-col items-center gap-4">
                         <div className="w-full aspect-square rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden shadow-inner">
@@ -157,7 +139,6 @@ const TheaterFormModal: React.FC<TheaterFormModalProps> = ({
                             )}
                         </div>
 
-                        {/* System badge */}
                         {selectedSystem && (
                             <div className="w-full bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-3 flex items-center gap-3 border border-indigo-100">
                                 <div className="w-8 h-8 rounded-lg bg-white shadow-sm overflow-hidden flex-shrink-0 border border-slate-100">
@@ -174,7 +155,6 @@ const TheaterFormModal: React.FC<TheaterFormModalProps> = ({
                             </div>
                         )}
 
-                        {/* Theater info summary */}
                         {editingTheater && (
                             <div className="w-full bg-slate-50 rounded-xl p-3 space-y-2">
                                 <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Thông tin hiện tại</p>
@@ -191,9 +171,7 @@ const TheaterFormModal: React.FC<TheaterFormModalProps> = ({
                     </div>
                 )}
 
-                {/* Form */}
                 <form onSubmit={handleSubmit(handleFormSubmit)} className="flex-1 space-y-5">
-                    {/* Tên rạp */}
                     <div className="space-y-1.5">
                         <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-1.5">
                             <Building2 size={12} />
@@ -213,7 +191,6 @@ const TheaterFormModal: React.FC<TheaterFormModalProps> = ({
                         )}
                     </div>
 
-                    {/* Địa chỉ */}
                     <div className="space-y-1.5">
                         <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-1.5">
                             <MapPin size={12} />
@@ -232,24 +209,8 @@ const TheaterFormModal: React.FC<TheaterFormModalProps> = ({
                         )}
                     </div>
 
-                    {/* Thành phố + Hệ thống - side by side */}
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1.5">
-                            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-1.5">
-                                <Globe size={12} />
-                                Thành Phố / Tỉnh
-                            </label>
-                            <input
-                                {...register('location')}
-                                className={`w-full bg-slate-50 border-2 ${errors.location ? 'border-rose-200 bg-rose-50/30' : 'border-transparent focus:border-indigo-200'} rounded-xl px-4 py-3 focus:ring-0 outline-none transition-all placeholder:text-slate-300 font-semibold text-sm`}
-                                placeholder="VD: Hồ Chí Minh"
-                            />
-                            {errors.location && (
-                                <p className="text-[10px] text-rose-500 flex items-center gap-1 ml-1 font-bold">
-                                    <AlertCircle size={12} /> {errors.location.message}
-                                </p>
-                            )}
-                        </div>
+
 
                         <div className="space-y-1.5">
                             <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-1.5">
@@ -258,8 +219,8 @@ const TheaterFormModal: React.FC<TheaterFormModalProps> = ({
                             </label>
                             <div className="relative">
                                 <select
-                                    {...register('system_id')}
-                                    className={`w-full bg-slate-50 border-2 ${errors.system_id ? 'border-rose-200 bg-rose-50/30' : 'border-transparent focus:border-indigo-200'} rounded-xl px-4 py-3 focus:ring-0 outline-none transition-all font-semibold text-sm appearance-none cursor-pointer pr-10`}
+                                    {...register('systemId')}
+                                    className={`w-full bg-slate-50 border-2 ${errors.systemId ? 'border-rose-200 bg-rose-50/30' : 'border-transparent focus:border-indigo-200'} rounded-xl px-4 py-3 focus:ring-0 outline-none transition-all font-semibold text-sm appearance-none cursor-pointer pr-10`}
                                 >
                                     <option value="">Chọn hệ thống</option>
                                     {systems.map((system: any) => (
@@ -268,86 +229,80 @@ const TheaterFormModal: React.FC<TheaterFormModalProps> = ({
                                 </select>
                                 <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                             </div>
-                            {errors.system_id && (
+                            {errors.systemId && (
                                 <p className="text-[10px] text-rose-500 flex items-center gap-1 ml-1 font-bold">
-                                    <AlertCircle size={12} /> {errors.system_id.message}
+                                    <AlertCircle size={12} /> {errors.systemId.message}
+                                </p>
+                            )}
+                        </div>
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-1.5">
+                                <Image size={12} />
+                                Logo Rạp
+                                <span className="text-slate-300 normal-case tracking-normal font-medium">(tùy chọn)</span>
+                            </label>
+
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                accept="image/*"
+                                onChange={handleFileChange}
+                                className="hidden"
+                            />
+
+                            <div
+                                onClick={() => fileInputRef.current?.click()}
+                                className="w-full bg-slate-50 border-2 border-dashed border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/30 rounded-xl px-4 py-4 cursor-pointer transition-all group"
+                            >
+                                {selectedFile ? (
+                                    <div className="flex items-center gap-3">
+                                        {logoPreview && (
+                                            <img
+                                                src={logoPreview}
+                                                alt="Preview"
+                                                className="w-10 h-10 rounded-lg object-cover border border-slate-200 flex-shrink-0"
+                                            />
+                                        )}
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-semibold text-slate-700 truncate">{selectedFile.name}</p>
+                                            <p className="text-[10px] text-slate-400 font-medium">
+                                                {(selectedFile.size / 1024).toFixed(1)} KB
+                                            </p>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleRemoveFile();
+                                            }}
+                                            className="p-1.5 hover:bg-rose-100 text-slate-400 hover:text-rose-500 rounded-lg transition-all flex-shrink-0"
+                                        >
+                                            <X size={14} />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 bg-indigo-100 group-hover:bg-indigo-200 rounded-lg flex items-center justify-center transition-colors flex-shrink-0">
+                                            <Upload size={18} className="text-indigo-500" />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-semibold text-slate-500 group-hover:text-indigo-600 transition-colors">
+                                                Nhấn để chọn ảnh logo
+                                            </p>
+                                            <p className="text-[10px] text-slate-400 font-medium">PNG, JPG, WEBP (tối đa 5MB)</p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {isEditing && !selectedFile && editingTheater?.logo && (
+                                <p className="text-[10px] text-slate-400 ml-1 font-medium flex items-center gap-1">
+                                    <Image size={10} />
+                                    Đang sử dụng logo hiện tại. Chọn ảnh mới để thay thế.
                                 </p>
                             )}
                         </div>
                     </div>
-
-                    {/* Logo File Upload */}
-                    <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1 flex items-center gap-1.5">
-                            <Image size={12} />
-                            Logo Rạp
-                            <span className="text-slate-300 normal-case tracking-normal font-medium">(tùy chọn)</span>
-                        </label>
-
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            accept="image/*"
-                            onChange={handleFileChange}
-                            className="hidden"
-                        />
-
-                        {/* Drop zone / file picker area */}
-                        <div
-                            onClick={() => fileInputRef.current?.click()}
-                            className="w-full bg-slate-50 border-2 border-dashed border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/30 rounded-xl px-4 py-4 cursor-pointer transition-all group"
-                        >
-                            {selectedFile ? (
-                                <div className="flex items-center gap-3">
-                                    {logoPreview && (
-                                        <img
-                                            src={logoPreview}
-                                            alt="Preview"
-                                            className="w-10 h-10 rounded-lg object-cover border border-slate-200 flex-shrink-0"
-                                        />
-                                    )}
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-semibold text-slate-700 truncate">{selectedFile.name}</p>
-                                        <p className="text-[10px] text-slate-400 font-medium">
-                                            {(selectedFile.size / 1024).toFixed(1)} KB
-                                        </p>
-                                    </div>
-                                    <button
-                                        type="button"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleRemoveFile();
-                                        }}
-                                        className="p-1.5 hover:bg-rose-100 text-slate-400 hover:text-rose-500 rounded-lg transition-all flex-shrink-0"
-                                    >
-                                        <X size={14} />
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-indigo-100 group-hover:bg-indigo-200 rounded-lg flex items-center justify-center transition-colors flex-shrink-0">
-                                        <Upload size={18} className="text-indigo-500" />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-semibold text-slate-500 group-hover:text-indigo-600 transition-colors">
-                                            Nhấn để chọn ảnh logo
-                                        </p>
-                                        <p className="text-[10px] text-slate-400 font-medium">PNG, JPG, WEBP (tối đa 5MB)</p>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Current logo hint for edit mode */}
-                        {isEditing && !selectedFile && editingTheater?.logo && (
-                            <p className="text-[10px] text-slate-400 ml-1 font-medium flex items-center gap-1">
-                                <Image size={10} />
-                                Đang sử dụng logo hiện tại. Chọn ảnh mới để thay thế.
-                            </p>
-                        )}
-                    </div>
-
-                    {/* Buttons */}
                     <div className="flex items-center gap-3 pt-4">
                         <button
                             type="button"

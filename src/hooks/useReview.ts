@@ -5,21 +5,23 @@ export const useReviewQuery = () => {
     const queryClient = useQueryClient();
     const createReviewMutation = useMutation({
         mutationFn: (reviewDto: any) => createReview(reviewDto),
-        onSuccess: (data) => {
-            console.log(data);
-            queryClient.invalidateQueries({ queryKey: ["reviews"] });
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["review-movie"] });
+            queryClient.invalidateQueries({ queryKey: ["movie"] });
         },
     })
     const updateReviewMutation = useMutation({
         mutationFn: ({ id, reviewDto }: { id: string, reviewDto: any }) => updateReview(id, reviewDto),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["reviews"] });
+            queryClient.invalidateQueries({ queryKey: ["review-movie"] });
+            queryClient.invalidateQueries({ queryKey: ["movie"] });
         },
     })
     const deleteReviewMutation = useMutation({
         mutationFn: (id: string) => deleteReview(id),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["reviews"] });
+            queryClient.invalidateQueries({ queryKey: ["review-movie"] });
+            queryClient.invalidateQueries({ queryKey: ["movie"] });
         },
     })
     const getReviewByMovieQuery = (id: string) => useQuery({

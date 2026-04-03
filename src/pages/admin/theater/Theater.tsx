@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { useTheaters, useTheaterMutations } from '../../../hooks/useTheater';
 import type { ITheater, TheaterDto } from '../../../types/theater.types';
 import { useTheaterSystems } from '../../../hooks/useTheaterSystem';
-
 import TheaterHeader from './TheaterHeader';
 import TheaterSearch from './TheaterSearch';
 import TheaterList from './TheaterList';
 import TheaterFormModal from './TheaterFormModal';
 import TheaterDeleteModal from './TheaterDeleteModal';
+import { toast } from "react-toastify";
 
 const Theater: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -16,10 +16,6 @@ const Theater: React.FC = () => {
     const { data: theatersData, isLoading } = useTheaters({ page, limit });
     const { data: systemsData } = useTheaterSystems();
     const { createTheater, updateTheater, deleteTheater } = useTheaterMutations();
-
-    console.log(theatersData);
-
-
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingTheater, setEditingTheater] = useState<ITheater | null>(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -49,11 +45,17 @@ const Theater: React.FC = () => {
     const handleSubmit = (dto: TheaterDto | FormData) => {
         if (editingTheater) {
             updateTheater.mutate({ id: editingTheater.id, theaterDto: dto }, {
-                onSuccess: () => setIsModalOpen(false)
+                onSuccess: () => {
+                    setIsModalOpen(false)
+                    toast.success("Cập nhật rạp chiếu thành công")
+                }
             });
         } else {
             createTheater.mutate(dto, {
-                onSuccess: () => setIsModalOpen(false)
+                onSuccess: () => {
+                    setIsModalOpen(false)
+                    toast.success("Thêm rạp chiếu thành công")
+                }
             });
         }
     };
@@ -61,7 +63,10 @@ const Theater: React.FC = () => {
     const handleDelete = () => {
         if (theaterToDelete) {
             deleteTheater.mutate(theaterToDelete, {
-                onSuccess: () => setIsDeleteModalOpen(false)
+                onSuccess: () => {
+                    setIsDeleteModalOpen(false)
+                    toast.success("Xóa rạp chiếu thành công")
+                }
             });
         }
     };

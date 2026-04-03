@@ -1,9 +1,6 @@
 import React from 'react';
 import { Plus } from 'lucide-react';
-
-interface TheaterHeaderProps {
-    onAdd: () => void;
-}
+import type { TheaterHeaderProps } from '../../../types/theater.types';
 
 const TheaterHeader: React.FC<TheaterHeaderProps> = ({ onAdd }) => {
     return (

@@ -2,6 +2,8 @@ export const PATH = {
   // PATH AUTH
   LOGIN: "/login",
   REGISTER: "/register",
+  FORGOT_PASSWORD: "/forgot-password",
+  RESET_PASSWORD: "/reset-password/:token",
 
   // PATH USER
   USER_LAYOUT: "/",
@@ -15,6 +17,7 @@ export const PATH = {
   ROOM: "/room/:id",
   SHOWTIME_DETAIL: "/lich-chieu/:id",
   PAYMENT: "/payment",
+  PAYMENT_SUCCESS: "/payment-success",
 
   // PATH ADMIN
   ADMIN_LAYOUT: "/dashboard",

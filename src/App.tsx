@@ -2,6 +2,8 @@ import { Route, Routes } from "react-router-dom";
 import { PATH } from "../src/utils/path";
 import Register from "./pages/auth/Register";
 import Login from "./pages/auth/Login";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
 
 import UserLayout from "./layouts/user/UserLayout";
 import Home from "./pages/user/home/Home";
@@ -14,6 +16,7 @@ import Event from "./pages/user/event/Event";
 import Showtime from "./pages/user/showtime/Showtime";
 import Room from "./pages/user/room/Room";
 import Payment from "./pages/user/payment/Payment";
+import PaymentResult from "./pages/user/payment/PaymentResult";
 
 import AdminLayout from "./layouts/admin/Layout";
 import Movie from "./pages/admin/movie/Movie";
@@ -34,6 +37,8 @@ function App() {
         <Route path="*" element={<NotFound />} />
         <Route path={PATH.LOGIN} element={<Login />} />
         <Route path={PATH.REGISTER} element={<Register />} />
+        <Route path={PATH.FORGOT_PASSWORD} element={<ForgotPassword />} />
+        <Route path={PATH.RESET_PASSWORD} element={<ResetPassword />} />
         <Route path={PATH.SHOWTIME_DETAIL} element={<Room />} />
 
         <Route path={PATH.USER_LAYOUT} element={<UserLayout />}>
@@ -53,6 +58,7 @@ function App() {
           <Route path={PATH.EVENT} element={<Event />} />
           <Route path={PATH.SHOWTIME} element={<Showtime />} />
           <Route path={PATH.PAYMENT} element={<Payment />} />
+          <Route path={PATH.PAYMENT_SUCCESS} element={<PaymentResult />} />
         </Route>
 
         <Route

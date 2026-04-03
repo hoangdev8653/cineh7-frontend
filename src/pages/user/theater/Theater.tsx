@@ -35,7 +35,6 @@ function Theater() {
             </div>
 
             <div className="container mx-auto px-4 -mt-12 relative z-10">
-                {/* System Selector */}
                 <div className="bg-white rounded-2xl shadow-xl p-6 mb-12 border border-slate-100">
                     <div className="flex flex-wrap justify-center gap-6 md:gap-12">
                         {theaterSystems?.data?.map((item: any, index: number) => (
@@ -62,7 +61,6 @@ function Theater() {
                     </div>
                 </div>
 
-                {/* Theater Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-slate-800">
                     {filteredTheaters?.length > 0 ? (
                         filteredTheaters?.map((theater: any, index: number) => (

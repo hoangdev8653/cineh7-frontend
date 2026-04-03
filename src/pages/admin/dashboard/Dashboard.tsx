@@ -19,10 +19,6 @@ const Dashboard: React.FC = () => {
     const { data: topMovie } = useGetTopMovie();
     const { data: orders } = useGetOrders('day');
 
-    // console.log(revenue);
-    console.log(orders);
-
-
     const stats = [
         {
             label: 'Tổng Doanh Thu',
@@ -63,13 +59,10 @@ const Dashboard: React.FC = () => {
 
     return (
         <div className="space-y-10 pb-10">
-            {/* Header */}
             <div>
                 <h1 className="text-3xl font-black text-slate-900 tracking-tight">Tổng Quan Hệ Thống</h1>
                 <p className="text-slate-400 font-medium mt-1">Chào mừng trở lại! Đây là tình hình kinh doanh của bạn hôm nay.</p>
             </div>
-
-            {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {stats.map((stat, idx) => (
                     <motion.div
@@ -98,10 +91,7 @@ const Dashboard: React.FC = () => {
                     </motion.div>
                 ))}
             </div>
-
-            {/* Charts Row */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Revenue Overview - Simulated Wave Chart */}
                 <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
                     <div className="flex items-center justify-between mb-8 relative z-10">
                         <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Biểu Đồ Doanh Thu</h3>
@@ -109,7 +99,6 @@ const Dashboard: React.FC = () => {
                     </div>
 
                     <div className="h-64 w-full relative z-10">
-                        {/* Simple SVG Wave Animation */}
                         <svg viewBox="0 0 400 150" className="w-full h-full">
                             <defs>
                                 <linearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
@@ -134,7 +123,6 @@ const Dashboard: React.FC = () => {
                                 strokeWidth="3"
                                 strokeLinecap="round"
                             />
-                            {/* Dots */}
                             {[80, 130, 280, 400].map((cx, i) => (
                                 <motion.circle
                                     key={i}
@@ -150,8 +138,6 @@ const Dashboard: React.FC = () => {
                                 />
                             ))}
                         </svg>
-
-                        {/* X-Axis labels */}
                         <div className="flex justify-between mt-4 px-2">
                             {['Tháng 1', 'Tháng 3', 'Tháng 5', 'Tháng 7', 'Tháng 9', 'Tháng 11'].map(m => (
                                 <span key={m} className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{m}</span>
@@ -159,8 +145,6 @@ const Dashboard: React.FC = () => {
                         </div>
                     </div>
                 </div>
-
-                {/* Revenue Statistics - Bar Chart */}
                 <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm group">
                     <div className="flex items-center justify-between mb-8">
                         <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Thống Kê Doanh Thu</h3>
@@ -217,12 +201,8 @@ const Dashboard: React.FC = () => {
                         ))}
                     </div>
                 </div>
-
             </div>
-
-            {/* Bottom Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Order Status Overview */}
                 <div className="lg:col-span-2 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
                     <div className="p-8 border-b border-slate-50 flex items-center justify-between">
                         <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Trạng Thái Đơn Hàng</h3>
@@ -282,9 +262,6 @@ const Dashboard: React.FC = () => {
                         </div>
                     </div>
                 </div>
-
-
-                {/* Top Movies */}
                 <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8">
                     <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight mb-8">Phim Bán Chạy Nhất</h3>
                     <div className="space-y-8">
@@ -331,7 +308,6 @@ const Dashboard: React.FC = () => {
                         ))}
                     </div>
                 </div>
-
             </div>
         </div>
     );

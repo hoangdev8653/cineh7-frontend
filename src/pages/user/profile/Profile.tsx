@@ -1,8 +1,12 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { User, Mail, Calendar, CreditCard, Shield, LogOut, ChevronRight, Settings, Ticket, Loader2, Inbox } from 'lucide-react';
-import { getLocalStorage } from '../../../utils/localStorage';
+import { getLocalStorage, setLocalStorage } from '../../../utils/localStorage';
 import { PATH } from "../../../utils/path"
 import { useOrderMutations } from '../../../hooks/useOrder';
+import { formatCurrency } from '../../../utils/date';
+import { useUserMutations } from '../../../hooks/useUser';
+import { useAuthStore } from '../../../store/useAuthStore';
+import { toast } from 'react-toastify';
 
 const formatDate = (dateStr: string) => {
     try {
@@ -12,11 +16,6 @@ const formatDate = (dateStr: string) => {
     } catch {
         return dateStr;
     }
-};
-
-const formatCurrency = (amount: number | string) => {
-    const num = typeof amount === 'string' ? parseFloat(amount) : amount;
-    return num.toLocaleString('vi-VN') + 'đ';
 };
 
 const getStatusConfig = (status: string) => {
@@ -45,8 +44,23 @@ const getPaymentLabel = (method: string) => {
 
 function Profile() {
     const [activeTab, setActiveTab] = useState("Thông tin cá nhân");
-    const users = getLocalStorage("user");
+    const { user: authUser, setUser } = useAuthStore();
+    const storageUser = getLocalStorage("user");
+    const currentUser = authUser || storageUser;
+
     const { getOrderByUserQuery } = useOrderMutations();
+    const { updateUser } = useUserMutations();
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [name, setName] = useState(currentUser?.name || currentUser?.full_name || "");
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (currentUser) {
+            setName(currentUser.name || currentUser.full_name || "");
+        }
+    }, [currentUser]);
 
     const orders = getOrderByUserQuery?.data?.data || [];
     const isLoadingOrders = getOrderByUserQuery?.isLoading;
@@ -57,52 +71,104 @@ function Profile() {
         window.location.href = PATH.LOGIN;
     };
 
-    const user = {
-        name: users?.name || "Khách",
-        email: users?.email || "Chưa cập nhật",
-        phone: users?.phone || "Chưa cập nhật",
-        role: users?.role || "USER",
-        points: users?.points || 0,
-        avatar: users?.avarta || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        status: users?.status || "ACTIVE"
+    const handleAvatarClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const onAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setSelectedFile(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setAvatarPreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleUpdateProfile = async () => {
+        if (!currentUser?.id) {
+            toast.error("Không tìm thấy thông tin người dùng");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("name", name);
+        if (selectedFile) {
+            formData.append("avatar", selectedFile);
+        }
+
+        updateUser.mutate(
+            formData,
+            {
+                onSuccess: (response: any) => {
+                    const updatedUser = response.data;
+                    const newUser = updatedUser.user || updatedUser;
+
+                    setUser(newUser);
+                    setLocalStorage("user", newUser);
+
+                    toast.success("Cập nhật thông tin thành công!");
+                    setSelectedFile(null);
+                },
+                onError: (error: any) => {
+                    toast.error(error.message || "Đã có lỗi xảy ra khi cập nhật");
+                }
+            }
+        );
+    };
+
+    const userDisplay = {
+        name: name || "Khách",
+        email: currentUser?.email || "Chưa cập nhật",
+        phone: currentUser?.phone || "Chưa cập nhật",
+        role: currentUser?.role || "USER",
+        points: currentUser?.points || 0,
+        avatar: avatarPreview || currentUser?.avarta || currentUser?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        status: currentUser?.status || "ACTIVE"
     };
 
     return (
         <div className="bg-slate-50 min-h-screen pb-20 font-sans text-slate-800">
-            {/* Profile Header Background */}
+            <input
+                type="file"
+                ref={fileInputRef}
+                onChange={onAvatarChange}
+                className="hidden"
+                accept="image/*"
+            />
             <div className="h-48 bg-slate-900 w-full relative">
                 <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-green-500 via-transparent to-transparent" />
             </div>
-
             <div className="container mx-auto px-4 md:px-32 -mt-20 relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-
-                    {/* Left Column: Sidebar Info */}
                     <div className="lg:col-span-4 lg:sticky lg:top-24 h-fit">
                         <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200 border border-slate-100 overflow-hidden">
                             <div className="p-8 flex flex-col items-center">
-                                {/* Avatar */}
                                 <div className="relative mb-6">
                                     <div className="w-32 h-32 rounded-full p-1 bg-gradient-to-tr from-green-400 to-blue-500 shadow-xl shadow-green-500/20">
                                         <img
-                                            src={user.avatar}
-                                            alt={user.name}
+                                            src={userDisplay.avatar}
+                                            alt={userDisplay.name}
                                             className="w-full h-full object-cover rounded-full border-4 border-white"
                                         />
                                     </div>
-                                    <div className="absolute bottom-1 right-1 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg border border-slate-100 text-green-500 hover:scale-110 transition-transform cursor-pointer">
+                                    <div
+                                        onClick={handleAvatarClick}
+                                        className="absolute bottom-1 right-1 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg border border-slate-100 text-green-500 hover:scale-110 transition-transform cursor-pointer"
+                                    >
                                         <Settings size={16} />
                                     </div>
                                 </div>
 
-                                <h1 className="text-2xl font-black text-slate-900 mb-1">{user.name}</h1>
-                                <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-6">{user.role}</p>
+                                <h1 className="text-2xl font-black text-slate-900 mb-1">{userDisplay.name}</h1>
+                                <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-6">{userDisplay.role}</p>
 
-                                {/* Points Card */}
                                 <div className="w-full bg-slate-50 rounded-2xl p-6 border border-slate-100 flex items-center justify-between group hover:border-green-500 transition-colors">
                                     <div>
                                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Điểm tích lũy</p>
-                                        <p className="text-2xl font-black text-slate-900">{user.points.toLocaleString()} <span className="text-xs text-green-500">Pts</span></p>
+                                        <p className="text-2xl font-black text-slate-900">{userDisplay.points.toLocaleString()} <span className="text-xs text-green-500">Pts</span></p>
                                     </div>
                                     <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center text-green-500 group-hover:bg-green-500 group-hover:text-white transition-all">
                                         <CreditCard size={24} />
@@ -110,7 +176,6 @@ function Profile() {
                                 </div>
                             </div>
 
-                            {/* Navigation Sidebar */}
                             <div className="border-t border-slate-50 p-4 space-y-1">
                                 {[
                                     { icon: User, label: "Thông tin cá nhân" },
@@ -145,9 +210,7 @@ function Profile() {
                         </div>
                     </div>
 
-                    {/* Right Column: Main Content */}
                     <div className="lg:col-span-8 space-y-12">
-                        {/* Personal Info Section */}
                         {activeTab === "Thông tin cá nhân" && (
                             <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 animate-in fade-in duration-500">
                                 <div className="flex items-center gap-3 mb-10">
@@ -160,39 +223,54 @@ function Profile() {
                                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Họ và tên</label>
                                         <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 focus-within:border-green-500 focus-within:bg-white transition-all group">
                                             <User size={18} className="text-slate-400 group-focus-within:text-green-500" />
-                                            <input type="text" defaultValue={user.name} className="bg-transparent border-none focus:outline-none w-full font-bold text-slate-900" />
+                                            <input
+                                                type="text"
+                                                value={name}
+                                                onChange={(e) => setName(e.target.value)}
+                                                className="bg-transparent border-none focus:outline-none w-full font-bold text-slate-900"
+                                            />
                                         </div>
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Email</label>
                                         <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 group">
                                             <Mail size={18} className="text-slate-400" />
-                                            <input type="email" defaultValue={user.email} disabled className="bg-transparent border-none focus:outline-none w-full font-bold text-slate-400 cursor-not-allowed" />
+                                            <input type="email" defaultValue={userDisplay.email} disabled className="bg-transparent border-none focus:outline-none w-full font-bold text-slate-400 cursor-not-allowed" />
                                         </div>
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Chức vụ</label>
                                         <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 group">
                                             <Shield size={18} className="text-slate-400" />
-                                            <input type="text" defaultValue={user.role} disabled className="bg-transparent border-none focus:outline-none w-full font-bold text-slate-400 cursor-not-allowed uppercase" />
+                                            <input type="text" defaultValue={userDisplay.role} disabled className="bg-transparent border-none focus:outline-none w-full font-bold text-slate-400 cursor-not-allowed uppercase" />
                                         </div>
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Trạng thái</label>
                                         <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 group">
                                             <Shield size={18} className="text-slate-400" />
-                                            <input type="text" defaultValue={user.status} disabled className="bg-transparent border-none focus:outline-none w-full font-bold text-slate-400 cursor-not-allowed uppercase" />
+                                            <input type="text" defaultValue={userDisplay.status} disabled className="bg-transparent border-none focus:outline-none w-full font-bold text-slate-400 cursor-not-allowed uppercase" />
                                         </div>
                                     </div>
                                 </div>
 
-                                <button className="mt-12 px-10 py-4 cursor-pointer bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-green-600 transition-all shadow-xl hover:shadow-green-500/20 active:scale-95">
-                                    Cập nhật thông tin
+                                <button
+                                    onClick={handleUpdateProfile}
+                                    disabled={updateUser.isPending}
+                                    className="mt-12 px-10 py-4 cursor-pointer bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-green-600 transition-all shadow-xl hover:shadow-green-500/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                >
+                                    {updateUser.isPending ? (
+                                        <>
+                                            <Loader2 size={16} className="animate-spin" />
+                                            Đang cập nhật...
+                                        </>
+                                    ) : (
+                                        "Cập nhật thông tin"
+                                    )}
                                 </button>
                             </div>
                         )}
 
-                        {/* Recent Bookings Section */}
                         {activeTab === "Lịch sử đặt vé" && (
                             <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 animate-in fade-in duration-500">
                                 <div className="flex items-center justify-between mb-10">
@@ -205,7 +283,6 @@ function Profile() {
                                     </span>
                                 </div>
 
-                                {/* Loading State */}
                                 {isLoadingOrders && (
                                     <div className="flex flex-col items-center justify-center py-20 text-slate-400">
                                         <Loader2 size={40} className="animate-spin mb-4 text-green-500" />
@@ -213,7 +290,6 @@ function Profile() {
                                     </div>
                                 )}
 
-                                {/* Empty State */}
                                 {!isLoadingOrders && orders.length === 0 && (
                                     <div className="flex flex-col items-center justify-center py-20 text-slate-400">
                                         <div className="w-20 h-20 bg-slate-100 rounded-3xl flex items-center justify-center mb-6">
@@ -224,10 +300,8 @@ function Profile() {
                                     </div>
                                 )}
 
-                                {/* Order List */}
                                 {!isLoadingOrders && orders.length > 0 && (
                                     <div className="space-y-4">
-                                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                         {orders.map((order: any) => {
                                             const statusConfig = getStatusConfig(order.status);
                                             const seatNames = order.tickets?.map((t: any) => t.seat_name).filter(Boolean).join(', ') || '—';

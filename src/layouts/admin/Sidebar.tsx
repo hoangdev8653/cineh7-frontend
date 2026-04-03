@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
+import Logo from '../../assets/logo.png';
 import {
     LayoutDashboard,
     Film,
@@ -7,14 +8,9 @@ import {
     Theater,
     Calendar,
     Newspaper,
-    Clapperboard
 } from 'lucide-react';
 import { PATH } from '../../utils/path';
-
-interface AdminSidebarProps {
-    isSidebarOpen: boolean;
-    handleLogout: () => void;
-}
+import type { AdminSidebarProps } from '../../types/dashboard.types';
 
 const menuItems = [
     { name: 'Bảng Điều Khiển', icon: LayoutDashboard, path: PATH.ADMIN_LAYOUT },
@@ -34,24 +30,22 @@ const Sidebar = ({ isSidebarOpen, handleLogout }: AdminSidebarProps) => {
             className={`${isSidebarOpen ? 'w-64' : 'w-20'
                 } bg-white border-r border-slate-200 transition-all duration-300 flex flex-col z-30 shadow-sm`}
         >
-            <div className="p-6 flex items-center justify-between">
+            <div className="p-2 flex items-center">
                 {isSidebarOpen ? (
-                    <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white">
-                            <Clapperboard size={18} strokeWidth={2.5} />
+                    <div className=" items-center gap-2 cursor-pointer text-center mx-auto" onClick={() => navigate(PATH.USER_LAYOUT)}>
+                        <div className="w-20 h-20 bg-indigo-600 rounded-lg flex items-center justify-center text-white">
+                            <img src={Logo} alt="logo" className="w-full h-full object-cover" />
                         </div>
-                        <h1 className="text-xl font-bold text-slate-900 tracking-tight">
-                            Cine-H7
-                        </h1>
+
                     </div>
                 ) : (
-                    <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white mx-auto">
-                        <Clapperboard size={18} strokeWidth={2.5} />
+                    <div className="w-12 h-12 bg-indigo-600 rounded-lg flex items-center justify-center text-white mx-auto cursor-pointer" onClick={() => navigate(PATH.ADMIN_LAYOUT)}>
+                        <img src={Logo} alt="logo" className="w-full h-full object-cover" />
                     </div>
                 )}
             </div>
 
-            <nav className="flex-grow px-4 mt-4 space-y-1">
+            <nav className="flex-grow px-4 mt-0 space-y-1">
                 {menuItems.map((item) => {
                     const Icon = item.icon;
                     const isActive = location.pathname === item.path;

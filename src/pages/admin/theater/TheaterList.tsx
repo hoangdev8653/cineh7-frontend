@@ -2,16 +2,7 @@ import React from 'react';
 import { Edit, Trash2, MapPin, Theater as TheaterIcon } from 'lucide-react';
 import type { ITheater } from '../../../types/theater.types';
 import AdminPagination from '../../../components/common/AdminPagination';
-
-interface TheaterListProps {
-    theaterData?: any;
-    isLoading: boolean;
-    onEdit: (theater: ITheater) => void;
-    onDelete: (id: string) => void;
-    page: number;
-    totalPages: number;
-    onPageChange: (page: number) => void;
-}
+import type { TheaterListProps } from '../../../types/theater.types';
 
 const TheaterList: React.FC<TheaterListProps> = ({
     theaterData,
@@ -114,7 +105,6 @@ const TheaterList: React.FC<TheaterListProps> = ({
                 </div>
             </div>
 
-            {/* Pagination */}
             <div className="flex flex-col md:flex-row items-center justify-between px-6 py-2 gap-4">
                 <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest">
                     Hiển thị <span className="text-slate-900">{theaterData?.data?.theater?.length || 0}</span> địa điểm rạp

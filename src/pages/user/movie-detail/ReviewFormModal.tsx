@@ -4,13 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ModalCustom from '../../../components/common/Modal';
 import { useReviewQuery } from '../../../hooks/useReview';
 import { toast } from 'react-toastify';
-
-interface ReviewFormModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    movieId: string;
-    movieTitle: string;
-}
+import type { ReviewFormModalProps } from '../../../types/movie.types';
 
 const ReviewFormModal: React.FC<ReviewFormModalProps> = ({
     isOpen,
@@ -32,15 +26,18 @@ const ReviewFormModal: React.FC<ReviewFormModalProps> = ({
         }
 
         createReviewMutation.mutate({
-            movie_id: movieId,
+            movieId,
             rating: rating * 2,
-            comment: comment.trim()
+            comment
         }, {
             onSuccess: () => {
                 toast.success("Đánh giá đã được gửi thành công!");
                 setComment('');
                 setRating(5);
                 onClose();
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
             },
             onError: (error: any) => {
                 toast.error(error?.message || "Gửi đánh giá thất bại. Vui lòng thử lại!");
@@ -77,7 +74,6 @@ const ReviewFormModal: React.FC<ReviewFormModalProps> = ({
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Rating Selector */}
                     <div className="bg-slate-50 rounded-3xl p-6 border border-slate-100">
                         <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 block text-center mb-4">Xếp hạng của bạn</label>
                         <div className="flex justify-center gap-3 mb-4">
@@ -114,7 +110,6 @@ const ReviewFormModal: React.FC<ReviewFormModalProps> = ({
                         </AnimatePresence>
                     </div>
 
-                    {/* Comment Area */}
                     <div className="space-y-3">
                         <div className="flex items-center justify-between px-2">
                             <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Nội dung đánh giá</label>
@@ -127,7 +122,6 @@ const ReviewFormModal: React.FC<ReviewFormModalProps> = ({
                         />
                     </div>
 
-                    {/* Actions */}
                     <div className="flex gap-4">
                         <button
                             type="button"

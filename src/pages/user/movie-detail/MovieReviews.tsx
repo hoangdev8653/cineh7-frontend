@@ -6,7 +6,6 @@ import { useAuthStore } from "../../../store/useAuthStore";
 import { toast } from "react-toastify";
 import ReviewFormModal from "./ReviewFormModal";
 
-
 const MovieReviews = ({ movieId, movieTitle }: { movieId: string; movieTitle: string }) => {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const { user } = useAuthStore();
@@ -66,7 +65,6 @@ const MovieReviews = ({ movieId, movieTitle }: { movieId: string; movieTitle: st
         </button>
       </div>
 
-      {/* Rating Summary Card */}
       <div className="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-xl shadow-slate-200/40 mb-12 flex flex-col md:flex-row items-center gap-12">
         <div className="text-center md:border-r border-slate-100 md:pr-12">
           <p className="text-7xl font-black text-slate-900 italic tracking-tighter mb-2">{avgRating}</p>
@@ -96,7 +94,6 @@ const MovieReviews = ({ movieId, movieTitle }: { movieId: string; movieTitle: st
         </div>
       </div>
 
-      {/* Review List */}
       <div className="space-y-8">
         {rawReviews.length > 0 ? (
           rawReviews.map((r: any) => {
@@ -106,7 +103,6 @@ const MovieReviews = ({ movieId, movieTitle }: { movieId: string; movieTitle: st
             return (
               <div key={r.id} className="group relative bg-white rounded-[2.5rem] p-8 border border-slate-100 hover:border-red-100 hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-500">
                 <div className="flex flex-col md:flex-row gap-6">
-                  {/* User Info */}
                   <div className="shrink-0 flex md:flex-col items-center gap-4 md:w-32">
                     <div className="relative">
                       <img
@@ -124,7 +120,6 @@ const MovieReviews = ({ movieId, movieTitle }: { movieId: string; movieTitle: st
                     </div>
                   </div>
 
-                  {/* Content */}
                   <div className="flex-grow">
                     <div className="flex items-center gap-1 text-yellow-400 mb-4">
                       {[1, 2, 3, 4, 5].map((s) => (
@@ -155,14 +150,12 @@ const MovieReviews = ({ movieId, movieTitle }: { movieId: string; movieTitle: st
         )}
       </div>
 
-      {/* More Button */}
       {totalReviews > rawReviews.length && (
         <button className="w-full mt-12 py-6 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2rem] text-slate-400 font-black uppercase tracking-[0.2em] text-xs hover:bg-slate-100 hover:border-slate-300 transition-all">
           Xem thêm {totalReviews - rawReviews.length} đánh giá khác
         </button>
       )}
 
-      {/* Review Modal */}
       <ReviewFormModal
         isOpen={isReviewModalOpen}
         onClose={() => setIsReviewModalOpen(false)}

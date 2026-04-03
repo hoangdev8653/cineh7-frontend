@@ -23,6 +23,7 @@ export const createTheater = async (theaterDto: TheaterDto | FormData) => {
         data: theaterDto,
         headers: theaterDto instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : undefined
     })
+
 }
 
 export const updateTheater = async (id: string, theaterDto: TheaterDto | FormData) => {

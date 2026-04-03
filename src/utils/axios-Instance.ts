@@ -12,13 +12,10 @@ const axiosInstance = axios.create({
     withCredentials: true,
 });
 
-// Request Interceptor
 axiosInstance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        // Lấy token từ Zustand Store
         const token = useAuthStore.getState().accessToken;
 
-        // Không gửi token cho các request login/register
         const isAuthRequest = config.url?.includes('/auth/login') || config.url?.includes('/auth/register');
 
         if (token && config.headers && !isAuthRequest) {
@@ -32,7 +29,6 @@ axiosInstance.interceptors.request.use(
     }
 );
 
-// Biến để tránh việc gọi refresh token nhiều lần cùng lúc
 let isRefreshing = false;
 let failedQueue: any[] = [];
 
@@ -47,7 +43,6 @@ const processQueue = (error: any, token: string | null = null) => {
     failedQueue = [];
 };
 
-// Response Interceptor
 axiosInstance.interceptors.response.use(
     (response: AxiosResponse) => {
         return response.data;
@@ -55,12 +50,10 @@ axiosInstance.interceptors.response.use(
     async (error: AxiosError) => {
         const originalRequest = error.config as any;
 
-        // Nếu lỗi 401 và không phải là request login hoặc refresh token
         const isAuthRequest = originalRequest.url?.includes('/auth/login') || originalRequest.url?.includes('/auth/refresh-token');
 
         if (error.response?.status === 401 && !originalRequest._retry && !isAuthRequest) {
             if (isRefreshing) {
-                // Nếu đang refresh, đẩy các request tiếp theo vào hàng đợi
                 return new Promise(function (resolve, reject) {
                     failedQueue.push({ resolve, reject });
                 })
@@ -77,26 +70,21 @@ axiosInstance.interceptors.response.use(
             isRefreshing = true;
 
             return new Promise(function (resolve, reject) {
-                // Gọi API Refresh Token
-                // Backend cần endpoint này và trả về access_token mới
-                // Refresh token sẽ được tự động gửi kèm qua HttpOnly Cookie
-                axiosInstance.post('/refresh-token')
+                axiosInstance.post('/auth/refresh-token')
                     .then((res: any) => {
-                        const { data: { accessToken } } = res;
+                        const { data: { access_token } } = res;
 
-                        // Cập nhật token mới vào Zustand Store
-                        useAuthStore.getState().setAccessToken(accessToken);
+                        useAuthStore.getState().setAccessToken(access_token);
 
-                        // Thêm token mới vào request hiện tại
-                        originalRequest.headers['Authorization'] = 'Bearer ' + accessToken;
+                        originalRequest.headers['Authorization'] = 'Bearer ' + access_token;
 
-                        processQueue(null, accessToken);
+                        processQueue(null, access_token);
                         resolve(axiosInstance(originalRequest));
                     })
                     .catch((err) => {
                         processQueue(err, null);
-                        useAuthStore.getState().clearAuth(); // Xóa auth nếu refresh thất bại
-                        // window.location.href = '/login';
+                        useAuthStore.getState().clearAuth();
+                        window.location.href = '/login';
                         reject(err);
                     })
                     .finally(() => {

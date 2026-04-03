@@ -1,10 +1,6 @@
 import React from 'react';
 import { Search, Theater as TheaterIcon } from 'lucide-react';
-
-interface TheaterSearchProps {
-    value: string;
-    onChange: (value: string) => void;
-}
+import type { TheaterSearchProps } from '../../../types/theater.types';
 
 const TheaterSearch: React.FC<TheaterSearchProps> = ({ value, onChange }) => {
     return (

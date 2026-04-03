@@ -25,7 +25,6 @@ export const useTheaterDetail = (id: string) => {
 
 export const useTheaterMutations = () => {
     const queryClient = useQueryClient();
-
     const createMutation = useMutation({
         mutationFn: (theaterDto: TheaterDto | FormData) => createTheater(theaterDto),
         onSuccess: () => {

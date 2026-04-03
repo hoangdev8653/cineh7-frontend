@@ -62,20 +62,15 @@ function Home() {
                             <div
                                 key={index}
                                 className="px-2 cursor-pointer"
-                            // onClick={() => Navigate(PATH.NEWS_EVENT_DETAIL.replace(':id', item.id))}
                             >
-                                {/* Image Container */}
                                 <div className="relative aspect-square overflow-hidden rounded-3xl mb-6 shadow-sm group-hover:shadow-xl transition-all duration-500">
                                     <img
                                         src={item?.thumbnail}
                                         alt={item?.title}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                     />
-                                    {/* Overlay/Gradient */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                 </div>
-
-                                {/* Content */}
                                 <div className="px-2">
                                     <h3 className="text-lg font-black text-slate-900 leading-tight mb-3 group-hover:text-red-600 transition-colors uppercase tracking-tight">
                                         {item?.title}

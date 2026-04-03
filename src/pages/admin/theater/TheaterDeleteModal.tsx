@@ -1,12 +1,8 @@
 import React from 'react';
 import { Trash2 } from 'lucide-react';
 import ModalCustom from '../../../components/common/Modal';
+import type { TheaterDeleteModalProps } from '../../../types/theater.types';
 
-interface TheaterDeleteModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onConfirm: () => void;
-}
 
 const TheaterDeleteModal: React.FC<TheaterDeleteModalProps> = ({ isOpen, onClose, onConfirm }) => {
     if (!isOpen) return null;

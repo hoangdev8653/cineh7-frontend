@@ -1,10 +1,5 @@
-import { Menu, Search, Bell } from 'lucide-react';
-
-interface AdminHeaderProps {
-    isSidebarOpen: boolean;
-    setIsSidebarOpen: (isOpen: boolean) => void;
-    user: any;
-}
+import { Menu, Bell } from 'lucide-react';
+import type { AdminHeaderProps } from '../../types/dashboard.types';
 
 const Header = ({ isSidebarOpen, setIsSidebarOpen, user }: AdminHeaderProps) => {
     return (
@@ -16,20 +11,7 @@ const Header = ({ isSidebarOpen, setIsSidebarOpen, user }: AdminHeaderProps) => 
                 >
                     <Menu size={24} />
                 </button>
-
-                <div className="max-w-md w-full relative hidden md:block">
-                    <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input
-                        type="text"
-                        placeholder="Tìm kiếm..."
-                        className="w-full pl-12 pr-4 py-2.5 bg-slate-100 border-none rounded-2xl text-sm focus:ring-2 focus:ring-indigo-600/20 focus:bg-white transition-all text-slate-900 placeholder:text-slate-400"
-                    />
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 bg-white px-1.5 py-0.5 border border-slate-200 rounded text-[10px] font-bold text-slate-400 shadow-sm">
-                        ⌘K
-                    </div>
-                </div>
             </div>
-
             <div className="flex items-center gap-2">
                 <button className="p-2.5 text-slate-500 hover:text-indigo-600 hover:bg-slate-50 rounded-full transition-all relative group">
                     <Bell size={20} />

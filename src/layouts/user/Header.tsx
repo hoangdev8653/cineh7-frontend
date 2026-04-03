@@ -1,9 +1,7 @@
 import {
-  Film,
   Ticket,
   Newspaper,
   MapPin,
-  Search,
   User,
   LogOut,
 } from "lucide-react";
@@ -12,9 +10,10 @@ import { PATH } from "../../utils/path";
 import { useAuthStore } from "../../store/useAuthStore";
 import { logout } from "../../apis/auth";
 import { getLocalStorage } from "../../utils/localStorage";
+import Logo from '../../assets/logo2.png';
 
 function Header() {
-  const { user, clearAuth } = useAuthStore();
+  const { clearAuth } = useAuthStore();
   const navigate = useNavigate();
   const userData = getLocalStorage("user");
 
@@ -36,17 +35,14 @@ function Header() {
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
-        {/* Logo */}
         <Link to={PATH.USER_LAYOUT} className="flex items-center gap-2 group">
-          <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center group-hover:bg-red-700 transition-colors">
-            <Film size={24} fill="currentColor" className="text-white" />
-          </div>
-          <span className="text-2xl font-black tracking-tighter italic text-red-600">
-            CINE<span className="text-red-600">H7</span>
-          </span>
+          <img
+            src={Logo}
+            alt="logo"
+            className="w-20 h-20 object-contain mix-blend-multiply"
+          />
         </Link>
 
-        {/* Navigation */}
         <nav className="hidden md:flex items-center gap-8 font-medium">
           <NavLink to={PATH.SHOWTIME} className={navLinkClass}>
             <Ticket size={18} /> Lịch chiếu
@@ -62,12 +58,7 @@ function Header() {
           </NavLink>
         </nav>
 
-        {/* Actions */}
         <div className="flex items-center gap-5">
-          <button className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600">
-            <Search size={20} />
-          </button>
-
           {userData ? (
             <div className="flex items-center gap-4">
               <Link to={PATH.PROFILE} className="flex items-center gap-2 group">
