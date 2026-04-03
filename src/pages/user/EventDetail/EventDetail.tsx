@@ -44,7 +44,6 @@ function EventDetail() {
                                 Quay lại danh sách
                             </Link>
 
-                            {/* Article Intro */}
                             <div className="mb-12">
                                 <p className="text-slate-700 leading-relaxed text-lg mb-8">
                                     Bạn đang tìm kiếm những ưu đãi hấp dẫn nhất tại hệ thống rạp <span className="font-black text-slate-900 underline decoration-green-500 decoration-2">CineH7</span>?
@@ -72,7 +71,6 @@ function EventDetail() {
                                     </p>
                                 ))}
 
-                                {/* Image Showcase */}
                                 <div className="aspect-video w-full rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200 mb-12 border border-slate-100 group">
                                     <img
                                         src={events?.thumbnail}
@@ -81,7 +79,6 @@ function EventDetail() {
                                     />
                                 </div>
 
-                                {/* Conditions Section */}
                                 <div className="space-y-8">
                                     <h3 className="text-xl font-black text-slate-900 flex items-center gap-3 uppercase italic tracking-tighter">
                                         <span className="w-1.5 h-6 bg-green-500 rounded-full shrink-0" />
@@ -98,7 +95,6 @@ function EventDetail() {
                                 </div>
                             </div>
 
-                            {/* Footer Actions */}
                             <div className="border-t border-slate-100 pt-10 flex items-center justify-between">
                                 <Link to={PATH.EVENT} className="text-slate-900 font-black text-xs uppercase tracking-widest hover:text-green-600 transition-colors">
                                     Khám phá tin khác
@@ -125,7 +121,6 @@ function EventDetail() {
                                         alt={movie?.title}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                     />
-                                    {/* Overlay Button */}
                                     <a href={`/movie/${movie.id}`}>
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                                             <button className="bg-orange-500 cursor-pointer text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 text-sm hover:bg-orange-600 transition-colors">
@@ -134,7 +129,6 @@ function EventDetail() {
                                         </div>
                                     </a>
 
-                                    {/* Badge Info */}
                                     <div className="absolute bottom-3 right-3 flex flex-col gap-1.5 items-end z-10">
                                         <div className="bg-white/95 px-2 py-1 rounded-lg text-[11px] font-black text-slate-900 flex items-center gap-1 shadow-sm">
                                             <span className="text-yellow-500">⭐</span> {movie?.rating}

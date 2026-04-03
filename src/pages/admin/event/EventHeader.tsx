@@ -1,10 +1,6 @@
 import React from 'react';
 import { Plus } from 'lucide-react';
-
-interface NewsEventHeaderProps {
-    totalItems: number;
-    onAdd: () => void;
-}
+import type { NewsEventHeaderProps } from '../../../types/event.types';
 
 const NewsEventHeader: React.FC<NewsEventHeaderProps> = ({ totalItems, onAdd }) => {
     return (

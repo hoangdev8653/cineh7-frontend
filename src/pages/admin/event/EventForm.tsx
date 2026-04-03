@@ -11,25 +11,9 @@ import {
     Image as ImageIcon
 } from 'lucide-react';
 import ModalCustom from '../../../components/common/Modal';
-import type { IEvent } from '../../../types/event.types';
+import type { NewsEventFormData, NewsEventFormProps } from '../../../types/event.types';
+import { newsEventSchema } from '../../../schema/event';
 
-const newsEventSchema = z.object({
-    title: z.string().min(1, 'Tiêu đề không được để trống'),
-    slug: z.string().min(1, 'Slug không được để trống'),
-    content: z.string().min(10, 'Nội dung phải có ít nhất 10 ký tự'),
-    thumbnail: z.any().optional(),
-    type: z.enum(['NEWS', 'EVENT']),
-});
-
-type NewsEventFormData = z.infer<typeof newsEventSchema>;
-
-interface NewsEventFormProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onSubmit: (data: NewsEventFormData) => void;
-    editingItem: IEvent | null;
-    isPending: boolean;
-}
 
 const NewsEventForm: React.FC<NewsEventFormProps> = ({
     isOpen,

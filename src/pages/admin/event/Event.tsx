@@ -13,10 +13,8 @@ const NewsEvent: React.FC = () => {
     const [typeFilter, setTypeFilter] = useState<'ALL' | 'NEWS' | 'EVENT'>('ALL');
     const [page, setPage] = useState(1);
     const limit = 10;
-
     const { data: newsEvents, isLoading: isLoadingList } = useEvents();
     const { createEvent: createNewsEvent, updateEvent: updateNewsEvent, deleteEvent: deleteNewsEvent } = useEventMutations();
-
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<IEvent | null>(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -74,7 +72,6 @@ const NewsEvent: React.FC = () => {
             deleteNewsEvent.mutate(itemToDelete, {
                 onSuccess: () => {
                     setIsDeleteModalOpen(false);
-                    // Prevent page out of bounds
                     if (paginatedItems.length === 1 && page > 1) {
                         setPage(page - 1);
                     }
@@ -89,14 +86,12 @@ const NewsEvent: React.FC = () => {
                 totalItems={newsEvents?.length || 0}
                 onAdd={handleOpenAdd}
             />
-
             <NewsEventFilters
                 searchQuery={searchQuery}
                 onSearchChange={setSearchQuery}
                 typeFilter={typeFilter}
                 onTypeFilterChange={setTypeFilter}
             />
-
             <div className="flex flex-col gap-4">
                 <NewsEventTable
                     items={paginatedItems}
@@ -115,7 +110,6 @@ const NewsEvent: React.FC = () => {
                     />
                 )}
             </div>
-
             {isModalOpen && (
                 <NewsEventForm
                     key={editingItem?.id || 'new'}
@@ -126,7 +120,6 @@ const NewsEvent: React.FC = () => {
                     isPending={createNewsEvent.isPending || updateNewsEvent.isPending}
                 />
             )}
-
             <DeleteNewsEventModal
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}

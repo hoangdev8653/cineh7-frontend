@@ -1,13 +1,7 @@
-import React from 'react';
 import { Trash2 } from 'lucide-react';
 import ModalCustom from '../../../components/common/Modal';
+import type { DeleteNewsEventModalProps } from '../../../types/event.types';
 
-interface DeleteNewsEventModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onConfirm: () => void;
-    isPending: boolean;
-}
 
 const DeleteNewsEventModal: React.FC<DeleteNewsEventModalProps> = ({
     isOpen,

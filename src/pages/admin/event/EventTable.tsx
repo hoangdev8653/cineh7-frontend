@@ -6,14 +6,8 @@ import {
     Trash2,
     FileText,
 } from 'lucide-react';
-import type { IEvent } from '../../../../types/event.types';
-
-interface NewsEventTableProps {
-    items: IEvent[];
-    isLoading: boolean;
-    onEdit: (item: IEvent) => void;
-    onDelete: (id: string) => void;
-}
+import type { IEvent, NewsEventTableProps } from '../../../types/event.types';
+import { formatDate } from '../../../utils/date';
 
 const NewsEventTable: React.FC<NewsEventTableProps> = ({
     items,
@@ -21,17 +15,7 @@ const NewsEventTable: React.FC<NewsEventTableProps> = ({
     onEdit,
     onDelete,
 }) => {
-    const formatDate = (dateStr: string) => {
-        try {
-            return new Date(dateStr).toLocaleDateString('vi-VN', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-        } catch (e) {
-            return dateStr;
-        }
-    };
+
 
     return (
         <div className="space-y-6">

@@ -1,12 +1,5 @@
-import React from 'react';
 import { Search, Tag } from 'lucide-react';
-
-interface NewsEventFiltersProps {
-    searchQuery: string;
-    onSearchChange: (value: string) => void;
-    typeFilter: 'ALL' | 'NEWS' | 'EVENT';
-    onTypeFilterChange: (value: 'ALL' | 'NEWS' | 'EVENT') => void;
-}
+import type { NewsEventFiltersProps } from '../../../types/event.types';
 
 const NewsEventFilters: React.FC<NewsEventFiltersProps> = ({
     searchQuery,
