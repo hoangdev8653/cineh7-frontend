@@ -1,13 +1,6 @@
 import React from 'react';
 import { Mail, Shield, ShieldCheck, Trash2, User as UserIcon } from 'lucide-react';
-import type { IUser } from '../../../types/auth.types';
-
-interface UserTableProps {
-    users: IUser[] | undefined;
-    isLoading: boolean;
-    onEditRole: (user: IUser) => void;
-    onDeleteUser: (userId: string) => void;
-}
+import type { IUser, UserTableProps } from '../../../types/auth.types';
 
 const UserTable: React.FC<UserTableProps> = ({ users, isLoading, onEditRole, onDeleteUser }) => {
     return (

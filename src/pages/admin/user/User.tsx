@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter } from 'lucide-react';
+import { toast } from 'react-toastify';
 import { useUsers, useUserMutations } from '../../../hooks/useUser';
 import type { IUser } from '../../../types/auth.types';
 import UserTable from './UserTable';
@@ -9,19 +10,16 @@ import UserPagination from './UserPagination';
 
 const User: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
-    const [roleFilter, setRoleFilter] = useState<'ALL' | 'ADMIN' | 'EMPLOYEE' | 'USER'>('ALL');
+    const [roleFilter, setRoleFilter] = useState<'ALL' | 'ADMIN' | 'EMPLOYEE'>('ALL');
     const [page, setPage] = useState(1);
     const limit = 10;
-
     const { data: users, isLoading } = useUsers(searchQuery);
     const { updateUser, deleteUser } = useUserMutations();
-
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingUser, setEditingUser] = useState<IUser | null>(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [userToDelete, setUserToDelete] = useState<string | null>(null);
 
-    // Reset page to 1 when search or filter changes
     useEffect(() => {
         setPage(1);
     }, [searchQuery, roleFilter]);
@@ -30,7 +28,6 @@ const User: React.FC = () => {
         if (roleFilter === 'ALL') return true;
         return user.role === roleFilter;
     });
-
     const totalUsers = filteredUsers?.length || 0;
     const startIndex = (page - 1) * limit;
     const paginatedUsers = filteredUsers?.slice(startIndex, startIndex + limit);
@@ -38,7 +35,13 @@ const User: React.FC = () => {
     const handleRoleChange = (role: string) => {
         if (editingUser) {
             updateUser.mutate({ id: editingUser.id, userDto: { role } }, {
-                onSuccess: () => setIsEditModalOpen(false)
+                onSuccess: () => {
+                    toast.success('Cập nhật vai trò thành công!');
+                    setIsEditModalOpen(false);
+                },
+                onError: () => {
+                    toast.error('Cập nhật vai trò thất bại!');
+                }
             });
         }
     };
@@ -48,7 +51,6 @@ const User: React.FC = () => {
             deleteUser.mutate(userToDelete, {
                 onSuccess: () => {
                     setIsDeleteModalOpen(false);
-                    // Prevent page from being out of bounds after deletion
                     if (paginatedUsers?.length === 1 && page > 1) {
                         setPage(page - 1);
                     }
@@ -59,7 +61,6 @@ const User: React.FC = () => {
 
     return (
         <div className="space-y-8 pb-10">
-            {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <h1 className="text-3xl font-black text-slate-900 tracking-tight">Quản Lý Tài Khoản</h1>
@@ -77,7 +78,6 @@ const User: React.FC = () => {
                 </div>
             </div>
 
-            {/* Controls Section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="md:col-span-2 relative">
                     <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
@@ -99,12 +99,10 @@ const User: React.FC = () => {
                         <option value="ALL">Tất cả vai trò</option>
                         <option value="ADMIN">Quản trị viên</option>
                         <option value="EMPLOYEE">Nhân viên</option>
-                        <option value="USER">Người dùng</option>
                     </select>
                 </div>
             </div>
 
-            {/* Users Table */}
             <div className="flex flex-col gap-4">
                 <UserTable
                     users={paginatedUsers}
@@ -128,15 +126,14 @@ const User: React.FC = () => {
                 )}
             </div>
 
-            {/* Edit Role Modal */}
             <EditRoleModal
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
                 editingUser={editingUser}
                 onRoleChange={handleRoleChange}
+                isLoading={updateUser.isPending}
             />
 
-            {/* Delete Confirmation */}
             <DeleteUserModal
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}

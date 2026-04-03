@@ -1,17 +1,21 @@
-import React from 'react';
-import { Shield, ShieldCheck, User as UserIcon, CheckCircle2 } from 'lucide-react';
-import type { IUser } from '../../../types/auth.types';
+import React, { useState, useEffect } from 'react';
+import { Shield, ShieldCheck, User as UserIcon, CheckCircle2, Loader2, Save } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import ModalCustom from '../../../components/common/Modal';
+import type { EditRoleModalProps } from '../../../types/auth.types';
 
-interface EditRoleModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    editingUser: IUser | null;
-    onRoleChange: (role: string) => void;
-}
+const EditRoleModal: React.FC<EditRoleModalProps> = ({ isOpen, onClose, editingUser, onRoleChange, isLoading }) => {
+    const [selectedRole, setSelectedRole] = useState<string>('');
 
-const EditRoleModal: React.FC<EditRoleModalProps> = ({ isOpen, onClose, editingUser, onRoleChange }) => {
+    useEffect(() => {
+        if (editingUser?.role) {
+            setSelectedRole(editingUser.role);
+        }
+    }, [editingUser, isOpen]);
+
     if (!isOpen) return null;
+
+    const hasChanged = selectedRole !== editingUser?.role;
 
     return (
         <ModalCustom onClose={onClose} className="w-[450px] !bg-white !text-slate-900 border-none rounded-[3rem] p-10 shadow-2xl">
@@ -25,70 +29,95 @@ const EditRoleModal: React.FC<EditRoleModalProps> = ({ isOpen, onClose, editingU
                 </p>
 
                 <div className="grid grid-cols-1 gap-4 mb-10">
-                    <button
-                        onClick={() => onRoleChange('ADMIN')}
-                        className={`flex items-center justify-between p-5 rounded-[1.5rem] border-2 transition-all ${editingUser?.role === 'ADMIN'
-                            ? 'bg-purple-50 border-purple-500 shadow-lg shadow-purple-600/10'
-                            : 'bg-slate-50 border-transparent hover:border-slate-200'
-                            }`}
-                    >
-                        <div className="flex items-center gap-4">
-                            <div className={`p-2 rounded-xl ${editingUser?.role === 'ADMIN' ? 'bg-purple-500 text-white' : 'bg-white text-slate-400'}`}>
-                                <ShieldCheck size={20} />
-                            </div>
-                            <div className="text-left">
-                                <p className="font-black text-sm text-slate-900">Quản trị viên</p>
-                                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Toàn quyền truy cập</p>
-                            </div>
-                        </div>
-                        {editingUser?.role === 'ADMIN' && <CheckCircle2 size={24} className="text-purple-600" />}
-                    </button>
+                    {[
+                        { id: 'ADMIN', label: 'Quản trị viên', desc: 'Toàn quyền truy cập', icon: ShieldCheck, color: 'purple' },
+                        { id: 'EMPLOYEE', label: 'Nhân viên', desc: 'Quyền hạn chế', icon: UserIcon, color: 'indigo' },
+                    ].map((role) => {
+                        const Icon = role.icon;
+                        const isSelected = selectedRole === role.id;
+                        const isCurrent = editingUser?.role === role.id;
 
-                    <button
-                        onClick={() => onRoleChange('EMPLOYEE')}
-                        className={`flex items-center justify-between p-5 rounded-[1.5rem] border-2 transition-all ${editingUser?.role === 'EMPLOYEE'
-                            ? 'bg-indigo-50 border-indigo-500 shadow-lg shadow-indigo-600/10'
-                            : 'bg-slate-50 border-transparent hover:border-slate-200'
-                            }`}
-                    >
-                        <div className="flex items-center gap-4">
-                            <div className={`p-2 rounded-xl ${editingUser?.role === 'EMPLOYEE' ? 'bg-indigo-500 text-white' : 'bg-white text-slate-400'}`}>
-                                <UserIcon size={20} />
-                            </div>
-                            <div className="text-left">
-                                <p className="font-black text-sm text-slate-900">Nhân viên</p>
-                                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Quyền hạn chế</p>
-                            </div>
-                        </div>
-                        {editingUser?.role === 'EMPLOYEE' && <CheckCircle2 size={24} className="text-indigo-600" />}
-                    </button>
+                        const colors = {
+                            purple: 'bg-purple-50 border-purple-500 shadow-purple-600/10 text-purple-600',
+                            indigo: 'bg-indigo-50 border-indigo-500 shadow-indigo-600/10 text-indigo-600',
+                            emerald: 'bg-emerald-50 border-emerald-500 shadow-emerald-600/10 text-emerald-600',
+                        }[role.color as 'purple' | 'indigo' | 'emerald'];
 
-                    <button
-                        onClick={() => onRoleChange('USER')}
-                        className={`flex items-center justify-between p-5 rounded-[1.5rem] border-2 transition-all ${editingUser?.role === 'USER'
-                            ? 'bg-emerald-50 border-emerald-500 shadow-lg shadow-emerald-600/10'
-                            : 'bg-slate-50 border-transparent hover:border-slate-200'
-                            }`}
-                    >
-                        <div className="flex items-center gap-4">
-                            <div className={`p-2 rounded-xl ${editingUser?.role === 'USER' ? 'bg-emerald-500 text-white' : 'bg-white text-slate-400'}`}>
-                                <UserIcon size={20} />
-                            </div>
-                            <div className="text-left">
-                                <p className="font-black text-sm text-slate-900">Người dùng</p>
-                                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Quyền cơ bản</p>
-                            </div>
-                        </div>
-                        {editingUser?.role === 'USER' && <CheckCircle2 size={24} className="text-emerald-600" />}
-                    </button>
+                        const iconColors = {
+                            purple: 'bg-purple-500',
+                            indigo: 'bg-indigo-500',
+                            emerald: 'bg-emerald-500',
+                        }[role.color as 'purple' | 'indigo' | 'emerald'];
+
+                        return (
+                            <motion.button
+                                key={role.id}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={() => setSelectedRole(role.id)}
+                                className={`flex items-center justify-between p-5 rounded-[1.8rem] border-2 transition-all relative overflow-hidden ${isSelected
+                                    ? `${colors} shadow-xl`
+                                    : 'bg-slate-50 border-transparent hover:border-slate-200'
+                                    }`}
+                            >
+                                <div className="flex items-center gap-4 relative z-10">
+                                    <div className={`p-2.5 rounded-2xl transition-all ${isSelected ? `${iconColors} text-white shadow-lg` : 'bg-white text-slate-400 group-hover:text-slate-600'}`}>
+                                        <Icon size={20} strokeWidth={2.5} />
+                                    </div>
+                                    <div className="text-left">
+                                        <div className="flex items-center gap-2">
+                                            <p className="font-black text-sm text-slate-900">{role.label}</p>
+                                            {isCurrent && (
+                                                <span className="text-[8px] font-black bg-slate-200 text-slate-500 px-1.5 py-0.5 rounded-md uppercase tracking-tighter">Hiện tại</span>
+                                            )}
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">{role.desc}</p>
+                                    </div>
+                                </div>
+                                <AnimatePresence>
+                                    {isSelected && (
+                                        <motion.div
+                                            initial={{ scale: 0, opacity: 0 }}
+                                            animate={{ scale: 1, opacity: 1 }}
+                                            exit={{ scale: 0, opacity: 0 }}
+                                        >
+                                            <CheckCircle2 size={24} className={colors.split(' ').pop()} />
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </motion.button>
+                        );
+                    })}
                 </div>
 
-                <button
-                    onClick={onClose}
-                    className="w-full py-4 bg-slate-50 text-slate-400 hover:text-slate-900 font-black text-sm uppercase tracking-widest transition-all rounded-2xl"
-                >
-                    Hủy Bỏ
-                </button>
+                <div className="flex flex-col gap-3">
+                    <motion.button
+                        whileHover={hasChanged && !isLoading ? { scale: 1.02, y: -2 } : {}}
+                        whileTap={hasChanged && !isLoading ? { scale: 0.98 } : {}}
+                        disabled={!hasChanged || isLoading}
+                        onClick={() => onRoleChange(selectedRole)}
+                        className={`w-full py-4 rounded-[1.5rem] font-black text-sm uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-xl ${hasChanged && !isLoading
+                            ? 'bg-indigo-600 text-white shadow-indigo-200'
+                            : 'bg-slate-100 text-slate-300 cursor-not-allowed shadow-none'
+                            }`}
+                    >
+                        {isLoading ? (
+                            <Loader2 className="animate-spin" size={20} />
+                        ) : (
+                            <>
+                                <Save size={18} />
+                                Lưu Thay Đổi
+                            </>
+                        )}
+                    </motion.button>
+                    <button
+                        onClick={onClose}
+                        disabled={isLoading}
+                        className="w-full py-4 text-slate-400 hover:text-slate-900 font-bold text-xs uppercase tracking-widest transition-all rounded-2xl hover:bg-slate-50 disabled:opacity-50"
+                    >
+                        Hủy Bỏ
+                    </button>
+                </div>
             </div>
         </ModalCustom>
     );

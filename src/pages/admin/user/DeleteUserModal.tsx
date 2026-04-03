@@ -1,12 +1,7 @@
 import React from 'react';
 import { Trash2 } from 'lucide-react';
 import ModalCustom from '../../../components/common/Modal';
-
-interface DeleteUserModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onConfirm: () => void;
-}
+import type { DeleteUserModalProps } from '../../../types/auth.types';
 
 const DeleteUserModal: React.FC<DeleteUserModalProps> = ({ isOpen, onClose, onConfirm }) => {
     if (!isOpen) return null;

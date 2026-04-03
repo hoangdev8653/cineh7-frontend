@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAllUsers, getUserById, updateUser, deleteUser } from '../apis/user';
+import { getAllUsers, getUserById, updateUser, updateRole, deleteUser } from '../apis/user';
 import type { IUser } from '../types/auth.types';
 
 export const useUsers = (searchQuery?: string) => {
@@ -34,9 +34,17 @@ export const useUserMutations = () => {
     const queryClient = useQueryClient();
 
     const updateMutation = useMutation({
-        mutationFn: ({ id, userDto }: { id: string; userDto: Partial<IUser> }) =>
-            updateUser(id, userDto),
-        onSuccess: (data, variables) => {
+        mutationFn: (userDto: Partial<IUser> | FormData) =>
+            updateUser(userDto),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['users'] });
+        },
+    });
+
+    const updateRoleMutation = useMutation({
+        mutationFn: ({ id, role }: { id: string; role: string }) =>
+            updateRole(id, { role }),
+        onSuccess: (_, variables) => {
             queryClient.invalidateQueries({ queryKey: ['users'] });
             queryClient.invalidateQueries({ queryKey: ['user', variables.id] });
         },
@@ -51,6 +59,7 @@ export const useUserMutations = () => {
 
     return {
         updateUser: updateMutation,
+        updateRole: updateRoleMutation,
         deleteUser: deleteMutation,
     };
 };

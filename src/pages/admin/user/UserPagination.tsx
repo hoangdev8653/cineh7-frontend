@@ -1,12 +1,6 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-
-interface UserPaginationProps {
-    totalUsers: number;
-    page: number;
-    limit: number;
-    onPageChange: (page: number) => void;
-}
+import type { UserPaginationProps } from '../../../types/auth.types';
 
 const UserPagination: React.FC<UserPaginationProps> = ({ totalUsers, page, limit, onPageChange }) => {
     const totalPages = Math.ceil(totalUsers / limit) || 1;
@@ -17,7 +11,7 @@ const UserPagination: React.FC<UserPaginationProps> = ({ totalUsers, page, limit
                 Đang ở trang {page} / {totalPages} - Hiện tối đa {limit} kết quả
             </p>
             <div className="flex items-center gap-3">
-                <button 
+                <button
                     onClick={() => onPageChange(page - 1)}
                     disabled={page <= 1}
                     className="p-3 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:text-indigo-600 hover:border-indigo-100 transition-all disabled:opacity-30 shadow-sm disabled:cursor-not-allowed">
@@ -28,7 +22,7 @@ const UserPagination: React.FC<UserPaginationProps> = ({ totalUsers, page, limit
                         {page}
                     </button>
                 </div>
-                <button 
+                <button
                     onClick={() => onPageChange(page + 1)}
                     disabled={page >= totalPages || totalUsers === 0}
                     className="p-3 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:text-indigo-600 hover:border-indigo-100 transition-all disabled:opacity-30 shadow-sm disabled:cursor-not-allowed">
