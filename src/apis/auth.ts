@@ -31,3 +31,19 @@ export const getProfile = async () => {
     })
 }
 
+export const forgotPassword = async (forgotPasswordDto: { email: string }) => {
+    return await axiosInstance({
+        method: 'POST',
+        url: '/auth/forgot-password',
+        data: forgotPasswordDto,
+    })
+}
+
+export const resetPassword = async (resetPasswordDto: { newPassword: string; token: string }) => {
+    return await axiosInstance({
+        method: 'POST',
+        url: '/auth/reset-password',
+        data: resetPasswordDto,
+    })
+}
+

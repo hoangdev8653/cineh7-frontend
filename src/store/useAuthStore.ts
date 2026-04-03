@@ -12,6 +12,9 @@ export const useAuthStore = create<AuthState>()(
             setAuth: (user: IUser, accessToken: string) =>
                 set({ user, accessToken, isInitialized: true }),
 
+            setUser: (user: IUser) =>
+                set({ user }),
+
             setAccessToken: (accessToken: string) =>
                 set({ accessToken }),
 

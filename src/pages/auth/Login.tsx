@@ -50,7 +50,6 @@ function Login() {
   return (
     <div className="min-h-screen bg-[#eef2f6] flex items-center justify-center p-4 text-[#1e293b]">
       <div className="bg-white w-full max-w-lg rounded-3xl shadow-xl shadow-blue-900/5 p-8 md:p-10 transition-all">
-        {/* Header */}
         <div className="text-center mb-10">
           <h1 className="text-3xl font-bold text-[#1e293b] mb-2">Đăng nhập</h1>
           <p className="text-[#64748b] text-sm">
@@ -59,7 +58,6 @@ function Login() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Error Message */}
           {loginMutation.isError && (
             <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
               <Lock size={16} className="shrink-0" />
@@ -70,7 +68,6 @@ function Login() {
             </div>
           )}
 
-          {/* Email Field */}
           <div className="space-y-1.5">
             <label
               className="text-sm font-semibold text-[#1e293b] block"
@@ -98,7 +95,6 @@ function Login() {
             )}
           </div>
 
-          {/* Password Field */}
           <div className="space-y-1.5">
             <label
               className="text-sm font-semibold text-[#1e293b] block"
@@ -126,12 +122,10 @@ function Login() {
             )}
           </div>
 
-          {/* Utilities */}
           <div className="flex items-center justify-between">
             <label className="flex items-center gap-2 cursor-pointer select-none group">
               <div className="relative w-5 h-5">
                 <input
-                  // {...register('rememberMe')}
                   type="checkbox"
                   className="peer hidden"
                 />
@@ -146,14 +140,13 @@ function Login() {
               </span>
             </label>
             <Link
-              to="#"
+              to={PATH.FORGOT_PASSWORD}
               className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors"
             >
               Quên mật khẩu?
             </Link>
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={isSubmitting}
@@ -163,7 +156,6 @@ function Login() {
           </button>
         </form>
 
-        {/* Alternatives (Login with Email/Social) */}
         <div className="mt-8">
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
@@ -184,7 +176,6 @@ function Login() {
           </div>
         </div>
 
-        {/* Footer */}
         <div className="text-center mt-10">
           <p className="text-sm text-[#64748b]">
             Chưa có tài khoản?{" "}

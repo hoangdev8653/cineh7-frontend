@@ -1,10 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { login, register } from "../apis/auth"
-import type { LoginDto, RegisterDto } from "../types/auth.types"
+import { forgotPassword, login, register, resetPassword } from "../apis/auth"
+import type { ForgotPasswordDto, LoginDto, RegisterDto, ResetPasswordDto } from "../types/auth.types"
 import { useAuthStore } from "../store/useAuthStore"
 import { useNavigate } from "react-router-dom"
 import { PATH } from "../utils/path"
 import { setLocalStorage } from "../utils/localStorage"
+import { toast } from "react-toastify"
 
 export const useAuthMutations = () => {
     const queryClient = useQueryClient();
@@ -34,8 +35,31 @@ export const useAuthMutations = () => {
         },
     });
 
+    const forgotPasswordMutation = useMutation({
+        mutationFn: (forgotPasswordDto: ForgotPasswordDto) => forgotPassword(forgotPasswordDto),
+        onSuccess: () => {
+            toast.success("Yêu cầu đã được gửi. Vui lòng kiểm tra email của bạn!");
+        },
+        onError: (error: any) => {
+            toast.error(error.response?.data?.message || "Đã có lỗi xảy ra");
+        }
+    });
+
+    const resetPasswordMutation = useMutation({
+        mutationFn: (resetPasswordDto: ResetPasswordDto) => resetPassword(resetPasswordDto),
+        onSuccess: () => {
+            toast.success("Mật khẩu của bạn đã được đặt lại thành công!");
+            navigate(PATH.LOGIN);
+        },
+        onError: (error: any) => {
+            toast.error(error.response?.data?.message || "Mã token không hợp lệ hoặc đã hết hạn");
+        }
+    });
+
     return {
         loginMutation,
         registerMutation,
+        forgotPasswordMutation,
+        resetPasswordMutation
     };
 };
