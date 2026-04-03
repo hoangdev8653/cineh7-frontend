@@ -1,13 +1,7 @@
 import React from 'react';
 import { Trash2 } from 'lucide-react';
 import ModalCustom from '../../../components/common/Modal';
-
-interface DeleteMovieModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onConfirm: () => void;
-    isPending: boolean;
-}
+import type { DeleteMovieModalProps } from '../../../types/movie.types';
 
 const DeleteMovieModal: React.FC<DeleteMovieModalProps> = ({
     isOpen,

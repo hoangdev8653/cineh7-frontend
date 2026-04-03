@@ -1,7 +1,7 @@
 import axiosInstance from "../utils/axios-Instance"
 import type { MovieDto } from "../types/movie.types"
 
-export const getAllMovies = async (params?: { page?: number; limit?: number }) => {
+export const getAllMovies = async (params?: { page?: number; limit?: number; title?: string; status?: string }) => {
     return await axiosInstance({
         method: 'GET',
         url: '/movie',

@@ -7,9 +7,11 @@ export const useMovies = (params?: { page?: number; limit?: number }) => {
     const { searchQuery, filterStatus } = useMovieStore();
 
     return useQuery({
-        queryKey: ['movies', searchQuery, filterStatus],
+        queryKey: ['movies', searchQuery, filterStatus, params?.page, params?.limit],
         queryFn: async () => {
-            const response = await getAllMovies(params);
+            const response = await getAllMovies({
+                ...params,
+            });
             return response;
         },
     });

@@ -4,18 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Edit, Plus } from 'lucide-react';
 import ModalCustom from '../../../components/common/Modal';
 import { movieSchema } from '../../../schema/movie';
-import type { IMovie } from '../../../types/movie.types';
-import * as z from 'zod';
-
-type MovieFormData = z.infer<typeof movieSchema>;
-
-interface MovieFormModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onSubmit: (data: MovieFormData) => void;
-    editingMovie: IMovie | null;
-    isPending: boolean;
-}
+import type { MovieFormData, MovieFormModalProps } from '../../../types/movie.types';
 
 const MovieFormModal: React.FC<MovieFormModalProps> = ({
     isOpen,

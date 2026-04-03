@@ -1,10 +1,6 @@
 import React from 'react';
 import { Plus } from 'lucide-react';
-
-interface MovieHeaderProps {
-    totalMovies: number;
-    onAdd: () => void;
-}
+import type { MovieHeaderProps } from '../../../types/movie.types';
 
 const MovieHeader: React.FC<MovieHeaderProps> = ({ totalMovies, onAdd }) => {
     return (

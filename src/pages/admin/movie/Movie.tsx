@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useMovies, useMovieMutations } from '../../../hooks/useMovie';
 import { useMovieStore } from '../../../store/useMovieStore';
 import type { IMovie } from '../../../types/movie.types';
@@ -13,6 +13,10 @@ const Movie: React.FC = () => {
     const { searchQuery, filterStatus, setSearchQuery, setFilterStatus } = useMovieStore();
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
+
+    useEffect(() => {
+        setPage(1);
+    }, [searchQuery, filterStatus]);
     const { data: movies, isLoading } = useMovies({ page, limit });
     const { createMovie, updateMovie, deleteMovie } = useMovieMutations();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -67,23 +71,12 @@ const Movie: React.FC = () => {
         }
     };
 
-    const filteredMovies = movies?.data?.movie?.filter((movie: IMovie) => {
-        const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            movie.metadata?.director?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            movie.metadata?.actors?.some(actor => actor.toLowerCase().includes(searchQuery.toLowerCase()));
 
-        let matchesStatus = true;
-        if (filterStatus === 'NOW_SHOWING') matchesStatus = movie.isShowing;
-        else if (filterStatus === 'COMING_SOON') matchesStatus = movie.comingSoon;
-        else if (filterStatus === 'END_SHOWING') matchesStatus = !movie.isShowing && !movie.comingSoon;
-
-        return matchesSearch && matchesStatus;
-    });
 
     return (
         <div className="space-y-8 pb-10">
             <MovieHeader
-                totalMovies={movies?.data?.movie?.length || 0}
+                totalMovies={movies?.data?.total || 0}
                 onAdd={handleOpenAdd}
             />
 
@@ -105,7 +98,7 @@ const Movie: React.FC = () => {
             />
 
             <MoviePagination
-                totalMovies={movies?.data?.total || movies?.data?.movie?.length || 0}
+                totalMovies={movies?.data?.total || 0}
                 page={page}
                 limit={limit}
                 onPageChange={setPage}

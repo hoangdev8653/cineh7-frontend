@@ -1,12 +1,6 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-
-interface MoviePaginationProps {
-    totalMovies: number;
-    page: number;
-    limit: number;
-    onPageChange: (page: number) => void;
-}
+import type { MoviePaginationProps } from '../../../types/movie.types';
 
 const MoviePagination: React.FC<MoviePaginationProps> = ({ totalMovies, page, limit, onPageChange }) => {
     const totalPages = Math.ceil(totalMovies / limit) || 1;

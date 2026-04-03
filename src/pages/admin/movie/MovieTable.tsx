@@ -1,13 +1,6 @@
 import React from 'react';
 import { Film, Calendar, Edit, Trash2 } from 'lucide-react';
-import type { IMovie } from '../../../../types/movie.types';
-
-interface MovieTableProps {
-    movies: any;
-    isLoading: boolean;
-    onEdit: (movie: IMovie) => void;
-    onDelete: (id: string) => void;
-}
+import type { IMovie, MovieTableProps } from '../../../types/movie.types';
 
 const MovieTable: React.FC<MovieTableProps> = ({ movies, isLoading, onEdit, onDelete }) => {
     return (
