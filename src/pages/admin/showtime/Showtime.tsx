@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useShowTimes, useShowTimeMutations } from '../../../hooks/useShowTime';
 import { useMovies } from '../../../hooks/useMovie';
 import { useRooms } from '../../../hooks/useRoom';
 import { useTheaters } from '../../../hooks/useTheater';
 import type { IShowtime } from '../../../types/showtime.types';
-import type { IRoom } from '../../../types/room.types';
 import { type ShowtimeFormData } from '../../../schema/showtime';
 
 import ShowtimeHeader from './ShowtimeHeader';
@@ -12,10 +12,13 @@ import ShowtimeSearch from './ShowtimeSearch';
 import ShowtimeList from './ShowtimeList';
 import ShowtimeFormModal from './ShowtimeFormModal';
 import ShowtimeDeleteModal from './ShowtimeDeleteModal';
+import ShowtimePagination from './ShowtimePagination';
 
 const Showtime: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
-    const { data: showtimes, isLoading: isLoadingShowtimes } = useShowTimes();
+    const [page, setPage] = useState(1);
+    const limit = 10;
+    const { data: showtimes, isLoading: isLoadingShowtimes } = useShowTimes({ page, limit });
     const { data: movies } = useMovies();
     const { data: rooms } = useRooms();
     const { data: theaters } = useTheaters();
@@ -46,11 +49,23 @@ const Showtime: React.FC = () => {
     const onSubmit = (data: ShowtimeFormData) => {
         if (editingShowtime) {
             updateShowTime.mutate({ id: editingShowtime.id, showTimeDto: data }, {
-                onSuccess: () => setIsModalOpen(false)
+                onSuccess: () => {
+                    toast.success('Cập nhật lịch chiếu thành công!');
+                    setIsModalOpen(false);
+                },
+                onError: () => {
+                    toast.error('Cập nhật lịch chiếu thất bại!');
+                }
             });
         } else {
             createShowTime.mutate(data, {
-                onSuccess: () => setIsModalOpen(false)
+                onSuccess: () => {
+                    toast.success('Tạo lịch chiếu thành công!');
+                    setIsModalOpen(false);
+                },
+                onError: () => {
+                    toast.error('Tạo lịch chiếu thất bại! Vui lòng kiểm tra lại.');
+                }
             });
         }
     };
@@ -58,7 +73,13 @@ const Showtime: React.FC = () => {
     const handleDelete = () => {
         if (showtimeToDelete) {
             deleteShowTime.mutate(showtimeToDelete, {
-                onSuccess: () => setIsDeleteModalOpen(false)
+                onSuccess: () => {
+                    toast.success('Xóa lịch chiếu thành công!');
+                    setIsDeleteModalOpen(false);
+                },
+                onError: () => {
+                    toast.error('Xóa lịch chiếu thất bại!');
+                }
             });
         }
     };
@@ -85,7 +106,7 @@ const Showtime: React.FC = () => {
                 editingShowtime={editingShowtime}
                 onSubmit={onSubmit}
                 movies={movies as any}
-                rooms={rooms as IRoom[]}
+                rooms={rooms || []}
                 theaters={theaters as any}
                 isPending={createShowTime.isPending || updateShowTime.isPending}
             />
@@ -95,6 +116,15 @@ const Showtime: React.FC = () => {
                 onClose={() => setIsDeleteModalOpen(false)}
                 onConfirm={handleDelete}
             />
+
+            {!isLoadingShowtimes && (showtimes?.total || 0) > 0 && (
+                <ShowtimePagination
+                    totalShowtimes={showtimes.total}
+                    page={page}
+                    limit={limit}
+                    onPageChange={setPage}
+                />
+            )}
         </div>
     );
 };

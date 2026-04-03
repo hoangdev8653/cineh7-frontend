@@ -1,9 +1,6 @@
 import React from 'react';
 import { Plus } from 'lucide-react';
-
-interface ShowtimeHeaderProps {
-    onAdd: () => void;
-}
+import type { ShowtimeHeaderProps } from '../../../types/showtime.types';
 
 const ShowtimeHeader: React.FC<ShowtimeHeaderProps> = ({ onAdd }) => {
     return (

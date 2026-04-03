@@ -2,11 +2,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { getAllShowtimes, getShowtimeGrouped, createShowtime, deleteShowtime, getShowtimeById, updateShowtime, getShowtimeByMovieId } from "../apis/showtime"
 import type { ShowtimeDto } from "../types/showtime.types"
 
-export const useShowTimes = () => {
+export const useShowTimes = (params?: { page?: number; limit?: number }) => {
     return useQuery({
-        queryKey: ["showtimes"],
+        queryKey: ["showtimes", params?.page, params?.limit],
         queryFn: async () => {
-            const response = await getAllShowtimes();
+            const response = await getAllShowtimes(params);
             return response.data;
         },
     });
@@ -60,7 +60,7 @@ export const useShowTimeMutations = () => {
     const updateMutation = useMutation({
         mutationFn: ({ id, showTimeDto }: { id: string; showTimeDto: ShowtimeDto }) =>
             updateShowtime(id, showTimeDto),
-        onSuccess: (data, variables) => {
+        onSuccess: (_, variables) => {
             queryClient.invalidateQueries({ queryKey: ["showtimes"] });
             queryClient.invalidateQueries({ queryKey: ["showtime", variables.id] });
         },

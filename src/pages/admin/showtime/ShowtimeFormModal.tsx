@@ -1,24 +1,11 @@
 import React, { useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Edit, Plus, AlertCircle, ChevronRight, Ticket } from 'lucide-react';
 import ModalCustom from '../../../components/common/Modal';
 import { showtimeSchema, type ShowtimeFormData } from '../../../schema/showtime';
-import type { IShowtime } from '../../../types/showtime.types';
-import type { IMovie } from '../../../types/movie.types';
-import type { IRoom } from '../../../types/room.types';
-import type { ITheater } from '../../../types/theater.types';
-
-interface ShowtimeFormModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    editingShowtime: IShowtime | null;
-    onSubmit: (data: ShowtimeFormData) => void;
-    movies: IMovie[];
-    rooms: IRoom[];
-    theaters: ITheater[];
-    isPending: boolean;
-}
+import type { ShowtimeFormModalProps } from '../../../types/showtime.types';
 
 const ShowtimeFormModal: React.FC<ShowtimeFormModalProps> = ({
     isOpen,
@@ -38,24 +25,22 @@ const ShowtimeFormModal: React.FC<ShowtimeFormModalProps> = ({
     useEffect(() => {
         if (isOpen) {
             if (editingShowtime) {
-                const room = rooms.find(r => r.id === editingShowtime.room_id);
+                const room = rooms.find(r => r.id === editingShowtime.roomId);
                 if (room) {
                     setSelectedTheaterId(room.theaterId);
                 }
                 reset({
-                    movie_id: editingShowtime.movie_id,
-                    room_id: editingShowtime.room_id,
+                    movieId: editingShowtime.movieId,
+                    roomId: editingShowtime.roomId,
                     startTime: editingShowtime.startTime.slice(0, 16),
-                    endTime: (editingShowtime.endTime || '').slice(0, 16),
                     price: Number(editingShowtime.price),
                 });
             } else {
                 setSelectedTheaterId('');
                 reset({
-                    movie_id: '',
-                    room_id: '',
+                    movieId: '',
+                    roomId: '',
                     startTime: '',
-                    endTime: '',
                     price: 100000,
                 });
             }
@@ -75,7 +60,11 @@ const ShowtimeFormModal: React.FC<ShowtimeFormModalProps> = ({
             className="w-full max-w-2xl !bg-white !text-slate-900 border-none rounded-[3rem] p-0 overflow-hidden shadow-2xl"
         >
             <div className="p-10">
-                <div className="flex items-center gap-5 mb-10">
+                <motion.div
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    className="flex items-center gap-5 mb-10"
+                >
                     <div className="w-16 h-16 bg-indigo-600 rounded-3xl flex items-center justify-center text-white shadow-xl shadow-indigo-600/20">
                         {editingShowtime ? <Edit size={30} strokeWidth={2.5} /> : <Plus size={30} strokeWidth={2.5} />}
                     </div>
@@ -83,7 +72,7 @@ const ShowtimeFormModal: React.FC<ShowtimeFormModalProps> = ({
                         <h2 className="text-2xl font-black tracking-tight">{editingShowtime ? 'Chỉnh Sửa Lịch Chiếu' : 'Thêm Lịch Chiếu'}</h2>
                         <p className="text-slate-400 font-medium text-sm">Cấu hình phim, phòng và thời gian chiếu chính xác</p>
                     </div>
-                </div>
+                </motion.div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -91,7 +80,7 @@ const ShowtimeFormModal: React.FC<ShowtimeFormModalProps> = ({
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Chọn Phim</label>
                             <div className="relative">
                                 <select
-                                    {...register('movie_id')}
+                                    {...register('movieId')}
                                     className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-indigo-600/20 outline-none transition-all appearance-none cursor-pointer font-bold text-slate-900"
                                 >
                                     <option value="">Chọn một bộ phim</option>
@@ -103,7 +92,7 @@ const ShowtimeFormModal: React.FC<ShowtimeFormModalProps> = ({
                                     <ChevronRight size={16} className="rotate-90" />
                                 </div>
                             </div>
-                            {errors.movie_id && <p className="text-[10px] text-rose-500 flex items-center gap-1.5 mt-1 font-black uppercase tracking-wider"><AlertCircle size={14} /> {errors.movie_id.message}</p>}
+                            {errors.movieId && <p className="text-[10px] text-rose-500 flex items-center gap-1.5 mt-1 font-black uppercase tracking-wider"><AlertCircle size={14} /> {errors.movieId.message}</p>}
                         </div>
 
                         <div className="space-y-2">
@@ -113,7 +102,7 @@ const ShowtimeFormModal: React.FC<ShowtimeFormModalProps> = ({
                                     value={selectedTheaterId}
                                     onChange={(e) => {
                                         setSelectedTheaterId(e.target.value);
-                                        reset((formValues) => ({ ...formValues, room_id: '' }));
+                                        reset((formValues) => ({ ...formValues, roomId: '' }));
                                     }}
                                     className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-indigo-600/20 outline-none transition-all appearance-none cursor-pointer font-bold text-slate-900"
                                 >
@@ -132,7 +121,7 @@ const ShowtimeFormModal: React.FC<ShowtimeFormModalProps> = ({
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Phòng Chiếu</label>
                             <div className="relative">
                                 <select
-                                    {...register('room_id')}
+                                    {...register('roomId')}
                                     disabled={!selectedTheaterId}
                                     className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-indigo-600/20 outline-none transition-all appearance-none cursor-pointer font-bold text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
@@ -145,7 +134,7 @@ const ShowtimeFormModal: React.FC<ShowtimeFormModalProps> = ({
                                     <ChevronRight size={16} className="rotate-90" />
                                 </div>
                             </div>
-                            {errors.room_id && <p className="text-[10px] text-rose-500 flex items-center gap-1.5 mt-1 font-black uppercase tracking-wider"><AlertCircle size={14} /> {errors.room_id.message}</p>}
+                            {errors.roomId && <p className="text-[10px] text-rose-500 flex items-center gap-1.5 mt-1 font-black uppercase tracking-wider"><AlertCircle size={14} /> {errors.roomId.message}</p>}
                         </div>
 
                         <div className="space-y-2">
@@ -176,23 +165,31 @@ const ShowtimeFormModal: React.FC<ShowtimeFormModalProps> = ({
                     </div>
 
                     <div className="flex items-center gap-4 pt-8">
-                        <button
+                        <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
                             type="button"
                             onClick={onClose}
                             className="flex-1 cursor-pointer py-4 bg-slate-50 text-slate-400 hover:text-slate-900 font-black text-sm uppercase tracking-widest transition-all rounded-2xl"
                         >
                             Hủy Bỏ
-                        </button>
-                        <button
+                        </motion.button>
+                        <motion.button
+                            whileHover={!isPending ? { scale: 1.02, y: -2 } : {}}
+                            whileTap={!isPending ? { scale: 0.98 } : {}}
                             type="submit"
                             disabled={isPending}
                             className="flex-1 cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-black uppercase tracking-widest transition-all shadow-xl shadow-indigo-600/20 disabled:opacity-50 text-sm flex items-center justify-center gap-3 active:scale-[0.98]"
                         >
-                            {isPending && (
-                                <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
+                            {isPending ? (
+                                <div className="w-5 h-5 border-[3px] border-white/30 border-t-white rounded-full animate-spin"></div>
+                            ) : (
+                                <>
+                                    {editingShowtime ? <Edit size={18} /> : <Ticket size={18} />}
+                                    {editingShowtime ? 'Cập Nhật Lịch Chiếu' : 'Xác Nhận & Lên Lịch'}
+                                </>
                             )}
-                            {editingShowtime ? 'Cập Nhật Lịch Chiếu' : 'Xác Nhận & Lên Lịch'}
-                        </button>
+                        </motion.button>
                     </div>
                 </form>
             </div>

@@ -1,14 +1,8 @@
 import React from 'react';
-import { Edit, Trash2, Calendar, Clock, Monitor, Ticket, Film, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Edit, Trash2, Calendar, Clock, Monitor, Ticket, Film } from 'lucide-react';
 import type { IShowtime } from '../../../types/showtime.types';
 import { formatDateTime } from '../../../utils/date';
-
-interface ShowtimeListProps {
-    showtimes: IShowtime[];
-    isLoading: boolean;
-    onEdit: (showtime: IShowtime) => void;
-    onDelete: (id: string) => void;
-}
+import type { ShowtimeListProps } from '../../../types/showtime.types';
 
 const ShowtimeList: React.FC<ShowtimeListProps> = ({
     showtimes,
@@ -132,19 +126,6 @@ const ShowtimeList: React.FC<ShowtimeListProps> = ({
                 </div>
             </div>
 
-            {/* Pagination Placeholder (Simple for now) */}
-            <div className="flex flex-col md:flex-row items-center justify-between px-6 py-2 gap-4">
-                <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest">
-                    Hiển thị <span className="text-slate-900">{showtimes.length}</span> lịch chiếu đã lên lịch
-                </p>
-                <div className="flex items-center gap-1 bg-white p-1 rounded-xl shadow-sm border border-slate-100">
-                    <button className="p-2 text-slate-300 hover:text-slate-900 transition-colors disabled:opacity-20" disabled><ChevronLeft size={20} /></button>
-                    <div className="flex items-center gap-1">
-                        <span className="w-9 h-9 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs font-black shadow-lg shadow-indigo-600/20">1</span>
-                    </div>
-                    <button className="p-2 text-slate-300 hover:text-slate-900 transition-colors disabled:opacity-20" disabled><ChevronRight size={20} /></button>
-                </div>
-            </div>
         </div>
     );
 };

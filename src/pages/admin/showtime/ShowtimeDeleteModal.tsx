@@ -1,12 +1,7 @@
 import React from 'react';
 import { Trash2 } from 'lucide-react';
 import ModalCustom from '../../../components/common/Modal';
-
-interface ShowtimeDeleteModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onConfirm: () => void;
-}
+import type { ShowtimeDeleteModalProps } from '../../../types/showtime.types';
 
 const ShowtimeDeleteModal: React.FC<ShowtimeDeleteModalProps> = ({ isOpen, onClose, onConfirm }) => {
     if (!isOpen) return null;

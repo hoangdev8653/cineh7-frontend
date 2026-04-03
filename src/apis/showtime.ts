@@ -1,10 +1,11 @@
 import axiosInstance from "../utils/axios-Instance"
 import type { ShowtimeDto } from "../types/showtime.types"
 
-export const getAllShowtimes = async () => {
+export const getAllShowtimes = async (params?: { page?: number; limit?: number }) => {
     return await axiosInstance({
         method: 'GET',
         url: '/showtime',
+        params,
     })
 }
 

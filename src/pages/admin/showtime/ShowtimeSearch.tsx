@@ -1,10 +1,6 @@
 import React from 'react';
 import { Search, Clock } from 'lucide-react';
-
-interface ShowtimeSearchProps {
-    value: string;
-    onChange: (value: string) => void;
-}
+import type { ShowtimeSearchProps } from '../../../types/showtime.types';
 
 const ShowtimeSearch: React.FC<ShowtimeSearchProps> = ({ value, onChange }) => {
     return (
