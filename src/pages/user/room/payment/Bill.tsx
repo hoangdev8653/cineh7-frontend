@@ -2,13 +2,7 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useOrderMutations } from "../../../../hooks/useOrder";
-
-interface BillProps {
-    totalPrice: number;
-    arrayGhe: string[];
-    showtimeId: string;
-    selectedMethod: string;
-}
+import type { BillProps } from "../../../../types/room.types";
 
 function Bill({ totalPrice, arrayGhe, showtimeId, selectedMethod }: BillProps) {
     const navigate = useNavigate();
@@ -40,32 +34,25 @@ function Bill({ totalPrice, arrayGhe, showtimeId, selectedMethod }: BillProps) {
         }
     }
 
-    const handleMockCheckout = () => {
+    const handleCheckout = () => {
         toast.info(`Đang xử lý thanh toán qua ${selectedMethod.toUpperCase()}...`);
-        setTimeout(() => {
-            // Mock API call or Order flow
-            // createOrderMutation.mutate({
-            //     showtime_id: id,
-            //     seat_ids: arrayGhe,
-            // }, {
-            //     onSuccess: () => {
-            //         toast.success("Thanh toán thành công! Đang chuyển hướng...");
-            //         setTimeout(() => {
-            //             navigate("/");
-            //         }, 3000);
-            //     },
-            //     onError: () => {
-            //         toast.error("Thanh toán thất bại");
-            //     }
-            // });
-            // console.log(totalPrice, arrayGhe, showtimeId, selectedMethod);
-            console.log("totalPrice", totalPrice);
-            console.log("arrayGhe", arrayGhe);
-            console.log("showtimeId", showtimeId);
-            console.log("selectedMethod", selectedMethod);
-
-
-        }, 1500);
+        createOrderMutation.mutate({
+            showtimeId,
+            seatIds: arrayGhe,
+            method: selectedMethod
+        }, {
+            onSuccess: (response: any) => {
+                if (response?.data?.paymentUrl) {
+                    toast.success("Đang chuyển hướng sang trang thanh toán...");
+                    setTimeout(() => {
+                        window.location.href = response.data.paymentUrl;
+                    }, 1500);
+                }
+            },
+            onError: () => {
+                toast.error("Thanh toán thất bại");
+            }
+        });
     }
 
     if (selectedMethod === 'paypal') {
@@ -80,7 +67,6 @@ function Bill({ totalPrice, arrayGhe, showtimeId, selectedMethod }: BillProps) {
         );
     }
 
-    // Generic Mock Checkout button for Momo, ZaloPay, VNPay
     const methodColors: Record<string, string> = {
         momo: 'bg-[#A50064] hover:bg-[#8A0053]',
         vnpay: 'bg-[#005BAA] hover:bg-[#004A8B]',
@@ -91,7 +77,7 @@ function Bill({ totalPrice, arrayGhe, showtimeId, selectedMethod }: BillProps) {
 
     return (
         <button
-            onClick={handleMockCheckout}
+            onClick={handleCheckout}
             disabled={createOrderMutation.isPending}
             className={`w-full py-4 rounded-lg text-white font-bold text-lg transition-colors flex items-center justify-center gap-2 ${buttonColor} ${createOrderMutation.isPending ? 'opacity-70 cursor-not-allowed' : ''}`}
         >

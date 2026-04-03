@@ -176,7 +176,7 @@ function Room() {
                   alt="avatar"
                 />
                 <div className="text-xs text-gray-500 font-medium">
-                  {storedUser?.full_name || "Guest"}
+                  {storedUser?.name}
                 </div>
               </div>
             </div>

@@ -3,9 +3,6 @@ import { useEffect, useState } from "react";
 import Bill from "./Bill";
 import { formatPrice } from "../../../../utils/forrmatPriceVn";
 import { getLocalStorage } from "../../../../utils/localStorage";
-import { useOrderMutations } from "../../../../hooks/useOrder";
-import type { OrderDto } from "../../../../types/order.types";
-
 interface PaymentProps {
     data: any;
     arrayGhe: string[];
@@ -16,9 +13,6 @@ function Payment({ data, arrayGhe, showtimeId }: PaymentProps) {
     const [price, setPrice] = useState(0);
     const [selectedMethod, setSelectedMethod] = useState<string>('paypal');
     const user = getLocalStorage("user") || { email: "guest@example.com", phone: "0123456789" };
-    const { createOrderMutation } = useOrderMutations();
-
-
     useEffect(() => {
         if (arrayGhe.length === 0) {
             setPrice(0);
@@ -26,20 +20,6 @@ function Payment({ data, arrayGhe, showtimeId }: PaymentProps) {
             setPrice(Number(data?.tienGhe || 100000) * arrayGhe.length);
         }
     }, [arrayGhe, data]);
-
-
-    const handleCreateOrder = () => {
-        const orderDto: OrderDto = {
-            showtime_id: showtimeId,
-            seat_ids: arrayGhe,
-        }
-        console.log(orderDto);
-
-        // createOrderMutation.mutate(orderDto);
-    }
-
-    // console.log(arrayGhe);
-
 
     return (
         <div
